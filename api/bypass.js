@@ -4,7 +4,6 @@ const ALLOWED = {
   linkvertise: "https://api.theresav.eu/api/bypass/linkvertise",
   izen: "https://api.theresav.eu/api/bypass/izen",
   universal: "https://api.theresav.eu/api/bypass/universal",
-  move2link: "https://api.theresav.eu/api/bypass/move2link",
 };
 
 export default async function handler(req, res) {
@@ -52,4 +51,4 @@ export default async function handler(req, res) {
       message: error.message
     });
   }
-      }
+}
