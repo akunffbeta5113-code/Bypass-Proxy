@@ -1,9 +1,7 @@
 const ALLOWED = {
   sfl: "https://api.theresav.eu/api/bypass/sfl",
   adlink: "https://api.theresav.eu/api/bypass/adlinksumo",
-  bicolink: "https://api.theresav.eu/api/bypass/bicolink",
   linkvertise: "https://api.theresav.eu/api/bypass/linkvertise",
-  delta: "https://api.theresav.eu/api/bypass/delta",
   izen: "https://api.theresav.eu/api/bypass/izen",
   universal: "https://api.theresav.eu/api/bypass/universal",
   move2link: "https://api.theresav.eu/api/bypass/move2link",
