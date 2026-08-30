@@ -4,7 +4,8 @@ const ALLOWED = {
   bicolink: "https://api.theresav.eu/api/bypass/bicolink",
   linkvertise: "https://api.theresav.eu/api/bypass/linkvertise",
   delta: "https://api.theresav.eu/api/bypass/delta",
-  izen: "https://api.theresav.eu/api/bypass/izen",   // 🔥 TAMBAHKAN INI UNTUK DELTA
+  izen: "https://api.theresav.eu/api/bypass/izen",
+  move2link: "https://api.theresav.eu/api/bypass/move2link",  // 🔥 TAMBAHKAN
 };
 
 export default async function handler(req, res) {
