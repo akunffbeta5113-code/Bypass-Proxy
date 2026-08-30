@@ -5,7 +5,8 @@ const ALLOWED = {
   linkvertise: "https://api.theresav.eu/api/bypass/linkvertise",
   delta: "https://api.theresav.eu/api/bypass/delta",
   izen: "https://api.theresav.eu/api/bypass/izen",
-  move2link: "https://api.theresav.eu/api/bypass/move2link",  // 🔥 TAMBAHKAN
+  universal: "https://api.theresav.eu/api/bypass/universal",
+  move2link: "https://api.theresav.eu/api/bypass/move2link",
 };
 
 export default async function handler(req, res) {
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
   const input = String(req.query.url || "").trim();
   const target = ALLOWED[type];
 
-  if (!target) return res.status(400).json({ error: "Unsupported type" });
+  if (!target) return res.status(400).json({ error: `Unsupported type: ${type}` });
   if (!input) return res.status(400).json({ error: "Missing url" });
 
   const key = process.env.THRESAV_API_KEY;
@@ -29,7 +30,7 @@ export default async function handler(req, res) {
   try {
     const targetUrl = target + "?url=" + encodeURIComponent(input);
     
-    console.log(`[Proxy] Forwarding to: ${targetUrl}`); // Debug
+    console.log(`[Proxy] Forwarding to: ${targetUrl}`);
 
     const response = await fetch(targetUrl, {
       method: "GET",
@@ -43,7 +44,7 @@ export default async function handler(req, res) {
     let body;
     try { body = JSON.parse(text); } catch { body = { raw: text }; }
 
-    console.log(`[Proxy] Response status: ${response.status}`); // Debug
+    console.log(`[Proxy] Response status: ${response.status}`);
 
     return res.status(response.status).json(body);
   } catch (error) {
@@ -53,4 +54,4 @@ export default async function handler(req, res) {
       message: error.message
     });
   }
-    }
+      }
