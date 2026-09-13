@@ -1,54 +1,48 @@
-const ALLOWED = {
-  sfl: "https://api.theresav.eu/api/bypass/sfl",
-  adlink: "https://api.theresav.eu/api/bypass/adlinksumo",
-  linkvertise: "https://api.theresav.eu/api/bypass/linkvertise",
-  izen: "https://api.theresav.eu/api/bypass/izen",
-  universal: "https://api.theresav.eu/api/bypass/universal",
-};
-
+// api/bypass.js
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-apikey");
+  // Header CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'x-apikey, Content-Type');
 
-  if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-  const type = String(req.query.type || "").toLowerCase();
-  const input = String(req.query.url || "").trim();
-  const target = ALLOWED[type];
+  const { type, url } = req.query;
 
-  if (!target) return res.status(400).json({ error: `Unsupported type: ${type}` });
-  if (!input) return res.status(400).json({ error: "Missing url" });
+  if (!type || !url) {
+    return res.status(400).json({ error: 'Parameter type dan url wajib diisi' });
+  }
 
-  const key = process.env.THRESAV_API_KEY;
-  if (!key) return res.status(500).json({ error: "THRESAV_API_KEY is not configured" });
+  // Daftar tipe yang didukung — SUDAH DITAMBAH move2link
+  const ENDPOINTS = {
+    adlink: 'adlink',
+    sfl: 'sfl',
+    delta: 'izen',
+    linkvertise: 'linkvertise',
+    move2link: 'move2link',   // ← INI DIA
+    universal: 'universal'
+  };
+
+  if (!ENDPOINTS[type]) {
+    return res.status(400).json({ error: 'Unsupported type: ' + type });
+  }
+
+  const endpoint = ENDPOINTS[type];
+  const target = `https://api.theresav.eu/api/bypass/${endpoint}?url=${encodeURIComponent(url)}`;
 
   try {
-    const targetUrl = target + "?url=" + encodeURIComponent(input);
-    
-    console.log(`[Proxy] Forwarding to: ${targetUrl}`);
-
-    const response = await fetch(targetUrl, {
-      method: "GET",
-      headers: { 
-        "x-apikey": key,
-        "Content-Type": "application/json"
+    const response = await fetch(target, {
+      method: 'GET',
+      headers: {
+        'x-apikey': 'SQ7Dw'
       }
     });
 
-    const text = await response.text();
-    let body;
-    try { body = JSON.parse(text); } catch { body = { raw: text }; }
-
-    console.log(`[Proxy] Response status: ${response.status}`);
-
-    return res.status(response.status).json(body);
-  } catch (error) {
-    console.error("[Proxy] Error:", error);
-    return res.status(502).json({
-      error: "Upstream request failed",
-      message: error.message
-    });
+    const data = await response.text();
+    res.status(response.status).setHeader('Content-Type', 'application/json').send(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 }
