@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>IBNUXIT APP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Poppins,sans-serif}
+:root{--bg:#0d0f18;--card:#171a25;--muted:#8d91a2}
+html,body{min-height:100%;background:var(--bg);color:#fff}
+body{display:flex;justify-content:center;padding:16px;overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;border-radius:50%;filter:blur(80px);opacity:.22;z-index:0;pointer-events:none}
+body:before{width:230px;height:230px;background:#7a35ff;top:-70px;right:-60px}
+body:after{width:220px;height:220px;background:#ff3d3d;bottom:-70px;left:-60px}
+.app{position:relative;z-index:1;width:100%;max-width:430px;min-height:calc(100vh - 32px);background:#11131e;border:1px solid #292c3b;border-radius:32px;padding:26px 22px 24px;box-shadow:0 25px 70px #0008}
+.topBadge{width:max-content;margin:0 auto 22px;padding:10px 24px;border-radius:24px;background:#4a3d12;color:#ffd84d;font-size:14px;font-weight:800;box-shadow:0 8px 25px #0004}
+.music{position:absolute;right:28px;top:38px;width:58px;height:58px;border:2px solid #8b39ff;border-radius:50%;display:grid;place-items:center;color:#687086;font-size:26px}
+h1{text-align:center;font-size:32px;line-height:1.15;font-weight:800;letter-spacing:-1px}
+h1 span{color:#ffca18}
+.subtitle{text-align:center;color:#9498a8;margin-top:8px;font-size:14px}
+.live{width:max-content;margin:25px auto 28px;padding:8px 22px;border-radius:22px;background:#4b1e22;color:#ff6262;font-size:14px;font-weight:700}
+.cards{display:flex;flex-direction:column;gap:15px}
+.service{position:relative;display:flex;align-items:center;gap:17px;width:100%;min-height:91px;padding:14px 17px 14px 14px;border-radius:25px;background:#181b27;border:2px solid var(--accent);box-shadow:0 10px 28px #0003;cursor:pointer;transition:.18s;overflow:hidden}
+.service:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fff0 50%,#fff08);pointer-events:none}
+.service:active{transform:scale(.985)}
+.icon{flex:0 0 63px;width:63px;height:63px;border-radius:20px;background:var(--accent);display:grid;place-items:center;font-size:29px;font-weight:800;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 32%,transparent)}
+.info{min-width:0;flex:1}
+.info b{display:block;font-size:17px;line-height:1.2;margin-bottom:5px}
+.info small{display:block;color:#8d91a2;font-size:13px}
+.arrow{font-size:27px;color:#4f5361}
+footer{text-align:center;margin-top:28px;color:#666b7c;font-size:11px;font-weight:600}
+.dateDisplay{margin-top:7px;color:#858a9b;font-size:12px;font-weight:500}
+.modal{display:none;position:fixed;inset:0;z-index:20;background:#070810eF;padding:16px;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.panel{width:100%;max-width:430px;max-height:94vh;overflow:auto;background:#121520;border:1px solid #303444;border-radius:27px;padding:21px;box-shadow:0 30px 80px #000b}
+.modalHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modalHead h2{font-size:20px}
+.close{width:40px;height:40px;border:0;border-radius:13px;background:#252936;color:#fff;font-size:21px}
+.input{position:relative;margin-bottom:12px}
+.input input{width:100%;height:54px;padding:0 15px;border:1px solid #303444;border-radius:15px;outline:0;background:#1b1e2a;color:#fff;font-size:14px}
+.input input:focus{border-color:#8b5cff;box-shadow:0 0 18px #8b5cff33}
+.actions{display:flex;gap:10px;margin-bottom:12px}
+button{cursor:pointer}
+.small{flex:1;height:46px;border:0;border-radius:13px;background:#242834;color:#fff;font-weight:700}
+.run{width:100%;height:53px;border:0;border-radius:15px;background:linear-gradient(135deg,#7d43ff,#b45cff);color:#fff;font-size:16px;font-weight:800}
+.loader{display:none;width:40px;height:40px;border:4px solid #ffffff22;border-top-color:#a55cff;border-radius:50%;margin:18px auto;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.result{display:none;margin-top:15px;padding:15px;border-radius:17px;background:#191c28;border:1px solid #2d3140}
+.item{margin-bottom:12px}
+.label{font-size:11px;color:#858a9c;margin-bottom:5px}
+.value{padding:10px;border-radius:10px;background:#222633;word-break:break-word;font-size:13px;user-select:text;-webkit-user-select:text}
+.resultBtns{display:flex;gap:10px;margin-top:14px}
+.resultBtns button{flex:1;height:44px;border:0;border-radius:12px;font-weight:700}
+.copy{background:#fff;color:#111}
+.open{background:#39df88;color:#08130d}
+.debug{margin-top:13px;background:#0d0f17;border-radius:13px;overflow:hidden}
+.debugHead{padding:12px;display:flex;justify-content:space-between;font-size:13px;font-weight:700;cursor:pointer}
+.debugBody{display:none;padding:12px;border-top:1px solid #262a37;color:#b8ffcf;font:12px monospace;white-space:pre-wrap;word-break:break-word;max-height:200px;overflow:auto;background:#0a0c12}
+.toast{position:fixed;z-index:50;left:50%;bottom:20px;transform:translate(-50%,120px);background:#20232e;padding:11px 17px;border-radius:12px;box-shadow:0 12px 30px #0008;transition:.25s;font-size:13px}
+.toast.show{transform:translate(-50%,0)}
+@media(max-width:370px){.app{padding:23px 16px}h1{font-size:28px}.music{display:none}.service{min-height:84px}.icon{width:57px;height:57px;flex-basis:57px}}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="topBadge">⚡ PREMIUM BYPASS AUTO ⚡</div>
+  <div class="music">♫</div>
+  <h1>IBNUXIT <span>APP</span></h1>
+  <p class="subtitle">Bypass Generator • Fast &amp; Secure</p>
+  <div class="live">● LIVE USERS ONLINE: <span id="live">143</span></div>
+
+  <section class="cards">
+    <div class="service" style="--accent:#ff4b3f" data-type="adlink">
+      <div class="icon">≡★</div>
+      <div class="info"><b>ADLINKSUMO BYPASS</b><small>Bypass Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="service" style="--accent:#ffc515" data-type="sfl">
+      <div class="icon">≡★</div>
+      <div class="info"><b>SFL BYPASS</b><small>Bypass Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="service" style="--accent:#00e676" data-type="delta">
+      <div class="icon">≡★</div>
+      <div class="info"><b>DELTA BYPASS</b><small>Bypass Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="service" style="--accent:#38bdf8" data-type="linkvertise">
+      <div class="icon">≡★</div>
+      <div class="info"><b>LINKVERTISE BYPASS</b><small>Bypass Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="service" style="--accent:#ff7a00" data-type="move2link">
+      <div class="icon">≡★</div>
+      <div class="info"><b>MOVE2LINK BYPASS</b><small>Bypass Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="service" style="--accent:#a855f7" data-type="universal">
+      <div class="icon">≡★</div>
+      <div class="info"><b>UNIVERSAL BYPASS</b><small>Bypass All Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
+  </section>
+
+  <footer>
+  © IBNUXIT APP • PROGRAMMER REVERSE
+  <div class="dateDisplay" id="dateDisplay"></div>
+  <div class="hijriDisplay" id="hijriDisplay"></div>
+  <div class="observanceDisplay" id="observanceDisplay"></div>
+</footer>
+</main>
+
+<div class="modal" id="modal">
+  <div class="panel">
+    <div class="modalHead">
+      <h2 id="modalTitle">Bypass</h2>
+      <button class="close" id="close">×</button>
+    </div>
+    <div class="input"><input id="url" placeholder="Tempel link di sini"></div>
+    <div class="actions">
+      <button class="small" id="paste">📋 Paste</button>
+      <button class="small" id="clear">🗑 Clear</button>
+    </div>
+    <button class="run" id="run">🚀 Bypass Sekarang</button>
+    <div class="loader" id="loader"></div>
+
+    <div class="result" id="result">
+      <div class="item"><div class="label">Original URL</div><div class="value" id="original">-</div></div>
+      <div class="item"><div class="label">Bypassed URL</div><div class="value" id="bypassed">-</div></div>
+      <div class="item"><div class="label">Creator</div><div class="value" id="creator">-</div></div>
+      <div class="item"><div class="label">Execution Time</div><div class="value" id="time">-</div></div>
+      <div class="resultBtns">
+        <button class="copy" id="copy">📋 Copy</button>
+        <button class="open" id="open">🌐 Open</button>
+      </div>
+    </div>
+
+    <div class="debug">
+      <div class="debugHead" id="debugToggle">🐞 Debug <span>▼</span></div>
+      <div class="debugBody" id="debugBody">Menunggu request...</div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Berhasil</div>
+
+<script>
+// ============================================
+// VERCEL PROXY
+// ============================================
+const PROXY_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'https://bypass-proxy.vercel.app/api/bypass'
+  : '/api/bypass';
+
+const ENDPOINTS = {
+  adlink: 'adlink',
+  sfl: 'sfl',
+  delta: 'izen',
+  linkvertise: 'linkvertise',
+  move2link: 'move2link',
+  universal: 'universal'
+};
+
+let currentType = "adlink";
+let resultLink = "";
+
+const $ = id => document.getElementById(id);
+const modal = $("modal");
+
+function toast(text){
+  $("toast").textContent = text;
+  $("toast").classList.add("show");
+  setTimeout(() => $("toast").classList.remove("show"), 2300);
+}
+
+function debug(text){
+  const el = $("debugBody");
+  if (typeof text === 'object') {
+    el.textContent = JSON.stringify(text, null, 2);
+  } else {
+    el.textContent = text;
+  }
+  if (text && typeof text === 'string' && (text.includes('error') || text.includes('Error'))) {
+    $("debugBody").style.display = "block";
+  }
+}
+
+document.querySelectorAll(".service").forEach(card => {
+  card.addEventListener("click", () => {
+    currentType = card.dataset.type;
+    const names = {
+      adlink: "AdLinkSumo Bypass",
+      sfl: "SFL Bypass",
+      delta: "Delta Bypass",
+      linkvertise: "Linkvertise Bypass",
+      move2link: "Move2link Bypass",
+      universal: "Universal Bypass"
+    };
+    const placeholders = {
+      adlink: "Tempel link AdLinkSumo di sini",
+      sfl: "Tempel link SFL di sini",
+      delta: "Tempel link DeltaBypass di sini",
+      linkvertise: "Tempel link Linkvertise di sini",
+      move2link: "Tempel link Move2link di sini",
+      universal: "Tempel link Universal Bypass di sini"
+    };
+    $("modalTitle").textContent = names[currentType];
+    $("url").placeholder = placeholders[currentType];
+    $("url").value = "";
+    $("result").style.display = "none";
+    debug("Menunggu request...");
+    modal.classList.add("show");
+    setTimeout(() => $("url").focus(), 100);
+  });
+});
+
+$("close").onclick = () => modal.classList.remove("show");
+modal.addEventListener("click", e => { if(e.target === modal) modal.classList.remove("show"); });
+
+$("paste").onclick = async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    $("url").value = text;
+    toast("Berhasil paste");
+  } catch {
+    const text = prompt("Tempel link di sini:");
+    if(text) $("url").value = text.trim();
+  }
+};
+
+$("clear").onclick = () => {
+  $("url").value = "";
+  $("result").style.display = "none";
+  resultLink = "";
+  toast("Dibersihkan");
+};
+
+$("debugToggle").onclick = () => {
+  const body = $("debugBody");
+  body.style.display = body.style.display === "block" ? "none" : "block";
+};
+
+$("copy").onclick = async () => {
+  if (!resultLink) return toast("Belum ada hasil");
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(resultLink);
+      toast("Link berhasil disalin");
+      return;
+    }
+  } catch (e) {}
+  try {
+    const area = document.createElement("textarea");
+    area.value = resultLink;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.left = "-9999px";
+    document.body.appendChild(area);
+    area.focus(); area.select();
+    const copied = document.execCommand("copy");
+    document.body.removeChild(area);
+    if (copied) return toast("Link berhasil disalin");
+  } catch (e) {}
+  const area = document.createElement("textarea");
+  area.value = resultLink;
+  area.style.position = "fixed";
+  area.style.left = "10px";
+  area.style.top = "10px";
+  area.style.width = "90%";
+  area.style.height = "60px";
+  area.style.zIndex = "99999";
+  document.body.appendChild(area);
+  area.focus(); area.select();
+  toast("Tekan lama teks lalu pilih Salin");
+};
+
+$("open").onclick = () => {
+  if(!resultLink) return toast("Belum ada hasil");
+  window.open(resultLink, "_blank");
+};
+
+$("url").addEventListener("keypress", e => {
+  if(e.key === "Enter") bypass();
+});
+$("run").onclick = bypass;
+
+async function bypass(){
+  const url = $("url").value.trim();
+  if(!url) return toast("Masukkan URL");
+
+  $("loader").style.display = "block";
+  $("result").style.display = "none";
+  debug({
+    status: "Mengirim request...",
+    endpoint: ENDPOINTS[currentType],
+    url: url,
+    proxy: PROXY_URL
+  });
+  const start = performance.now();
+
+  try {
+    const endpoint = ENDPOINTS[currentType];
+    // Format request untuk Vercel Yang Mulia: ?type=...&url=...
+    const requestUrl = PROXY_URL + "?type=" + encodeURIComponent(endpoint) + "&url=" + encodeURIComponent(url);
+
+    // TIDAK kirim header x-apikey — sudah dihandle backend Vercel
+    const res = await fetch(requestUrl, { method: "GET" });
+
+    const contentType = res.headers.get("content-type") || "";
+    let json = null;
+    let raw = "";
+
+    try {
+      raw = (await res.text()).trim();
+    } catch(e) {
+      raw = "";
+    }
+
+    if(raw) {
+      try { json = JSON.parse(raw); } catch(e) {}
+    }
+
+    const elapsed = Math.round(performance.now() - start);
+
+    debug({
+      request: {
+        url: requestUrl,
+        method: "GET"
+      },
+      response: {
+        status: res.status,
+        ok: res.ok,
+        statusText: res.statusText,
+        contentType: contentType,
+        responseTime: elapsed + " ms"
+      },
+      data: json !== null ? json : (raw || "(empty response)")
+    });
+
+    if(!res.ok) {
+      let detail = "";
+      if(json && typeof json === "object") {
+        detail = json.message || json.error || json.detail || "";
+      } else {
+        detail = raw;
+      }
+
+      if(res.status === 400) throw new Error("HTTP 400" + (detail ? " - " + detail : ""));
+      if(res.status === 401) throw new Error("HTTP 401" + (detail ? " - " + detail : " - API Key tidak valid"));
+      if(res.status === 403) throw new Error("HTTP 403" + (detail ? " - " + detail : ""));
+      if(res.status === 429) throw new Error("HTTP 429" + (detail ? " - " + detail : " - Terlalu banyak request"));
+      throw new Error("HTTP " + res.status + (detail ? " - " + detail : ""));
+    }
+
+    let success = false;
+    let bypassed = "";
+
+    if(currentType === "sfl") {
+      success = !!(json && json.status);
+      bypassed = json && json.bypassed_url;
+    } else if(currentType === "adlink") {
+      success = !!(json && (json.success || json.status));
+      bypassed = json && (json.url || json.bypassed_url);
+    } else if(currentType === "delta") {
+      success = !!(json && json.status);
+      bypassed = json && (json.result || json.url || json.bypassed_url);
+    } else if(currentType === "linkvertise") {
+      success = !!(json && json.status);
+      bypassed = json && json.bypassed_url;
+    } else if(currentType === "move2link") {
+      success = !!(json && json.status);
+      bypassed = json && (json.bypassed_url || json.url || json.result);
+    } else if(currentType === "universal") {
+      success = !!(json && json.status);
+      bypassed = json && (json.result || json.url || json.bypassed_url);
+    }
+
+    if(!success || !bypassed) {
+      const message = (json && typeof json === "object" && (json.error || json.message)) || "Request gagal";
+      throw new Error(message);
+    }
+
+    $("original").textContent = (json && typeof json === "object" && (json.original_url || json.input_url || json.input)) || url;
+    $("bypassed").textContent = bypassed;
+    $("creator").textContent = (json && typeof json === "object" && json.creator) || 
+      (currentType === "delta" ? "DeltaBypass" : 
+       currentType === "move2link" ? "Blickrosë" :
+       currentType === "universal" ? "UniversalBypass" : "-");
+    $("time").textContent = (json && typeof json === "object" && json.execution_time_ms != null)
+      ? json.execution_time_ms + " ms"
+      : (json && typeof json === "object" && json.time_taken) 
+        ? json.time_taken
+        : elapsed + " ms";
+
+    resultLink = bypassed;
+    $("result").style.display = "block";
+    toast("Bypass berhasil");
+  } catch(err) {
+    debug({
+      error: String(err),
+      message: err.message,
+      stack: err.stack
+    });
+    toast(err.message || "Terjadi kesalahan");
+  } finally {
+    $("loader").style.display = "none";
+  }
+}
+
+function updateDateTime() {
+  const now = new Date();
+
+  const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+  const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+  const hijriMonths = ["Muharram","Safar","Rabiul Awal","Rabiul Akhir","Jumadil Awal","Jumadil Akhir","Rajab","Syaban","Ramadan","Syawal","Zulkaidah","Zulhijah"];
+
+  const day = days[now.getDay()];
+  const date = now.getDate();
+  const month = months[now.getMonth()];
+  const year = now.getFullYear();
+
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+
+  document.getElementById("dateDisplay").innerHTML =
+    `${day}, ${date} ${month} ${year}<br><span>${hours}:${minutes}:${seconds} WIB</span>`;
+
+  try {
+    const hijriFormatter = new Intl.DateTimeFormat("id-ID-u-ca-islamic-umalqura", { day: "numeric", month: "numeric", year: "numeric" });
+    const parts = hijriFormatter.formatToParts(now);
+    const hDay = parts.find(p => p.type === "day")?.value;
+    const hMonth = Number(parts.find(p => p.type === "month")?.value);
+    const hYear = parts.find(p => p.type === "year")?.value;
+    document.getElementById("hijriDisplay").textContent = `${hDay} ${hijriMonths[hMonth - 1]} ${hYear} H`;
+  } catch (e) {
+    document.getElementById("hijriDisplay").textContent = "-";
+  }
+
+  const observances2026 = {
+    "1-1": "Tahun Baru Masehi 🎉",
+    "16-1": "Isra Mikraj Nabi Muhammad SAW 🌙",
+    "2-2": "Hari Lahan Basah Sedunia 🌿",
+    "9-2": "Hari Pers Nasional 📰",
+    "14-2": "Hari Peringatan Pembela Tanah Air (PETA) 🇮🇩",
+    "16-2": "Tahun Baru Imlek 2577 Kongzili 🏮",
+    "21-2": "Hari Peduli Sampah Nasional ♻️",
+    "3-3": "Hari Satwa Liar Sedunia 🐾",
+    "8-3": "Hari Perempuan Internasional 🌷",
+    "11-3": "Hari Supersemar 🇮🇩",
+    "18-3": "Hari Suci Nyepi / Tahun Baru Saka 1948 🕉️",
+    "20-3": "Wafat Yesus Kristus ✝️",
+    "21-3": "Hari Raya Idulfitri 1447 H 🌙",
+    "22-3": "Hari Raya Idulfitri 1447 H 🌙",
+    "2-4": "Hari Peduli Autisme Sedunia 💙",
+    "21-4": "Hari Kartini 🇮🇩",
+    "22-4": "Hari Bumi 🌍",
+    "1-5": "Hari Buruh Internasional 👷",
+    "2-5": "Hari Pendidikan Nasional 📚",
+    "17-5": "Hari Buku Nasional 📖",
+    "20-5": "Hari Kebangkitan Nasional 🇮🇩",
+    "31-5": "Hari Raya Waisak 2570 BE ☸️",
+    "1-6": "Hari Lahir Pancasila 🇮🇩",
+    "5-6": "Hari Lingkungan Hidup Sedunia 🌱",
+    "16-6": "1 Muharam / Tahun Baru Islam 1448 H 🌙",
+    "27-6": "Hari Antinarkoba Internasional 🚫",
+    "23-7": "Hari Anak Nasional 👧",
+    "10-8": "Hari Kebangkitan Teknologi Nasional 💡",
+    "14-8": "Hari Pramuka 🇮🇩",
+    "17-8": "Hari Proklamasi Kemerdekaan Republik Indonesia 🇮🇩",
+    "25-8": "Maulid Nabi Muhammad SAW 🌙",
+    "1-9": "Hari Polisi Wanita (Polwan) 🇮🇩",
+    "9-9": "Hari Olahraga Nasional 🏃",
+    "17-9": "Hari Palang Merah Indonesia ❤️",
+    "24-9": "Hari Tani Nasional 🌾",
+    "28-9": "Hari Kereta Api Nasional 🚆",
+    "1-10": "Hari Kesaktian Pancasila 🇮🇩",
+    "5-10": "Hari Ulang Tahun TNI 🇮🇩",
+    "16-10": "Hari Pangan Sedunia 🌾",
+    "22-10": "Hari Santri Nasional 🕌",
+    "28-10": "Hari Sumpah Pemuda 🇮🇩",
+    "10-11": "Hari Pahlawan 🇮🇩",
+    "12-11": "Hari Kesehatan Nasional 🏥",
+    "25-11": "Hari Guru Nasional / HUT PGRI 📚",
+    "10-12": "Hari Hak Asasi Manusia Sedunia ⚖️",
+    "22-12": "Hari Ibu 🇮🇩",
+    "25-12": "Hari Natal 🎄"
+  };
+
+  const key = `${date}-${now.getMonth() + 1}`;
+  document.getElementById("observanceDisplay").textContent = `Peringatan Hari Ini: ${observances2026[key] || "-"}`;
+}
+
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+setInterval(() => {
+  const n = 140 + Math.floor(Math.random() * 9);
+  $("live").textContent = n;
+}, 5000);
+</script>
+</body>
+</html>
