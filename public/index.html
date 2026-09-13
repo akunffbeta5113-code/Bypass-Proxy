@@ -150,7 +150,9 @@ button{cursor:pointer}
 // ============================================
 const PROXY_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'https://bypass-proxy.vercel.app/api/bypass'
-  : '/api/bypass';
+  : (location.hostname.includes('github.io'))
+    ? 'https://bypass-proxy.vercel.app/api/bypass'
+    : '/api/bypass';
 
 const ENDPOINTS = {
   adlink: 'adlink',
