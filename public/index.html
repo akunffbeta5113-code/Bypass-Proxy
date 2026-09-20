@@ -60,6 +60,71 @@ button{cursor:pointer}
 .toast{position:fixed;z-index:50;left:50%;bottom:20px;transform:translate(-50%,120px);background:#20232e;padding:11px 17px;border-radius:12px;box-shadow:0 12px 30px #0008;transition:.25s;font-size:13px}
 .toast.show{transform:translate(-50%,0)}
 @media(max-width:370px){.app{padding:23px 16px}h1{font-size:28px}.music{display:none}.service{min-height:84px}.icon{width:57px;height:57px;flex-basis:57px}}
+  /* ========================================== */
+/* POPUP MAINTENANCE */
+/* ========================================== */
+.maintenance-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.maintenance-overlay.show {
+  display: flex;
+}
+.maintenance-box {
+  max-width: 380px;
+  width: 100%;
+  background: #1a1d29;
+  border: 2px solid #f5b342;
+  border-radius: 24px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7);
+  animation: popIn .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn {
+  from { transform: scale(.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.maintenance-icon {
+  font-size: 60px;
+  margin-bottom: 14px;
+  display: inline-block;
+  animation: swing 2.5s infinite;
+}
+@keyframes swing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+.maintenance-title {
+  color: #f5b342;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.maintenance-text {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.maintenance-sub {
+  color: #8d91a2;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+  }
 </style>
 </head>
 <body>
@@ -153,6 +218,50 @@ const PROXY_URL = (location.hostname === 'localhost' || location.hostname === '1
   : (location.hostname.includes('github.io'))
     ? 'https://bypass-proxy.vercel.app/api/bypass'
     : '/api/bypass';
+
+  // ==========================================
+// MAINTENANCE MODE CHECK
+// Tersembunyi — tidak ada tombol/link di halaman
+// ==========================================
+const MAINTENANCE_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
+  ? 'https://bypass-proxy.vercel.app/api/maintenance'
+  : '/api/maintenance';
+
+async function cekMaintenance() {
+  try {
+    const res = await fetch(MAINTENANCE_API, { cache: 'no-store' });
+    const data = await res.json();
+
+    const overlay = document.getElementById('maintenanceOverlay');
+    const app = document.querySelector('.app');
+
+    if (data.maintenance === true) {
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      if (app) {
+        app.style.filter = 'blur(6px)';
+        app.style.pointerEvents = 'none';
+        app.style.userSelect = 'none';
+      }
+    } else {
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+      if (app) {
+        app.style.filter = '';
+        app.style.pointerEvents = '';
+        app.style.userSelect = '';
+      }
+    }
+  } catch (err) {
+    console.log('Maintenance check failed:', err);
+  }
+}
+
+// Cek saat halaman dibuka
+cekMaintenance();
+
+// Cek ulang setiap 15 detik (biar update cepat di semua device)
+setInterval(cekMaintenance, 15000);
 
 const ENDPOINTS = {
   adlink: 'adlink',
@@ -501,5 +610,20 @@ setInterval(() => {
   $("live").textContent = n;
 }, 5000);
 </script>
+  <!-- ========================================== -->
+<!-- POPUP MAINTENANCE — Tersembunyi, hanya muncul kalau ON -->
+<!-- ========================================== -->
+<div class="maintenance-overlay" id="maintenanceOverlay">
+  <div class="maintenance-box">
+    <div class="maintenance-icon">🛠️</div>
+    <div class="maintenance-title">MAINTENANCE</div>
+    <div class="maintenance-text">
+      MAINTENANCE DULU BRO, SABAR YA
+    </div>
+    <div class="maintenance-sub">
+      Aplikasi akan aktif otomatis setelah maintenance selesai.
+    </div>
+  </div>
+</div>
 </body>
 </html>
