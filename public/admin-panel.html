@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Admin</title>
+<title>Admin Panel</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
 body {
@@ -24,16 +24,13 @@ body {
   border-radius: 24px;
   padding: 30px 26px;
   text-align: center;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
 }
 h1 { font-size: 22px; margin-bottom: 6px; }
 .sub { color: #8d91a2; font-size: 13px; margin-bottom: 24px; }
 label {
-  display: block;
-  text-align: left;
-  color: #858a9c;
-  font-size: 12px;
-  font-weight: 600;
+  display: block; text-align: left;
+  color: #858a9c; font-size: 12px; font-weight: 600;
   margin-bottom: 6px;
 }
 input {
@@ -48,12 +45,17 @@ button {
   width: 100%; height: 52px; border: 0; border-radius: 12px;
   font-size: 15px; font-weight: 800; cursor: pointer;
   margin-bottom: 10px; transition: .15s;
-  letter-spacing: .5px;
+  letter-spacing: .3px;
 }
 button:active { transform: scale(.98); }
 .btn-on { background: #ff4b3f; color: #fff; }
 .btn-off { background: #39df88; color: #08130d; }
 .btn-check { background: #242834; color: #fff; }
+.btn-use {
+  background: linear-gradient(135deg, #7d43ff, #b45cff);
+  color: #fff;
+  margin-top: 4px;
+}
 .status {
   margin-top: 18px; padding: 16px; border-radius: 12px;
   background: #0d0f17; font-size: 13px; color: #b8ffcf;
@@ -64,6 +66,11 @@ button:active { transform: scale(.98); }
 .status.on { background: #4b1e22; color: #ff6262; font-weight: 700; }
 .status.off { background: #1a3a24; color: #39df88; font-weight: 700; }
 .status.error { background: #3a1a1a; color: #ff8888; }
+.divider {
+  height: 1px;
+  background: #292c3b;
+  margin: 20px 0 18px;
+}
 </style>
 </head>
 <body>
@@ -81,6 +88,10 @@ button:active { transform: scale(.98); }
   <button class="btn-off" onclick="ubah('off')">🟢 MATIKAN MAINTENANCE</button>
   <button class="btn-check" onclick="cek()">🔍 Cek Status</button>
 
+  <div class="divider"></div>
+
+  <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
+
   <div class="status" id="status">Siap.</div>
 </div>
 
@@ -92,9 +103,7 @@ async function ubah(action) {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
 
-  if (!key1 || !key2) {
-    return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
-  }
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
 
   try {
     const res = await fetch(
@@ -107,9 +116,6 @@ async function ubah(action) {
 
     if (res.ok && data.success) {
       showStatus('✅ ' + data.message, data.maintenance ? 'on' : 'off');
-      // Kosongkan input setelah berhasil
-      $('key1').value = '';
-      $('key2').value = '';
     } else {
       showStatus('❌ ' + (data.message || data.error || 'Gagal'), 'error');
     }
@@ -131,13 +137,29 @@ async function cek() {
   }
 }
 
+function bukaAplikasi() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+
+  if (!key1 || !key2) {
+    showStatus('⚠️ Isi kedua kunci dulu sebelum buka aplikasi!', 'error');
+    return;
+  }
+
+  // Buka aplikasi di tab baru dengan token admin
+  const url = '/?admin=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2);
+  window.open(url, '_blank');
+
+  showStatus('✅ Aplikasi dibuka di tab baru (mode admin)', 'off');
+}
+
 function showStatus(text, cls) {
   const el = $('status');
   el.textContent = text;
   el.className = 'status ' + (cls || '');
 }
 
-// Cek status saat halaman dibuka
+// Cek status awal
 cek();
 </script>
 </body>
