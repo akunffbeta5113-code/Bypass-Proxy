@@ -8,8 +8,8 @@ import { kv } from '@vercel/kv';
 // KUNCI RAHASIA — GANTI dengan milik Yang Mulia!
 // JANGAN kasih tahu siapapun
 // ==========================================
-const ADMIN_KEY_1 = 'SECRETDEV_2026';
-const ADMIN_KEY_2 = 'JANGAN_KASIH_SIAPAPUN_X9Z';
+const ADMIN_KEY_1 = '5113';
+const ADMIN_KEY_2 = '25413';
 
 export default async function handler(req, res) {
   // CORS
