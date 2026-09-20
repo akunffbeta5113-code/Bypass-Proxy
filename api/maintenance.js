@@ -1,13 +1,8 @@
 // api/maintenance.js
-// Sistem maintenance mode dengan 2 kunci rahasia
-// Hanya admin (Yang Mulia) yang bisa ON/OFF
+// Sistem maintenance + mode admin view
 
 import { kv } from '@vercel/kv';
 
-// ==========================================
-// KUNCI RAHASIA — GANTI dengan milik Yang Mulia!
-// JANGAN kasih tahu siapapun
-// ==========================================
 const ADMIN_KEY_1 = '5113';
 const ADMIN_KEY_2 = '25413';
 
@@ -21,55 +16,48 @@ export default async function handler(req, res) {
     return res.status(204).end();
   }
 
-  const { action, key1, key2 } = req.query;
+  const { action, key1, key2, adminView } = req.query;
 
   // ==========================================
-  // MODE 1: Cek status (dipanggil oleh HTML utama)
-  // Tidak butuh key — publik hanya bisa lihat ON/OFF
+  // MODE ADMIN VIEW
+  // Dipanggil oleh index.html kalau ada token di URL
+  // Balas: maintenance false (walau aslinya true)
   // ==========================================
-  if (!action) {
-    try {
-      const maintenance = (await kv.get('maintenance')) === 'on';
-      return res.status(200).json({
-        maintenance: maintenance,
-        updatedAt: await kv.get('maintenance_updated_at') || null
-      });
-    } catch (err) {
-      // Kalau KV belum siap, default OFF
-      return res.status(200).json({ maintenance: false });
+  if (adminView === '1') {
+    if (key1 !== ADMIN_KEY_1 || key2 !== ADMIN_KEY_2) {
+      return res.status(403).json({ error: 'Forbidden', isAdmin: false });
     }
+    return res.status(200).json({
+      maintenance: false,   // paksa false
+      isAdmin: true
+    });
   }
 
   // ==========================================
-  // MODE 2: Ubah status — WAJIB 2 KUNCI BENAR
+  // CEK STATUS (publik — dipakai oleh index.html biasa)
+  // ==========================================
+  if (!action) {
+    const maintenance = (await kv.get('maintenance')) === 'on';
+    return res.status(200).json({ maintenance });
+  }
+
+  // ==========================================
+  // UBAH STATUS — wajib 2 kunci benar
   // ==========================================
   if (action === 'on' || action === 'off') {
-    // Cek dua kunci
     if (key1 !== ADMIN_KEY_1 || key2 !== ADMIN_KEY_2) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Kunci tidak valid'
       });
     }
-
-    try {
-      await kv.set('maintenance', action);
-      await kv.set('maintenance_updated_at', new Date().toISOString());
-
-      return res.status(200).json({
-        success: true,
-        maintenance: action === 'on',
-        message: action === 'on'
-          ? 'Maintenance AKTIF di semua device'
-          : 'Maintenance NONAKTIF'
-      });
-    } catch (err) {
-      return res.status(500).json({
-        error: 'KV error',
-        message: err.message
-      });
-    }
+    await kv.set('maintenance', action);
+    return res.status(200).json({
+      success: true,
+      maintenance: action === 'on',
+      message: action === 'on' ? 'Maintenance AKTIF di semua device' : 'Maintenance NONAKTIF'
+    });
   }
 
   return res.status(400).json({ error: 'Action tidak dikenal' });
-        }
+}
