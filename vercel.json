@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "functions": {
     "api/bypass.js": {
       "maxDuration": 30
