@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+body {
+  min-height: 100vh;
+  background: #0d0f18;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.box {
+  max-width: 400px;
+  width: 100%;
+  background: #171a25;
+  border: 1px solid #292c3b;
+  border-radius: 24px;
+  padding: 30px 26px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+h1 { font-size: 22px; margin-bottom: 6px; }
+.sub { color: #8d91a2; font-size: 13px; margin-bottom: 24px; }
+label {
+  display: block;
+  text-align: left;
+  color: #858a9c;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+input {
+  width: 100%; height: 50px; padding: 0 14px;
+  background: #1b1e2a; border: 1px solid #303444;
+  border-radius: 12px; color: #fff; font-size: 14px;
+  margin-bottom: 14px; outline: none;
+  transition: .15s;
+}
+input:focus { border-color: #8b5cff; box-shadow: 0 0 14px rgba(139,92,255,.3); }
+button {
+  width: 100%; height: 52px; border: 0; border-radius: 12px;
+  font-size: 15px; font-weight: 800; cursor: pointer;
+  margin-bottom: 10px; transition: .15s;
+  letter-spacing: .5px;
+}
+button:active { transform: scale(.98); }
+.btn-on { background: #ff4b3f; color: #fff; }
+.btn-off { background: #39df88; color: #08130d; }
+.btn-check { background: #242834; color: #fff; }
+.status {
+  margin-top: 18px; padding: 16px; border-radius: 12px;
+  background: #0d0f17; font-size: 13px; color: #b8ffcf;
+  word-break: break-word; min-height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; line-height: 1.5;
+}
+.status.on { background: #4b1e22; color: #ff6262; font-weight: 700; }
+.status.off { background: #1a3a24; color: #39df88; font-weight: 700; }
+.status.error { background: #3a1a1a; color: #ff8888; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>🔐 Admin Panel</h1>
+  <p class="sub">Masukkan 2 kunci rahasia</p>
+
+  <label>Kunci Pertama</label>
+  <input id="key1" type="password" placeholder="Kunci 1" autocomplete="off">
+
+  <label>Kunci Kedua</label>
+  <input id="key2" type="password" placeholder="Kunci 2" autocomplete="off">
+
+  <button class="btn-on" onclick="ubah('on')">🔴 AKTIFKAN MAINTENANCE</button>
+  <button class="btn-off" onclick="ubah('off')">🟢 MATIKAN MAINTENANCE</button>
+  <button class="btn-check" onclick="cek()">🔍 Cek Status</button>
+
+  <div class="status" id="status">Siap.</div>
+</div>
+
+<script>
+const API = '/api/maintenance';
+const $ = id => document.getElementById(id);
+
+async function ubah(action) {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+
+  if (!key1 || !key2) {
+    return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+  }
+
+  try {
+    const res = await fetch(
+      API + '?action=' + action +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, data.maintenance ? 'on' : 'off');
+      // Kosongkan input setelah berhasil
+      $('key1').value = '';
+      $('key2').value = '';
+    } else {
+      showStatus('❌ ' + (data.message || data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function cek() {
+  try {
+    const res = await fetch(API, { cache: 'no-store' });
+    const data = await res.json();
+    showStatus(
+      (data.maintenance ? '🔴 MAINTENANCE AKTIF DI SEMUA DEVICE' : '🟢 NORMAL — Aplikasi Jalan'),
+      data.maintenance ? 'on' : 'off'
+    );
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+function showStatus(text, cls) {
+  const el = $('status');
+  el.textContent = text;
+  el.className = 'status ' + (cls || '');
+}
+
+// Cek status saat halaman dibuka
+cek();
+</script>
+</body>
+</html>
