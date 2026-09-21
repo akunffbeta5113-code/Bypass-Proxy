@@ -386,6 +386,25 @@ const MAINTENANCE_API = (location.hostname === 'localhost' || location.hostname 
   : '/api/maintenance';
 
   // =========================================
+  // Cek Admin
+  // =========================================
+  let isAdminMode = false;
+
+// Cek token admin di URL
+const urlParams = new URLSearchParams(location.search);
+const adminToken1 = urlParams.get('admin');
+const adminToken2 = urlParams.get('key2');
+if (adminToken1 && adminToken2) {
+  sessionStorage.setItem('sd_admin_k1', adminToken1);
+  sessionStorage.setItem('sd_admin_k2', adminToken2);
+  isAdminMode = true;
+  window.history.replaceState({}, '', location.pathname);
+}
+if (sessionStorage.getItem('sd_admin_k1') && sessionStorage.getItem('sd_admin_k2')) {
+  isAdminMode = true;
+}
+
+  // =========================================
   // Cek Broadcast
   // =========================================
   const BROADCAST_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
@@ -612,6 +631,9 @@ async function loadServiceStatus() {
 }
 
 function cekService(serviceId) {
+  // Kalau admin mode, langsung lolos
+  if (isAdminMode) return true;
+
   const info = servicesCache[serviceId] || { status: 'on', reason: '' };
   if (info.status === 'off') {
     const overlay = document.getElementById('serviceOffOverlay');
@@ -676,7 +698,8 @@ function debug(text){
 
 document.querySelectorAll(".service").forEach(card => {
   card.addEventListener("click", () => {
-  if (!cekService(card.dataset.type)) return;
+  // Kalau admin mode, skip cek service
+  if (!isAdminMode && !cekService(card.dataset.type)) return;
   currentType = card.dataset.type;
     const names = {
   adlink: "AdLinkSumo Bypass",
