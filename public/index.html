@@ -370,15 +370,15 @@ body.has-broadcast {
 <script>
 
 // ==========================================
-// PENGAMAN — Sembunyikan overlay kalau macet
+// PENGAMAN — Sembunyikan overlay setelah 5 detik
 // ==========================================
-setTimeout(() => {
-  const blocking = document.getElementById('blockingOverlay');
+setTimeout(function() {
+  var blocking = document.getElementById('blockingOverlay');
   if (blocking) {
     blocking.classList.add('hide');
-    setTimeout(() => blocking.remove(), 400);
+    setTimeout(function() { blocking.remove(); }, 400);
   }
-}, 5000);  // 5 detik maksimal
+}, 5000);
   
 // ============================================
 // VERCEL PROXY
