@@ -131,17 +131,20 @@ button{cursor:pointer}
   display: none;
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 9999;
-  padding: 12px 16px;
+  z-index: 999999;
+  padding: 14px 44px 14px 16px;
   font-size: 13px;
   font-weight: 700;
   text-align: center;
   color: #fff;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-  animation: slideDown .4s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   cursor: pointer;
+  line-height: 1.4;
 }
-.broadcast-banner.show { display: block; }
+.broadcast-banner.show {
+  display: block;
+  animation: slideDown .4s ease;
+}
 .broadcast-banner.info { background: linear-gradient(135deg, #2196f3, #1976d2); }
 .broadcast-banner.success { background: linear-gradient(135deg, #00c896, #00a07a); }
 .broadcast-banner.warning { background: linear-gradient(135deg, #ffa726, #ff7043); }
@@ -152,22 +155,22 @@ button{cursor:pointer}
 }
 .broadcast-close {
   position: absolute;
-  right: 12px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.3);
   border: 0;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   color: #fff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   line-height: 1;
 }
 body.has-broadcast {
-  padding-top: 50px;
+  padding-top: 60px;
 }
   
   /* ========================================== */
@@ -381,6 +384,62 @@ const PROXY_URL = (location.hostname === 'localhost' || location.hostname === '1
 const MAINTENANCE_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
   ? 'https://bypass-proxy.vercel.app/api/maintenance'
   : '/api/maintenance';
+
+  // =========================================
+  // Cek Broadcast
+  // =========================================
+  const BROADCAST_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
+  ? 'https://bypass-proxy.vercel.app/api/broadcast'
+  : '/api/broadcast';
+
+let broadcastDismissed = false;
+let lastBroadcastMessage = '';
+
+async function cekBroadcast() {
+  if (broadcastDismissed) return;
+  try {
+    const res = await fetch(BROADCAST_API, { cache: 'no-store' });
+    const data = await res.json();
+
+    const banner = document.getElementById('broadcastBanner');
+    const text = document.getElementById('broadcastText');
+    if (!banner) return;
+
+    if (data.active && data.message) {
+      // Kalau pesan berubah, tampilkan lagi walau sudah di-dismiss
+      if (data.message !== lastBroadcastMessage) {
+        broadcastDismissed = false;
+        lastBroadcastMessage = data.message;
+      }
+      if (!broadcastDismissed) {
+        text.textContent = data.message;
+        banner.className = 'broadcast-banner show ' + (data.type || 'info');
+        document.body.classList.add('has-broadcast');
+      }
+    } else {
+      banner.className = 'broadcast-banner';
+      document.body.classList.remove('has-broadcast');
+    }
+  } catch (err) {}
+}
+
+function tutupBanner() {
+  const banner = document.getElementById('broadcastBanner');
+  banner.classList.remove('show');
+  document.body.classList.remove('has-broadcast');
+  broadcastDismissed = true;
+}
+
+// Jalankan setelah DOM siap
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    cekBroadcast();
+    setInterval(cekBroadcast, 30000);
+  });
+} else {
+  cekBroadcast();
+  setInterval(cekBroadcast, 30000);
+}
 
 // ==========================================
 // CEK TOKEN ADMIN DI URL
