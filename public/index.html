@@ -1,15 +1,18 @@
 <!DOCTYPE html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5.0,user-scalable=yes">
+<meta name="theme-color" content="#0d0f18">
 <title>Bypass Web</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Poppins,sans-serif}
 :root{--bg:#0d0f18;--card:#171a25;--muted:#8d91a2}
-html,body{min-height:100%;background:var(--bg);color:#fff}
-body{display:flex;justify-content:center;padding:16px;overflow-x:hidden}
+html,body{min-height:100%;background:var(--bg);color:#fff;-webkit-font-smoothing:antialiased}
+body{display:flex;justify-content:center;padding:16px;overflow-x:hidden;min-height:100vh}
 body:before,body:after{content:"";position:fixed;border-radius:50%;filter:blur(80px);opacity:.22;z-index:0;pointer-events:none}
 body:before{width:230px;height:230px;background:#7a35ff;top:-70px;right:-60px}
 body:after{width:220px;height:220px;background:#ff3d3d;bottom:-70px;left:-60px}
@@ -21,7 +24,7 @@ h1 span{color:#ffca18}
 .subtitle{text-align:center;color:#9498a8;margin-top:8px;font-size:14px}
 .live{width:max-content;margin:25px auto 28px;padding:8px 22px;border-radius:22px;background:#4b1e22;color:#ff6262;font-size:14px;font-weight:700}
 .cards{display:flex;flex-direction:column;gap:15px}
-.service{position:relative;display:flex;align-items:center;gap:17px;width:100%;min-height:91px;padding:14px 17px 14px 14px;border-radius:25px;background:#181b27;border:2px solid var(--accent);box-shadow:0 10px 28px #0003;cursor:pointer;transition:.18s;overflow:hidden}
+.service{position:relative;display:flex;align-items:center;gap:17px;width:100%;min-height:91px;padding:14px 17px 14px 14px;border-radius:25px;background:#181b27;border:2px solid var(--accent);box-shadow:0 10px 28px #0003;cursor:pointer;transition:.18s;overflow:hidden;-webkit-tap-highlight-color:transparent}
 .service:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fff0 50%,#fff08);pointer-events:none}
 .service:active{transform:scale(.985)}
 .icon{flex:0 0 63px;width:63px;height:63px;border-radius:20px;background:var(--accent);display:grid;place-items:center;font-size:29px;font-weight:800;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 32%,transparent)}
@@ -29,19 +32,19 @@ h1 span{color:#ffca18}
 .info b{display:block;font-size:17px;line-height:1.2;margin-bottom:5px}
 .info small{display:block;color:#8d91a2;font-size:13px}
 .arrow{font-size:27px;color:#4f5361}
-footer{text-align:center;margin-top:28px;color:#666b7c;font-size:11px;font-weight:600}
+footer{text-align:center;margin-top:28px;color:#666b7c;font-size:11px;font-weight:600;line-height:1.6}
 .dateDisplay{margin-top:7px;color:#858a9b;font-size:12px;font-weight:500}
-.modal{display:none;position:fixed;inset:0;z-index:20;background:#070810eF;padding:16px;align-items:center;justify-content:center}
+.modal{display:none;position:fixed;inset:0;z-index:20;background:#070810eF;padding:16px;align-items:center;justify-content:center;overflow-y:auto}
 .modal.show{display:flex}
-.panel{width:100%;max-width:430px;max-height:94vh;overflow:auto;background:#121520;border:1px solid #303444;border-radius:27px;padding:21px;box-shadow:0 30px 80px #000b}
+.panel{width:100%;max-width:430px;max-height:94vh;overflow:auto;background:#121520;border:1px solid #303444;border-radius:27px;padding:21px;box-shadow:0 30px 80px #000b;margin:auto}
 .modalHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .modalHead h2{font-size:20px}
-.close{width:40px;height:40px;border:0;border-radius:13px;background:#252936;color:#fff;font-size:21px}
+.close{width:40px;height:40px;border:0;border-radius:13px;background:#252936;color:#fff;font-size:21px;display:grid;place-items:center;line-height:1}
 .input{position:relative;margin-bottom:12px}
 .input input{width:100%;height:54px;padding:0 15px;border:1px solid #303444;border-radius:15px;outline:0;background:#1b1e2a;color:#fff;font-size:14px}
 .input input:focus{border-color:#8b5cff;box-shadow:0 0 18px #8b5cff33}
 .actions{display:flex;gap:10px;margin-bottom:12px}
-button{cursor:pointer}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .small{flex:1;height:46px;border:0;border-radius:13px;background:#242834;color:#fff;font-weight:700}
 .run{width:100%;height:53px;border:0;border-radius:15px;background:linear-gradient(135deg,#7d43ff,#b45cff);color:#fff;font-size:16px;font-weight:800}
 .loader{display:none;width:40px;height:40px;border:4px solid #ffffff22;border-top-color:#a55cff;border-radius:50%;margin:18px auto;animation:spin .7s linear infinite}
@@ -57,184 +60,146 @@ button{cursor:pointer}
 .debug{margin-top:13px;background:#0d0f17;border-radius:13px;overflow:hidden}
 .debugHead{padding:12px;display:flex;justify-content:space-between;font-size:13px;font-weight:700;cursor:pointer}
 .debugBody{display:none;padding:12px;border-top:1px solid #262a37;color:#b8ffcf;font:12px monospace;white-space:pre-wrap;word-break:break-word;max-height:200px;overflow:auto;background:#0a0c12}
-.toast{position:fixed;z-index:50;left:50%;bottom:20px;transform:translate(-50%,120px);background:#20232e;padding:11px 17px;border-radius:12px;box-shadow:0 12px 30px #0008;transition:.25s;font-size:13px}
+.toast{position:fixed;z-index:50;left:50%;bottom:20px;transform:translate(-50%,120px);background:#20232e;padding:11px 17px;border-radius:12px;box-shadow:0 12px 30px #0008;transition:.25s;font-size:13px;max-width:90vw}
 .toast.show{transform:translate(-50%,0)}
-@media(max-width:370px){.app{padding:23px 16px}h1{font-size:28px}.music{display:none}.service{min-height:84px}.icon{width:57px;height:57px;flex-basis:57px}}
-  /* ========================================== */
+
+/* ========================================== */
+/* BLOCKING OVERLAY — Memuat */
+/* ========================================== */
+#blockingOverlay {
+  position: fixed;
+  inset: 0;
+  background: #0d0f18;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  transition: opacity .3s;
+}
+#blockingOverlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.blocking-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #ffffff22;
+  border-top-color: #a55cff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+.blocking-text {
+  color: #8d91a2;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ========================================== */
 /* POPUP MAINTENANCE */
 /* ========================================== */
-.maintenance-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.78);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 99999;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.maintenance-overlay.show {
-  display: flex;
-}
-.maintenance-box {
-  max-width: 380px;
-  width: 100%;
-  background: #1a1d29;
-  border: 2px solid #f5b342;
-  border-radius: 24px;
-  padding: 32px 24px 28px;
-  text-align: center;
-  box-shadow: 0 25px 70px rgba(0,0,0,0.7);
-  animation: popIn .35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes popIn {
-  from { transform: scale(.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.maintenance-icon {
-  font-size: 60px;
-  margin-bottom: 14px;
-  display: inline-block;
-  animation: swing 2.5s infinite;
-}
-@keyframes swing {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-10deg); }
-  75% { transform: rotate(10deg); }
-}
-.maintenance-title {
-  color: #f5b342;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-}
-.maintenance-text {
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.6;
-  margin-bottom: 14px;
-  text-transform: uppercase;
-}
-.maintenance-sub {
-  color: #8d91a2;
-  font-size: 12px;
-  line-height: 1.5;
-  font-weight: 500;
+.maintenance-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;padding:20px}
+.maintenance-overlay.show{display:flex}
+.maintenance-box{max-width:380px;width:100%;background:#1a1d29;border:2px solid #f5b342;border-radius:24px;padding:32px 24px 28px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.7);animation:popIn .35s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.maintenance-icon{font-size:60px;margin-bottom:14px;display:inline-block;animation:swing 2.5s infinite}
+@keyframes swing{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.maintenance-title{color:#f5b342;font-size:24px;font-weight:800;letter-spacing:2px;margin-bottom:16px}
+.maintenance-text{color:#fff;font-size:14px;font-weight:700;line-height:1.6;margin-bottom:14px;text-transform:uppercase}
+.maintenance-sub{color:#8d91a2;font-size:12px;line-height:1.5;font-weight:500}
+
+/* ========================================== */
+/* BANNER BROADCAST */
+/* ========================================== */
+.broadcast-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:999999;padding:14px 44px 14px 16px;font-size:13px;font-weight:700;text-align:center;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.5);cursor:pointer;line-height:1.4}
+.broadcast-banner.show{display:block;animation:slideDown .4s ease}
+.broadcast-banner.info{background:linear-gradient(135deg,#2196f3,#1976d2)}
+.broadcast-banner.success{background:linear-gradient(135deg,#00c896,#00a07a)}
+.broadcast-banner.warning{background:linear-gradient(135deg,#ffa726,#ff7043)}
+.broadcast-banner.danger{background:linear-gradient(135deg,#ff4b3f,#d32f2f)}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.broadcast-close{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.3);border:0;border-radius:50%;width:26px;height:26px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;line-height:1}
+body.has-broadcast{padding-top:60px}
+
+/* ========================================== */
+/* POPUP SERVICE OFF */
+/* ========================================== */
+.service-off-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;padding:20px}
+.service-off-overlay.show{display:flex}
+.service-off-box{max-width:380px;width:100%;background:#1a1d29;border:2px solid #ff4b3f;border-radius:24px;padding:32px 24px 28px;text-align:center;animation:popIn .35s cubic-bezier(0.34,1.56,0.64,1)}
+.service-off-icon{font-size:54px;margin-bottom:14px}
+.service-off-title{color:#ff6262;font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:14px}
+.service-off-text{color:#fff;font-size:14px;line-height:1.6;margin-bottom:12px}
+.service-off-reason{color:#ffca18;font-size:13px;font-weight:700;line-height:1.5;padding:12px;background:#2a1e0f;border-radius:10px;margin-bottom:12px}
+.service-off-close{margin-top:12px;padding:12px 24px;background:#242834;border:0;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+
+/* Tablet */
+@media(min-width:600px){
+  body{padding:24px}
+  .app{max-width:520px;padding:32px 28px 28px}
+  h1{font-size:38px}
+  .service{min-height:98px;padding:16px 20px 16px 16px}
+  .icon{flex:0 0 68px;width:68px;height:68px;font-size:31px}
+  .info b{font-size:18px}
+  .panel{max-width:500px;padding:26px}
 }
 
-/* Banner Broadcast */
-.broadcast-banner {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 999999;
-  padding: 14px 44px 14px 16px;
-  font-size: 13px;
-  font-weight: 700;
-  text-align: center;
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  cursor: pointer;
-  line-height: 1.4;
-}
-.broadcast-banner.show {
-  display: block;
-  animation: slideDown .4s ease;
-}
-.broadcast-banner.info { background: linear-gradient(135deg, #2196f3, #1976d2); }
-.broadcast-banner.success { background: linear-gradient(135deg, #00c896, #00a07a); }
-.broadcast-banner.warning { background: linear-gradient(135deg, #ffa726, #ff7043); }
-.broadcast-banner.danger { background: linear-gradient(135deg, #ff4b3f, #d32f2f); }
-@keyframes slideDown {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(0); }
-}
-.broadcast-close {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.3);
-  border: 0;
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  line-height: 1;
-}
-body.has-broadcast {
-  padding-top: 60px;
+/* Desktop */
+@media(min-width:1024px){
+  body{padding:40px;align-items:center}
+  .app{max-width:560px;padding:36px 32px 32px;border-radius:36px}
+  h1{font-size:42px}
+  .subtitle{font-size:15px}
+  .service{min-height:104px;padding:18px 22px 18px 18px;border-radius:28px}
+  .icon{flex:0 0 72px;width:72px;height:72px;font-size:34px;border-radius:22px}
+  .info b{font-size:19px}
+  .info small{font-size:14px}
+  .panel{max-width:560px;padding:30px;border-radius:30px}
+  .input input{height:58px;font-size:15px}
+  .run{height:56px;font-size:17px}
+  .small{height:50px;font-size:15px}
+  .service:hover{transform:translateY(-2px);box-shadow:0 15px 35px #0005}
+  .run:hover{filter:brightness(1.1)}
 }
 
-    /* Popup service OFF */
-.service-off-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.78);
-  backdrop-filter: blur(8px);
-  z-index: 99999;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+/* Small phone */
+@media(max-width:370px){
+  .app{padding:23px 16px}
+  h1{font-size:28px}
+  .music{display:none}
+  .service{min-height:84px;padding:12px 14px 12px 12px}
+  .icon{width:57px;height:57px;flex-basis:57px}
+  .topBadge{font-size:12px;padding:8px 18px}
+  .live{font-size:12px}
 }
-.service-off-overlay.show { display: flex; }
-.service-off-box {
-  max-width: 380px;
-  width: 100%;
-  background: #1a1d29;
-  border: 2px solid #ff4b3f;
-  border-radius: 24px;
-  padding: 32px 24px 28px;
-  text-align: center;
-  animation: popIn .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+/* Landscape */
+@media(max-height:500px) and (orientation:landscape){
+  body{align-items:flex-start;padding:10px}
+  .app{padding:18px 20px}
+  h1{font-size:26px}
+  .topBadge{margin-bottom:14px;padding:6px 18px;font-size:12px}
+  .music{display:none}
+  .live{margin:14px auto 18px;font-size:12px}
+  .service{min-height:72px;padding:10px 14px 10px 10px}
+  .icon{width:48px;height:48px;flex-basis:48px;font-size:22px;border-radius:14px}
+  .info b{font-size:15px}
+  .info small{font-size:12px}
 }
-.service-off-icon { font-size: 54px; margin-bottom: 14px; }
-.service-off-title {
-  color: #ff6262;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-bottom: 14px;
-}
-.service-off-text {
-  color: #fff;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 12px;
-}
-.service-off-reason {
-  color: #ffca18;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.5;
-  padding: 12px;
-  background: #2a1e0f;
-  border-radius: 10px;
-  margin-bottom: 12px;
-}
-.service-off-close {
-  margin-top: 12px;
-  padding: 12px 24px;
-  background: #242834;
-  border: 0;
-  border-radius: 12px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  }
 </style>
 </head>
 <body>
-  <main class="app">
+
+<!-- ========================================== -->
+<!-- BLOCKING OVERLAY — Memuat -->
+<!-- ========================================== -->
+<div id="blockingOverlay">
+  <div class="blocking-spinner"></div>
+  <div class="blocking-text">Memuat...</div>
+</div>
+
+<main class="app">
   <div class="topBadge">⚡ PREMIUM BYPASS AUTO ⚡</div>
   <div class="music">♫</div>
   <h1>BYPASS <span>WEB</span></h1>
@@ -268,15 +233,15 @@ body.has-broadcast {
       <div class="arrow">›</div>
     </div>
     <div class="service" style="--accent:#00c896" data-type="sub2unlock">
-  <div class="icon">≡★</div>
-  <div class="info"><b>SUB2UNLOCK BYPASS</b><small>Bypass Link • Fast</small></div>
-  <div class="arrow">›</div>
-</div>
-<div class="service" style="--accent:#e91e63" data-type="sub4unlock">
-  <div class="icon">≡★</div>
-  <div class="info"><b>SUB4UNLOCK BYPASS</b><small>Bypass Link • Fast</small></div>
-  <div class="arrow">›</div>
-</div>
+      <div class="icon">≡★</div>
+      <div class="info"><b>SUB2UNLOCK BYPASS</b><small>Bypass Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="service" style="--accent:#e91e63" data-type="sub4unlock">
+      <div class="icon">≡★</div>
+      <div class="info"><b>SUB4UNLOCK BYPASS</b><small>Bypass Link • Fast</small></div>
+      <div class="arrow">›</div>
+    </div>
     <div class="service" style="--accent:#a855f7" data-type="universal">
       <div class="icon">≡★</div>
       <div class="info"><b>UNIVERSAL BYPASS</b><small>Bypass All Link • Fast</small></div>
@@ -298,7 +263,7 @@ body.has-broadcast {
       <h2 id="modalTitle">Bypass</h2>
       <button class="close" id="close">×</button>
     </div>
-    <div class="input"><input id="url" placeholder="Tempel link di sini"></div>
+    <div class="input"><input id="url" placeholder="Tempel link di sini" autocomplete="off" spellcheck="false"></div>
     <div class="actions">
       <button class="small" id="paste">📋 Paste</button>
       <button class="small" id="clear">🗑 Clear</button>
@@ -325,42 +290,125 @@ body.has-broadcast {
 </div>
 <div class="toast" id="toast">Berhasil</div>
 
+<!-- POPUP MAINTENANCE -->
+<div class="maintenance-overlay" id="maintenanceOverlay">
+  <div class="maintenance-box">
+    <div class="maintenance-icon">🛠️</div>
+    <div class="maintenance-title">MAINTENANCE</div>
+    <div class="maintenance-text">MAINTENANCE DULU BRO, SABAR YA</div>
+    <div class="maintenance-sub">Aplikasi akan aktif otomatis setelah maintenance selesai.</div>
+  </div>
+</div>
+
+<!-- POPUP SERVICE OFF -->
+<div class="service-off-overlay" id="serviceOffOverlay">
+  <div class="service-off-box">
+    <div class="service-off-icon">🚫</div>
+    <div class="service-off-title">SERVICE DIMATIKAN</div>
+    <div class="service-off-text" id="serviceOffText">Service ini sedang tidak tersedia.</div>
+    <div class="service-off-reason" id="serviceOffReason" style="display:none;"></div>
+    <button class="service-off-close" onclick="document.getElementById('serviceOffOverlay').classList.remove('show')">Tutup</button>
+  </div>
+</div>
+
+<!-- BANNER BROADCAST -->
+<div class="broadcast-banner" id="broadcastBanner">
+  <span id="broadcastText"></span>
+  <button class="broadcast-close" onclick="event.stopPropagation();tutupBanner()">×</button>
+</div>
+
 <script>
 // ==========================================
-// MAINTENANCE + ADMIN MODE (SIMPLE VERSION)
+// KONFIGURASI API
 // ==========================================
-const MAINTENANCE_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
-  ? 'https://bypass-proxy.vercel.app/api/maintenance'
+const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const IS_GITHUB = location.hostname.includes('github.io');
+const VERCEL_BASE = 'https://bypass-proxy.vercel.app';
+
+const PROXY_URL = (IS_LOCAL || IS_GITHUB)
+  ? VERCEL_BASE + '/api/bypass'
+  : '/api/bypass';
+
+const MAINTENANCE_API = (IS_LOCAL || IS_GITHUB)
+  ? VERCEL_BASE + '/api/maintenance'
   : '/api/maintenance';
 
-// Cek admin mode dari URL
-const urlParams = new URLSearchParams(location.search);
-const adminToken1 = urlParams.get('admin');
-const adminToken2 = urlParams.get('key2');
+const SERVICES_API = (IS_LOCAL || IS_GITHUB)
+  ? VERCEL_BASE + '/api/services'
+  : '/api/services';
 
-if (adminToken1 && adminToken2) {
-  sessionStorage.setItem('sd_admin_k1', adminToken1);
-  sessionStorage.setItem('sd_admin_k2', adminToken2);
-  window.history.replaceState({}, '', location.pathname);
+const BROADCAST_API = (IS_LOCAL || IS_GITHUB)
+  ? VERCEL_BASE + '/api/broadcast'
+  : '/api/broadcast';
+
+// ==========================================
+// UTIL
+// ==========================================
+const $ = id => document.getElementById(id);
+
+function toast(text){
+  const el = $("toast");
+  el.textContent = text;
+  el.classList.add("show");
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => el.classList.remove("show"), 2300);
 }
 
-function isAdminMode() {
-  return !!(sessionStorage.getItem('sd_admin_k1') && sessionStorage.getItem('sd_admin_k2'));
+function debug(text){
+  const el = $("debugBody");
+  if (typeof text === 'object') el.textContent = JSON.stringify(text, null, 2);
+  else el.textContent = text;
+  if (text && typeof text === 'string' && (text.includes('error') || text.includes('Error'))) {
+    el.style.display = "block";
+  }
 }
 
+// ==========================================
+// BLOCKING OVERLAY — Auto-hide pengaman
+// ==========================================
+function hideBlocking() {
+  const blocking = document.getElementById('blockingOverlay');
+  if (blocking) {
+    blocking.classList.add('hide');
+    setTimeout(() => { if (blocking.parentNode) blocking.remove(); }, 400);
+  }
+}
+
+// Pengaman 1: kalau 5 detik overlay masih ada, hapus paksa
+setTimeout(hideBlocking, 5000);
+
+// ==========================================
+// ADMIN MODE (opsional)
+// ==========================================
+let isAdminMode = false;
+(function initAdminMode(){
+  const params = new URLSearchParams(location.search);
+  const a1 = params.get('admin');
+  const a2 = params.get('key2');
+  if (a1 && a2) {
+    sessionStorage.setItem('sd_admin_k1', a1);
+    sessionStorage.setItem('sd_admin_k2', a2);
+    isAdminMode = true;
+    window.history.replaceState({}, '', location.pathname);
+  }
+  if (sessionStorage.getItem('sd_admin_k1') && sessionStorage.getItem('sd_admin_k2')) {
+    isAdminMode = true;
+  }
+})();
+
+// ==========================================
+// MAINTENANCE CHECK
+// ==========================================
 async function cekMaintenance() {
-  const overlay = document.getElementById('maintenanceOverlay');
+  const overlay = $('maintenanceOverlay');
   const app = document.querySelector('.app');
   if (!overlay) return;
 
-  // Kalau admin mode, skip maintenance
-  if (isAdminMode()) {
+  // Admin mode → skip maintenance
+  if (isAdminMode) {
     overlay.classList.remove('show');
     document.body.style.overflow = '';
-    if (app) {
-      app.style.filter = '';
-      app.style.pointerEvents = '';
-    }
+    if (app) app.style.pointerEvents = '';
     return;
   }
 
@@ -371,75 +419,23 @@ async function cekMaintenance() {
     if (data.maintenance === true) {
       overlay.classList.add('show');
       document.body.style.overflow = 'hidden';
-      if (app) {
-        app.style.filter = 'blur(6px)';
-        app.style.pointerEvents = 'none';
-      }
+      if (app) app.style.pointerEvents = 'none';
     } else {
       overlay.classList.remove('show');
       document.body.style.overflow = '';
-      if (app) {
-        app.style.filter = '';
-        app.style.pointerEvents = '';
-      }
+      if (app) app.style.pointerEvents = '';
     }
   } catch (err) {
-    // Kalau fetch GAGAL, JANGAN tampilkan maintenance
+    // Kalau gagal fetch → JANGAN tampilkan maintenance
     overlay.classList.remove('show');
     document.body.style.overflow = '';
-    if (app) {
-      app.style.filter = '';
-      app.style.pointerEvents = '';
-    }
+    if (app) app.style.pointerEvents = '';
   }
 }
 
-cekMaintenance();
-setInterval(cekMaintenance, 15000);
-  
-// ============================================
-// VERCEL PROXY
-// ============================================
-const PROXY_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-  ? 'https://bypass-proxy.vercel.app/api/bypass'
-  : (location.hostname.includes('github.io'))
-    ? 'https://bypass-proxy.vercel.app/api/bypass'
-    : '/api/bypass';
-
-  // ==========================================
-// MAINTENANCE — CEK CEPAT + BLOCKING OVERLAY
 // ==========================================
-
-const MAINTENANCE_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
-  ? 'https://bypass-proxy.vercel.app/api/maintenance'
-  : '/api/maintenance';
-
-  // =========================================
-  // Cek Admin
-  // =========================================
-  let isAdminMode = false;
-
-// Cek token admin di URL
-const urlParams = new URLSearchParams(location.search);
-const adminToken1 = urlParams.get('admin');
-const adminToken2 = urlParams.get('key2');
-if (adminToken1 && adminToken2) {
-  sessionStorage.setItem('sd_admin_k1', adminToken1);
-  sessionStorage.setItem('sd_admin_k2', adminToken2);
-  isAdminMode = true;
-  window.history.replaceState({}, '', location.pathname);
-}
-if (sessionStorage.getItem('sd_admin_k1') && sessionStorage.getItem('sd_admin_k2')) {
-  isAdminMode = true;
-}
-
-  // =========================================
-  // Cek Broadcast
-  // =========================================
-  const BROADCAST_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
-  ? 'https://bypass-proxy.vercel.app/api/broadcast'
-  : '/api/broadcast';
-
+// BROADCAST CHECK
+// ==========================================
 let broadcastDismissed = false;
 let lastBroadcastMessage = '';
 
@@ -449,12 +445,11 @@ async function cekBroadcast() {
     const res = await fetch(BROADCAST_API, { cache: 'no-store' });
     const data = await res.json();
 
-    const banner = document.getElementById('broadcastBanner');
-    const text = document.getElementById('broadcastText');
+    const banner = $('broadcastBanner');
+    const text = $('broadcastText');
     if (!banner) return;
 
     if (data.active && data.message) {
-      // Kalau pesan berubah, tampilkan lagi walau sudah di-dismiss
       if (data.message !== lastBroadcastMessage) {
         broadcastDismissed = false;
         lastBroadcastMessage = data.message;
@@ -472,182 +467,15 @@ async function cekBroadcast() {
 }
 
 function tutupBanner() {
-  const banner = document.getElementById('broadcastBanner');
+  const banner = $('broadcastBanner');
   banner.classList.remove('show');
   document.body.classList.remove('has-broadcast');
   broadcastDismissed = true;
 }
 
-// Jalankan setelah DOM siap
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    cekBroadcast();
-    setInterval(cekBroadcast, 30000);
-  });
-} else {
-  cekBroadcast();
-  setInterval(cekBroadcast, 30000);
-}
-
 // ==========================================
-// CEK TOKEN ADMIN DI URL
-// ==========================================
-const urlParams = new URLSearchParams(location.search);
-const adminToken1 = urlParams.get('admin');
-const adminToken2 = urlParams.get('key2');
-
-let isAdminMode = false;
-
-if (adminToken1 && adminToken2) {
-  sessionStorage.setItem('sd_admin_k1', adminToken1);
-  sessionStorage.setItem('sd_admin_k2', adminToken2);
-  isAdminMode = true;
-  window.history.replaceState({}, '', location.pathname);
-}
-if (sessionStorage.getItem('sd_admin_k1') && sessionStorage.getItem('sd_admin_k2')) {
-  isAdminMode = true;
-}
-
-// ==========================================
-// FUNGSI UTAMA — cek maintenance
-// ==========================================
-async function cekMaintenanceSekarang() {
-  const overlay = document.getElementById('maintenanceOverlay');
-  const app = document.querySelector('.app');
-
-  // ---------- ADMIN MODE ----------
-  if (isAdminMode) {
-    const k1 = sessionStorage.getItem('sd_admin_k1');
-    const k2 = sessionStorage.getItem('sd_admin_k2');
-    try {
-      const res = await fetch(
-        MAINTENANCE_API + '?adminView=1&key1=' + encodeURIComponent(k1) + '&key2=' + encodeURIComponent(k2),
-        { cache: 'no-store' }
-      );
-      const data = await res.json();
-      if (data.isAdmin === true) {
-        overlay.classList.remove('show');
-        document.body.style.overflow = '';
-        if (app) {
-          app.style.filter = '';
-          app.style.pointerEvents = '';
-        }
-        return { maintenance: false, isAdmin: true };
-      } else {
-        sessionStorage.removeItem('sd_admin_k1');
-        sessionStorage.removeItem('sd_admin_k2');
-        isAdminMode = false;
-      }
-    } catch (err) {
-      console.log('Admin check failed:', err);
-    }
-  }
-
-  // ---------- PUBLIK ----------
-  try {
-    const res = await fetch(MAINTENANCE_API, { cache: 'no-store' });
-    const data = await res.json();
-
-    // Simpan status ke localStorage untuk cek instan berikutnya
-    localStorage.setItem('sd_last_maintenance', data.maintenance ? 'on' : 'off');
-    localStorage.setItem('sd_last_maintenance_time', Date.now().toString());
-
-    if (data.maintenance === true) {
-      overlay.classList.add('show');
-      document.body.style.overflow = 'hidden';
-      if (app) {
-        app.style.filter = 'blur(6px)';
-        app.style.pointerEvents = 'none';
-      }
-    } else {
-      overlay.classList.remove('show');
-      document.body.style.overflow = '';
-      if (app) {
-        app.style.filter = '';
-        app.style.pointerEvents = '';
-      }
-    }
-    return { maintenance: data.maintenance, isAdmin: false };
-  } catch (err) {
-    console.log('Maintenance check failed:', err);
-    return { maintenance: false, isAdmin: false };
-  }
-}
-
-// ==========================================
-// TAMPILKAN STATUS CACHE DULU (INSTAN)
-// Kalau 30 detik terakhir status = ON, langsung tampilkan popup
-// ==========================================
-function tampilkanCacheInstan() {
-  const cached = localStorage.getItem('sd_last_maintenance');
-  const cachedTime = parseInt(localStorage.getItem('sd_last_maintenance_time') || '0');
-  const umur = Date.now() - cachedTime;
-
-  // Kalau cache masih fresh (< 30 detik) dan status ON → langsung tampilkan
-  if (cached === 'on' && umur < 30000 && !isAdminMode) {
-    const overlay = document.getElementById('maintenanceOverlay');
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-    const app = document.querySelector('.app');
-    if (app) {
-      app.style.filter = 'blur(6px)';
-      app.style.pointerEvents = 'none';
-    }
-  }
-}
-
-// ==========================================
-// JALANKAN SAAT HALAMAN DIBUKA
-// ==========================================
-async function initMaintenance() {
-  // 1. Tampilkan cache instan (kalau ada)
-  tampilkanCacheInstan();
-
-  // 2. Fetch status terbaru dari server
-  await cekMaintenanceSekarang();
-
-  // 3. Sembunyikan blocking overlay
-  const blocking = document.getElementById('blockingOverlay');
-  if (blocking) {
-    blocking.classList.add('hide');
-    setTimeout(() => blocking.remove(), 400);
-  }
-}
-
-// Jalankan secepat mungkin
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initMaintenance);
-} else {
-  initMaintenance();
-}
-
-// Auto-cek ulang tiap 15 detik
-setInterval(cekMaintenanceSekarang, 15000);
-
-// ==========================================
-// AUTO-REFRESH SAAT STATUS BERUBAH (dari ON ke OFF atau sebaliknya)
-// ==========================================
-let lastStatus = null;
-setInterval(async () => {
-  if (isAdminMode) return;
-  try {
-    const res = await fetch(MAINTENANCE_API, { cache: 'no-store' });
-    const data = await res.json();
-    if (lastStatus !== null && lastStatus !== data.maintenance) {
-      // Status berubah → refresh halaman otomatis
-      location.reload();
-    }
-    lastStatus = data.maintenance;
-  } catch (e) {}
-}, 10000);
-
-  // ==========================================
 // SERVICE ON/OFF CHECK
 // ==========================================
-const SERVICES_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
-  ? 'https://bypass-proxy.vercel.app/api/services'
-  : '/api/services';
-
 let servicesCache = {};
 
 async function loadServiceStatus() {
@@ -655,23 +483,23 @@ async function loadServiceStatus() {
     const res = await fetch(SERVICES_API, { cache: 'no-store' });
     const data = await res.json();
     servicesCache = data.services || {};
-    localStorage.setItem('sd_services', JSON.stringify(servicesCache));
   } catch (err) {}
 }
 
 function cekService(serviceId) {
-  // Kalau admin mode, langsung lolos
   if (isAdminMode) return true;
 
   const info = servicesCache[serviceId] || { status: 'on', reason: '' };
   if (info.status === 'off') {
-    const overlay = document.getElementById('serviceOffOverlay');
-    const text = document.getElementById('serviceOffText');
-    const reason = document.getElementById('serviceOffReason');
+    const overlay = $('serviceOffOverlay');
+    const text = $('serviceOffText');
+    const reason = $('serviceOffReason');
 
     const names = {
       adlink: 'AdLinkSumo', sfl: 'SFL', delta: 'Delta',
-      linkvertise: 'Linkvertise', move2link: 'Move2link', universal: 'Universal'
+      linkvertise: 'Linkvertise', move2link: 'Move2link',
+      sub2unlock: 'Sub2Unlock', sub4unlock: 'Sub4Unlock',
+      universal: 'Universal'
     };
 
     text.textContent = 'Layanan ' + (names[serviceId] || serviceId) + ' sedang tidak tersedia.';
@@ -687,50 +515,21 @@ function cekService(serviceId) {
   return true;
 }
 
-loadServiceStatus();
-setInterval(loadServiceStatus, 30000);
-
+// ==========================================
+// ENDPOINTS
+// ==========================================
 const ENDPOINTS = {
   adlink: 'adlink',
   sfl: 'sfl',
   delta: 'izen',
   linkvertise: 'linkvertise',
   move2link: 'move2link',
-  sub2unlock: 'sub2unlock',  
-  sub4unlock: 'sub4unlock',  
+  sub2unlock: 'sub2unlock',
+  sub4unlock: 'sub4unlock',
   universal: 'universal'
 };
 
-let currentType = "adlink";
-let resultLink = "";
-
-const $ = id => document.getElementById(id);
-const modal = $("modal");
-
-function toast(text){
-  $("toast").textContent = text;
-  $("toast").classList.add("show");
-  setTimeout(() => $("toast").classList.remove("show"), 2300);
-}
-
-function debug(text){
-  const el = $("debugBody");
-  if (typeof text === 'object') {
-    el.textContent = JSON.stringify(text, null, 2);
-  } else {
-    el.textContent = text;
-  }
-  if (text && typeof text === 'string' && (text.includes('error') || text.includes('Error'))) {
-    $("debugBody").style.display = "block";
-  }
-}
-
-document.querySelectorAll(".service").forEach(card => {
-  card.addEventListener("click", () => {
-  // Kalau admin mode, skip cek service
-  if (!isAdminMode && !cekService(card.dataset.type)) return;
-  currentType = card.dataset.type;
-    const names = {
+const SERVICE_NAMES = {
   adlink: "AdLinkSumo Bypass",
   sfl: "SFL Bypass",
   delta: "Delta Bypass",
@@ -740,7 +539,8 @@ document.querySelectorAll(".service").forEach(card => {
   sub4unlock: "Sub4Unlock Bypass",
   universal: "Universal Bypass"
 };
-const placeholders = {
+
+const SERVICE_PLACEHOLDERS = {
   adlink: "Tempel link AdLinkSumo di sini",
   sfl: "Tempel link SFL di sini",
   delta: "Tempel link DeltaBypass di sini",
@@ -750,8 +550,21 @@ const placeholders = {
   sub4unlock: "Tempel link Sub4Unlock di sini",
   universal: "Tempel link Universal Bypass di sini"
 };
-    $("modalTitle").textContent = names[currentType];
-    $("url").placeholder = placeholders[currentType];
+
+let currentType = "adlink";
+let resultLink = "";
+
+// ==========================================
+// MODAL & CARD
+// ==========================================
+const modal = $("modal");
+
+document.querySelectorAll(".service").forEach(card => {
+  card.addEventListener("click", () => {
+    if (!cekService(card.dataset.type)) return;
+    currentType = card.dataset.type;
+    $("modalTitle").textContent = SERVICE_NAMES[currentType];
+    $("url").placeholder = SERVICE_PLACEHOLDERS[currentType];
     $("url").value = "";
     $("result").style.display = "none";
     debug("Menunggu request...");
@@ -761,18 +574,39 @@ const placeholders = {
 });
 
 $("close").onclick = () => modal.classList.remove("show");
-modal.addEventListener("click", e => { if(e.target === modal) modal.classList.remove("show"); });
+modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("show"); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && modal.classList.contains("show")) modal.classList.remove("show");
+});
 
+// ==========================================
+// PASTE & CLEAR
+// ==========================================
 $("paste").onclick = async () => {
-  try {
-    const text = await navigator.clipboard.readText();
-    $("url").value = text;
-    toast("Berhasil paste");
-  } catch {
-    const text = prompt("Tempel link di sini:");
-    if(text) $("url").value = text.trim();
+  // Coba Cordova Clipboard dulu (APK)
+  if (window.cordova && cordova.plugins && cordova.plugins.clipboard) {
+    cordova.plugins.clipboard.paste(function(text) {
+      if (text) { $("url").value = text; toast("Berhasil paste"); }
+      else toast("Clipboard kosong");
+    }, function() { fallbackPrompt(); });
+    return;
   }
+
+  // Web Clipboard API
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      const text = await navigator.clipboard.readText();
+      if (text) { $("url").value = text; toast("Berhasil paste"); return; }
+    }
+  } catch (e) {}
+
+  fallbackPrompt();
 };
+
+function fallbackPrompt() {
+  const text = prompt("Tempel link di sini:");
+  if (text) $("url").value = text.trim();
+}
 
 $("clear").onclick = () => {
   $("url").value = "";
@@ -781,13 +615,20 @@ $("clear").onclick = () => {
   toast("Dibersihkan");
 };
 
+// ==========================================
+// DEBUG TOGGLE
+// ==========================================
 $("debugToggle").onclick = () => {
   const body = $("debugBody");
   body.style.display = body.style.display === "block" ? "none" : "block";
 };
 
+// ==========================================
+// COPY & OPEN RESULT
+// ==========================================
 $("copy").onclick = async () => {
   if (!resultLink) return toast("Belum ada hasil");
+
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(resultLink);
@@ -795,6 +636,7 @@ $("copy").onclick = async () => {
       return;
     }
   } catch (e) {}
+
   try {
     const area = document.createElement("textarea");
     area.value = resultLink;
@@ -807,6 +649,7 @@ $("copy").onclick = async () => {
     document.body.removeChild(area);
     if (copied) return toast("Link berhasil disalin");
   } catch (e) {}
+
   const area = document.createElement("textarea");
   area.value = resultLink;
   area.style.position = "fixed";
@@ -821,128 +664,94 @@ $("copy").onclick = async () => {
 };
 
 $("open").onclick = () => {
-  if(!resultLink) return toast("Belum ada hasil");
+  if (!resultLink) return toast("Belum ada hasil");
   window.open(resultLink, "_blank");
 };
 
-$("url").addEventListener("keypress", e => {
-  if(e.key === "Enter") bypass();
-});
+// ==========================================
+// BYPASS
+// ==========================================
+$("url").addEventListener("keypress", e => { if (e.key === "Enter") bypass(); });
 $("run").onclick = bypass;
 
 async function bypass(){
   const url = $("url").value.trim();
-  if(!url) return toast("Masukkan URL");
+  if (!url) return toast("Masukkan URL");
 
   $("loader").style.display = "block";
   $("result").style.display = "none";
   debug({
     status: "Mengirim request...",
     endpoint: ENDPOINTS[currentType],
-    url: url,
-    proxy: PROXY_URL
+    url: url
   });
   const start = performance.now();
 
   try {
     const endpoint = ENDPOINTS[currentType];
-    // Format request untuk Vercel Yang Mulia: ?type=...&url=...
     const requestUrl = PROXY_URL + "?type=" + encodeURIComponent(endpoint) + "&url=" + encodeURIComponent(url);
 
-    // TIDAK kirim header x-apikey — sudah dihandle backend Vercel
     const res = await fetch(requestUrl, { method: "GET" });
 
-    const contentType = res.headers.get("content-type") || "";
     let json = null;
     let raw = "";
-
-    try {
-      raw = (await res.text()).trim();
-    } catch(e) {
-      raw = "";
-    }
-
-    if(raw) {
-      try { json = JSON.parse(raw); } catch(e) {}
-    }
+    try { raw = (await res.text()).trim(); } catch(e) {}
+    if (raw) { try { json = JSON.parse(raw); } catch(e) {} }
 
     const elapsed = Math.round(performance.now() - start);
 
     debug({
-      request: {
-        url: requestUrl,
-        method: "GET"
-      },
+      request: { url: requestUrl, method: "GET" },
       response: {
         status: res.status,
         ok: res.ok,
-        statusText: res.statusText,
-        contentType: contentType,
         responseTime: elapsed + " ms"
       },
-      data: json !== null ? json : (raw || "(empty response)")
+      data: json !== null ? json : (raw || "(empty)")
     });
 
-    if(!res.ok) {
-      let detail = "";
-      if(json && typeof json === "object") {
-        detail = json.message || json.error || json.detail || "";
-      } else {
-        detail = raw;
-      }
-
-      if(res.status === 400) throw new Error("HTTP 400" + (detail ? " - " + detail : ""));
-      if(res.status === 401) throw new Error("HTTP 401" + (detail ? " - " + detail : " - API Key tidak valid"));
-      if(res.status === 403) throw new Error("HTTP 403" + (detail ? " - " + detail : ""));
-      if(res.status === 429) throw new Error("HTTP 429" + (detail ? " - " + detail : " - Terlalu banyak request"));
+    if (!res.ok) {
+      let detail = (json && (json.message || json.error)) || raw || "";
       throw new Error("HTTP " + res.status + (detail ? " - " + detail : ""));
     }
 
     let success = false;
     let bypassed = "";
 
-    if(currentType === "sfl") {
+    if (currentType === "sfl") {
       success = !!(json && json.status);
       bypassed = json && json.bypassed_url;
-    } else if(currentType === "adlink") {
+    } else if (currentType === "adlink") {
       success = !!(json && (json.success || json.status));
       bypassed = json && (json.url || json.bypassed_url);
-    } else if(currentType === "delta") {
+    } else if (currentType === "delta") {
       success = !!(json && json.status);
       bypassed = json && (json.result || json.url || json.bypassed_url);
-    } else if(currentType === "linkvertise") {
+    } else if (currentType === "linkvertise") {
       success = !!(json && json.status);
       bypassed = json && json.bypassed_url;
-    } else if(currentType === "move2link") {
-  success = !!(json && json.status);
-  bypassed = json && (json.bypassed_url || json.url || json.result);
-} else if(currentType === "sub2unlock") {
-  success = !!(json && json.status);
-  bypassed = json && (json.bypassed_url || json.url || json.result);
-} else if(currentType === "sub4unlock") {
-  success = !!(json && json.status);
-  bypassed = json && (json.bypassed_url || json.url || json.result);
-} else if(currentType === "universal") {
+    } else if (currentType === "move2link" || currentType === "sub2unlock" || currentType === "sub4unlock") {
+      success = !!(json && json.status);
+      bypassed = json && (json.bypassed_url || json.url || json.result);
+    } else if (currentType === "universal") {
       success = !!(json && json.status);
       bypassed = json && (json.result || json.url || json.bypassed_url);
     }
 
-    if(!success || !bypassed) {
-      const message = (json && typeof json === "object" && (json.error || json.message)) || "Request gagal";
+    if (!success || !bypassed) {
+      const message = (json && (json.error || json.message)) || "Request gagal";
       throw new Error(message);
     }
 
-    $("original").textContent = (json && typeof json === "object" && (json.original_url || json.input_url || json.input)) || url;
+    $("original").textContent = (json.original_url || json.input_url || json.input) || url;
     $("bypassed").textContent = bypassed;
-    $("creator").textContent = (json && typeof json === "object" && json.creator) || 
-      (currentType === "delta" ? "DeltaBypass" : 
+    $("creator").textContent = json.creator ||
+      (currentType === "delta" ? "DeltaBypass" :
        currentType === "move2link" ? "Blickrosë" :
        currentType === "universal" ? "UniversalBypass" : "-");
-    $("time").textContent = (json && typeof json === "object" && json.execution_time_ms != null)
+    $("time").textContent = json.execution_time_ms
       ? json.execution_time_ms + " ms"
-      : (json && typeof json === "object" && json.time_taken) 
-        ? json.time_taken
-        : elapsed + " ms";
+      : (json.time_taken || (elapsed + " ms"));
 
     resultLink = bypassed;
     $("result").style.display = "block";
@@ -957,11 +766,13 @@ async function bypass(){
   } finally {
     $("loader").style.display = "none";
   }
-}
+  }
 
+  // ==========================================
+// TANGGAL & HIJRIAH
+// ==========================================
 function updateDateTime() {
   const now = new Date();
-
   const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
   const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const hijriMonths = ["Muharram","Safar","Rabiul Awal","Rabiul Akhir","Jumadil Awal","Jumadil Akhir","Rajab","Syaban","Ramadan","Syawal","Zulkaidah","Zulhijah"];
@@ -970,12 +781,11 @@ function updateDateTime() {
   const date = now.getDate();
   const month = months[now.getMonth()];
   const year = now.getFullYear();
-
   const hours = String(now.getHours()).padStart(2, "0");
   const minutes = String(now.getMinutes()).padStart(2, "0");
   const seconds = String(now.getSeconds()).padStart(2, "0");
 
-  document.getElementById("dateDisplay").innerHTML =
+  $("dateDisplay").innerHTML =
     `${day}, ${date} ${month} ${year}<br><span>${hours}:${minutes}:${seconds} WIB</span>`;
 
   try {
@@ -984,108 +794,71 @@ function updateDateTime() {
     const hDay = parts.find(p => p.type === "day")?.value;
     const hMonth = Number(parts.find(p => p.type === "month")?.value);
     const hYear = parts.find(p => p.type === "year")?.value;
-    document.getElementById("hijriDisplay").textContent = `${hDay} ${hijriMonths[hMonth - 1]} ${hYear} H`;
+    $("hijriDisplay").textContent = `${hDay} ${hijriMonths[hMonth - 1]} ${hYear} H`;
   } catch (e) {
-    document.getElementById("hijriDisplay").textContent = "-";
+    $("hijriDisplay").textContent = "-";
   }
 
   const observances2026 = {
-    "1-1": "Tahun Baru Masehi 🎉",
-    "16-1": "Isra Mikraj Nabi Muhammad SAW 🌙",
-    "2-2": "Hari Lahan Basah Sedunia 🌿",
-    "9-2": "Hari Pers Nasional 📰",
-    "14-2": "Hari Peringatan Pembela Tanah Air (PETA) 🇮🇩",
-    "16-2": "Tahun Baru Imlek 2577 Kongzili 🏮",
-    "21-2": "Hari Peduli Sampah Nasional ♻️",
-    "3-3": "Hari Satwa Liar Sedunia 🐾",
-    "8-3": "Hari Perempuan Internasional 🌷",
-    "11-3": "Hari Supersemar 🇮🇩",
-    "18-3": "Hari Suci Nyepi / Tahun Baru Saka 1948 🕉️",
-    "20-3": "Wafat Yesus Kristus ✝️",
-    "21-3": "Hari Raya Idulfitri 1447 H 🌙",
-    "22-3": "Hari Raya Idulfitri 1447 H 🌙",
-    "2-4": "Hari Peduli Autisme Sedunia 💙",
-    "21-4": "Hari Kartini 🇮🇩",
-    "22-4": "Hari Bumi 🌍",
-    "1-5": "Hari Buruh Internasional 👷",
-    "2-5": "Hari Pendidikan Nasional 📚",
-    "17-5": "Hari Buku Nasional 📖",
-    "20-5": "Hari Kebangkitan Nasional 🇮🇩",
-    "31-5": "Hari Raya Waisak 2570 BE ☸️",
-    "1-6": "Hari Lahir Pancasila 🇮🇩",
-    "5-6": "Hari Lingkungan Hidup Sedunia 🌱",
-    "16-6": "1 Muharam / Tahun Baru Islam 1448 H 🌙",
-    "27-6": "Hari Antinarkoba Internasional 🚫",
-    "23-7": "Hari Anak Nasional 👧",
-    "10-8": "Hari Kebangkitan Teknologi Nasional 💡",
-    "14-8": "Hari Pramuka 🇮🇩",
-    "17-8": "Hari Proklamasi Kemerdekaan Republik Indonesia 🇮🇩",
-    "25-8": "Maulid Nabi Muhammad SAW 🌙",
-    "1-9": "Hari Polisi Wanita (Polwan) 🇮🇩",
-    "9-9": "Hari Olahraga Nasional 🏃",
-    "17-9": "Hari Palang Merah Indonesia ❤️",
-    "24-9": "Hari Tani Nasional 🌾",
-    "28-9": "Hari Kereta Api Nasional 🚆",
-    "1-10": "Hari Kesaktian Pancasila 🇮🇩",
-    "5-10": "Hari Ulang Tahun TNI 🇮🇩",
-    "16-10": "Hari Pangan Sedunia 🌾",
-    "22-10": "Hari Santri Nasional 🕌",
-    "28-10": "Hari Sumpah Pemuda 🇮🇩",
-    "10-11": "Hari Pahlawan 🇮🇩",
-    "12-11": "Hari Kesehatan Nasional 🏥",
-    "25-11": "Hari Guru Nasional / HUT PGRI 📚",
-    "10-12": "Hari Hak Asasi Manusia Sedunia ⚖️",
-    "22-12": "Hari Ibu 🇮🇩",
-    "25-12": "Hari Natal 🎄"
+    "1-1":"Tahun Baru Masehi 🎉","16-1":"Isra Mikraj Nabi Muhammad SAW 🌙",
+    "2-2":"Hari Lahan Basah Sedunia 🌿","9-2":"Hari Pers Nasional 📰",
+    "14-2":"Hari Peringatan Pembela Tanah Air (PETA) 🇮🇩","16-2":"Tahun Baru Imlek 2577 Kongzili 🏮",
+    "21-2":"Hari Peduli Sampah Nasional ♻️","3-3":"Hari Satwa Liar Sedunia 🐾",
+    "8-3":"Hari Perempuan Internasional 🌷","11-3":"Hari Supersemar 🇮🇩",
+    "18-3":"Hari Suci Nyepi / Tahun Baru Saka 1948 🕉️","20-3":"Wafat Yesus Kristus ✝️",
+    "21-3":"Hari Raya Idulfitri 1447 H 🌙","22-3":"Hari Raya Idulfitri 1447 H 🌙",
+    "2-4":"Hari Peduli Autisme Sedunia 💙","21-4":"Hari Kartini 🇮🇩","22-4":"Hari Bumi 🌍",
+    "1-5":"Hari Buruh Internasional 👷","2-5":"Hari Pendidikan Nasional 📚",
+    "17-5":"Hari Buku Nasional 📖","20-5":"Hari Kebangkitan Nasional 🇮🇩",
+    "31-5":"Hari Raya Waisak 2570 BE ☸️","1-6":"Hari Lahir Pancasila 🇮🇩",
+    "5-6":"Hari Lingkungan Hidup Sedunia 🌱","16-6":"1 Muharam / Tahun Baru Islam 1448 H 🌙",
+    "27-6":"Hari Antinarkoba Internasional 🚫","23-7":"Hari Anak Nasional 👧",
+    "10-8":"Hari Kebangkitan Teknologi Nasional 💡","14-8":"Hari Pramuka 🇮🇩",
+    "17-8":"Hari Proklamasi Kemerdekaan Republik Indonesia 🇮🇩","25-8":"Maulid Nabi Muhammad SAW 🌙",
+    "1-9":"Hari Polisi Wanita (Polwan) 🇮🇩","9-9":"Hari Olahraga Nasional 🏃",
+    "17-9":"Hari Palang Merah Indonesia ❤️","24-9":"Hari Tani Nasional 🌾",
+    "28-9":"Hari Kereta Api Nasional 🚆","1-10":"Hari Kesaktian Pancasila 🇮🇩",
+    "5-10":"Hari Ulang Tahun TNI 🇮🇩","16-10":"Hari Pangan Sedunia 🌾",
+    "22-10":"Hari Santri Nasional 🕌","28-10":"Hari Sumpah Pemuda 🇮🇩",
+    "10-11":"Hari Pahlawan 🇮🇩","12-11":"Hari Kesehatan Nasional 🏥",
+    "25-11":"Hari Guru Nasional / HUT PGRI 📚","10-12":"Hari Hak Asasi Manusia Sedunia ⚖️",
+    "22-12":"Hari Ibu 🇮🇩","25-12":"Hari Natal 🎄"
   };
 
   const key = `${date}-${now.getMonth() + 1}`;
-  document.getElementById("observanceDisplay").textContent = `Peringatan Hari Ini: ${observances2026[key] || "-"}`;
+  $("observanceDisplay").textContent = `Peringatan Hari Ini: ${observances2026[key] || "-"}`;
 }
 
-updateDateTime();
-setInterval(updateDateTime, 1000);
+// ==========================================
+// INIT
+// ==========================================
+async function init() {
+  // Cek maintenance dulu
+  await cekMaintenance();
+  // Sembunyikan blocking overlay
+  hideBlocking();
+  // Cek broadcast & service
+  cekBroadcast();
+  loadServiceStatus();
+}
 
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+// Interval
+setInterval(cekMaintenance, 15000);
+setInterval(cekBroadcast, 30000);
+setInterval(loadServiceStatus, 30000);
 setInterval(() => {
   const n = 140 + Math.floor(Math.random() * 9);
   $("live").textContent = n;
 }, 5000);
+
+updateDateTime();
+setInterval(updateDateTime, 1000);
 </script>
-  <!-- ========================================== -->
-<!-- POPUP MAINTENANCE — Tersembunyi, hanya muncul kalau ON -->
-<!-- ========================================== -->
-<div class="maintenance-overlay" id="maintenanceOverlay">
-  <div class="maintenance-box">
-    <div class="maintenance-icon">🛠️</div>
-    <div class="maintenance-title">MAINTENANCE</div>
-    <div class="maintenance-text">
-      MAINTENANCE DULU BRO, SABAR YA
-    </div>
-    <div class="maintenance-sub">
-      Aplikasi akan aktif otomatis setelah maintenance selesai.
-    </div>
-  </div>
-</div>
-
-  <!-- Popup Service OFF -->
-<div class="service-off-overlay" id="serviceOffOverlay">
-  <div class="service-off-box">
-    <div class="service-off-icon">🚫</div>
-    <div class="service-off-title">SERVICE DIMATIKAN</div>
-    <div class="service-off-text" id="serviceOffText">
-      Service ini sedang tidak tersedia.
-    </div>
-    <div class="service-off-reason" id="serviceOffReason" style="display:none;"></div>
-    <button class="service-off-close" onclick="document.getElementById('serviceOffOverlay').classList.remove('show')">
-      Tutup
-    </button>
-  </div>
-</div>
-
-  <!-- Banner Broadcast -->
-<div class="broadcast-banner" id="broadcastBanner">
-  <span id="broadcastText"></span>
-  <button class="broadcast-close" onclick="event.stopPropagation();tutupBanner()">×</button>
-</div>
 </body>
 </html>
