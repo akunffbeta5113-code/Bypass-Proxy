@@ -15,15 +15,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Parameter type dan url wajib diisi' });
   }
 
-  // Daftar tipe yang didukung — SUDAH DITAMBAH move2link
+  // Daftar tipe yang didukung 
   const ENDPOINTS = {
-    adlink: 'adlink',
-    sfl: 'sfl',
-    delta: 'izen',
-    linkvertise: 'linkvertise',
-    move2link: 'move2link',   // ← INI DIA
-    universal: 'universal'
-  };
+  adlink: 'adlink',
+  sfl: 'sfl',
+  delta: 'izen',
+  linkvertise: 'linkvertise',
+  move2link: 'move2link',
+  sub2unlock: 'sub2unlock',       
+  sub4unlock: 'sub4unlock',       
+  universal: 'universal'
+};
 
   if (!ENDPOINTS[type]) {
     return res.status(400).json({ error: 'Unsupported type: ' + type });
