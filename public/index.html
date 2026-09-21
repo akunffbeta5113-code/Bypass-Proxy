@@ -172,40 +172,6 @@ button{cursor:pointer}
 body.has-broadcast {
   padding-top: 60px;
 }
-  
-  /* ========================================== */
-/* BLOCKING OVERLAY — muncul sebelum cek selesai */
-/* ========================================== */
-#blockingOverlay {
-  position: fixed;
-  inset: 0;
-  background: #0d0f18;
-  z-index: 999999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-  transition: opacity .3s;
-}
-#blockingOverlay.hide {
-  opacity: 0;
-  pointer-events: none;
-}
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #ffffff22;
-  border-top-color: #a55cff;
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.blocking-text {
-  color: #8d91a2;
-  font-size: 13px;
-  font-weight: 600;
-}
 
     /* Popup service OFF */
 .service-off-overlay {
@@ -268,15 +234,7 @@ body.has-broadcast {
 </style>
 </head>
 <body>
-<!-- ========================================== -->
-<!-- BLOCKING OVERLAY — cegah kedip/maintenance telat -->
-<!-- ========================================== -->
-<div id="blockingOverlay">
-  <div class="spinner"></div>
-  <div class="blocking-text">Memuat...</div>
-</div>
-  
-<main class="app">
+  <main class="app">
   <div class="topBadge">⚡ PREMIUM BYPASS AUTO ⚡</div>
   <div class="music">♫</div>
   <h1>BYPASS <span>WEB</span></h1>
@@ -368,17 +326,76 @@ body.has-broadcast {
 <div class="toast" id="toast">Berhasil</div>
 
 <script>
+// ==========================================
+// MAINTENANCE + ADMIN MODE (SIMPLE VERSION)
+// ==========================================
+const MAINTENANCE_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
+  ? 'https://bypass-proxy.vercel.app/api/maintenance'
+  : '/api/maintenance';
 
-// ==========================================
-// PENGAMAN — Sembunyikan overlay setelah 5 detik
-// ==========================================
-setTimeout(function() {
-  var blocking = document.getElementById('blockingOverlay');
-  if (blocking) {
-    blocking.classList.add('hide');
-    setTimeout(function() { blocking.remove(); }, 400);
+// Cek admin mode dari URL
+const urlParams = new URLSearchParams(location.search);
+const adminToken1 = urlParams.get('admin');
+const adminToken2 = urlParams.get('key2');
+
+if (adminToken1 && adminToken2) {
+  sessionStorage.setItem('sd_admin_k1', adminToken1);
+  sessionStorage.setItem('sd_admin_k2', adminToken2);
+  window.history.replaceState({}, '', location.pathname);
+}
+
+function isAdminMode() {
+  return !!(sessionStorage.getItem('sd_admin_k1') && sessionStorage.getItem('sd_admin_k2'));
+}
+
+async function cekMaintenance() {
+  const overlay = document.getElementById('maintenanceOverlay');
+  const app = document.querySelector('.app');
+  if (!overlay) return;
+
+  // Kalau admin mode, skip maintenance
+  if (isAdminMode()) {
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+    if (app) {
+      app.style.filter = '';
+      app.style.pointerEvents = '';
+    }
+    return;
   }
-}, 5000);
+
+  try {
+    const res = await fetch(MAINTENANCE_API, { cache: 'no-store' });
+    const data = await res.json();
+
+    if (data.maintenance === true) {
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      if (app) {
+        app.style.filter = 'blur(6px)';
+        app.style.pointerEvents = 'none';
+      }
+    } else {
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+      if (app) {
+        app.style.filter = '';
+        app.style.pointerEvents = '';
+      }
+    }
+  } catch (err) {
+    // Kalau fetch GAGAL, JANGAN tampilkan maintenance
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+    if (app) {
+      app.style.filter = '';
+      app.style.pointerEvents = '';
+    }
+  }
+}
+
+cekMaintenance();
+setInterval(cekMaintenance, 15000);
   
 // ============================================
 // VERCEL PROXY
