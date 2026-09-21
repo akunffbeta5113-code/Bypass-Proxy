@@ -23,14 +23,22 @@ export default async function handler(req, res) {
   // CEK SEMUA SERVICE (publik)
   // ==========================================
   if (!action) {
-    const result = {};
-    for (const s of VALID_SERVICES) {
-      const st = await kv.get(`service_${s}_status`) || 'on';
-      const rs = await kv.get(`service_${s}_reason`) || '';
-      result[s] = { status: st, reason: rs };
-    }
-    return res.status(200).json({ services: result });
+  const result = {};
+  for (const s of VALID_SERVICES) {
+    const st = await kv.get(`service_${s}_status`) || 'on';
+    const rs = await kv.get(`service_${s}_reason`) || '';
+    result[s] = { status: st, reason: rs };
   }
+  return res.status(200).json({ services: result });
+}
+
+// Mode admin — cek apakah user ini admin
+if (action === 'adminView') {
+  if (key1 !== ADMIN_KEY_1 || key2 !== ADMIN_KEY_2) {
+    return res.status(403).json({ isAdmin: false });
+  }
+  return res.status(200).json({ isAdmin: true });
+}
 
   // ==========================================
   // UBAH STATUS SERVICE (butuh 2 kunci)
