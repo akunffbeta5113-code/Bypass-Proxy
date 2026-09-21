@@ -17,7 +17,7 @@ body {
   padding: 20px;
 }
 .box {
-  max-width: 400px;
+  max-width: 420px;
   width: 100%;
   background: #171a25;
   border: 1px solid #292c3b;
@@ -27,6 +27,7 @@ body {
   box-shadow: 0 25px 60px rgba(0,0,0,0.6);
 }
 h1 { font-size: 22px; margin-bottom: 6px; }
+h2 { font-size: 15px; color: #8d91a2; margin-bottom: 14px; text-align: left; }
 .sub { color: #8d91a2; font-size: 13px; margin-bottom: 24px; }
 label {
   display: block; text-align: left;
@@ -71,6 +72,57 @@ button:active { transform: scale(.98); }
   background: #292c3b;
   margin: 20px 0 18px;
 }
+/* Service management */
+.service-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #1b1e2a;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+.service-name {
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+  text-align: left;
+}
+.service-name small {
+  display: block;
+  font-size: 11px;
+  color: #8d91a2;
+  font-weight: 500;
+  margin-top: 2px;
+}
+.service-btn {
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .15s;
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+.service-btn.on { background: #39df88; color: #08130d; }
+.service-btn.off { background: #ff4b3f; color: #fff; }
+.reason-input {
+  width: 100%;
+  height: 40px;
+  font-size: 12px;
+  margin: 0 0 10px 0;
+  padding: 0 12px;
+  background: #12151f;
+  border: 1px solid #303444;
+  border-radius: 10px;
+  color: #fff;
+  outline: none;
+}
+.reason-input::placeholder { color: #5a5f70; }
 </style>
 </head>
 <body>
@@ -86,7 +138,11 @@ button:active { transform: scale(.98); }
 
   <button class="btn-on" onclick="ubah('on')">🔴 AKTIFKAN MAINTENANCE</button>
   <button class="btn-off" onclick="ubah('off')">🟢 MATIKAN MAINTENANCE</button>
-  <button class="btn-check" onclick="cek()">🔍 Cek Status</button>
+  <button class="btn-check" onclick="cek()">🔍 Cek Status Maintenance</button>
+
+  <div class="divider"></div>
+  <h2>⚙️ MANAJEMEN SERVICE</h2>
+  <div id="serviceList"></div>
 
   <div class="divider"></div>
 
@@ -96,24 +152,26 @@ button:active { transform: scale(.98); }
 </div>
 
 <script>
-const API = '/api/maintenance';
+const MAINT_API = '/api/maintenance';
+const SERVICES_API = '/api/services';
 const $ = id => document.getElementById(id);
 
+// ==========================================
+// MAINTENANCE
+// ==========================================
 async function ubah(action) {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
-
   if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
 
   try {
     const res = await fetch(
-      API + '?action=' + action +
+      MAINT_API + '?action=' + action +
       '&key1=' + encodeURIComponent(key1) +
       '&key2=' + encodeURIComponent(key2),
       { cache: 'no-store' }
     );
     const data = await res.json();
-
     if (res.ok && data.success) {
       showStatus('✅ ' + data.message, data.maintenance ? 'on' : 'off');
     } else {
@@ -126,10 +184,10 @@ async function ubah(action) {
 
 async function cek() {
   try {
-    const res = await fetch(API, { cache: 'no-store' });
+    const res = await fetch(MAINT_API, { cache: 'no-store' });
     const data = await res.json();
     showStatus(
-      (data.maintenance ? '🔴 MAINTENANCE AKTIF DI SEMUA DEVICE' : '🟢 NORMAL — Aplikasi Jalan'),
+      (data.maintenance ? '🔴 MAINTENANCE AKTIF' : '🟢 NORMAL — Aplikasi Jalan'),
       data.maintenance ? 'on' : 'off'
     );
   } catch (err) {
@@ -137,19 +195,124 @@ async function cek() {
   }
 }
 
+// ==========================================
+// MANAJEMEN SERVICE
+// ==========================================
+const SERVICES = [
+  { id: 'adlink', name: 'AdLinkSumo' },
+  { id: 'sfl', name: 'SFL' },
+  { id: 'delta', name: 'Delta' },
+  { id: 'linkvertise', name: 'Linkvertise' },
+  { id: 'move2link', name: 'Move2link' },
+  { id: 'universal', name: 'Universal' }
+];
+
+let servicesData = {};
+
+async function loadServices() {
+  try {
+    const res = await fetch(SERVICES_API, { cache: 'no-store' });
+    const data = await res.json();
+    servicesData = data.services || {};
+    renderServices();
+  } catch (err) {
+    console.error('Load services failed:', err);
+  }
+}
+
+function renderServices() {
+  const container = $('serviceList');
+  container.innerHTML = '';
+
+  SERVICES.forEach(svc => {
+    const info = servicesData[svc.id] || { status: 'on', reason: '' };
+    const isOn = info.status === 'on';
+
+    const item = document.createElement('div');
+    item.className = 'service-item';
+    item.innerHTML = `
+      <div class="service-name">
+        ${svc.name}
+        <small>${isOn ? 'Aktif' : 'Nonaktif: ' + (info.reason || 'tanpa alasan')}</small>
+      </div>
+      <button class="service-btn ${isOn ? 'on' : 'off'}"
+              onclick="toggleService('${svc.id}')">
+        ${isOn ? '🟢 ON' : '🔴 OFF'}
+      </button>
+    `;
+    container.appendChild(item);
+
+    if (!isOn) {
+      const reasonInput = document.createElement('input');
+      reasonInput.type = 'text';
+      reasonInput.className = 'reason-input';
+      reasonInput.placeholder = 'Alasan OFF (tampil ke user)';
+      reasonInput.value = info.reason || '';
+      reasonInput.onchange = () => updateReason(svc.id, reasonInput.value);
+      container.appendChild(reasonInput);
+    }
+  });
+}
+
+async function toggleService(serviceId) {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const current = servicesData[serviceId] || { status: 'on' };
+  const newStatus = current.status === 'on' ? 'off' : 'on';
+  const reason = current.reason || '';
+
+  try {
+    const res = await fetch(
+      SERVICES_API + '?action=set&service=' + serviceId +
+      '&status=' + newStatus +
+      '&reason=' + encodeURIComponent(reason) +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, newStatus === 'on' ? 'off' : 'on');
+      await loadServices();
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function updateReason(serviceId, reason) {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  const current = servicesData[serviceId] || { status: 'off' };
+
+  try {
+    await fetch(
+      SERVICES_API + '?action=set&service=' + serviceId +
+      '&status=' + current.status +
+      '&reason=' + encodeURIComponent(reason) +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    await loadServices();
+    showStatus('✅ Alasan disimpan', 'off');
+  } catch (err) {}
+}
+
+// ==========================================
+// BUKA APLIKASI (MODE ADMIN)
+// ==========================================
 function bukaAplikasi() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
 
-  if (!key1 || !key2) {
-    showStatus('⚠️ Isi kedua kunci dulu sebelum buka aplikasi!', 'error');
-    return;
-  }
-
-  // Buka aplikasi di tab baru dengan token admin
   const url = '/?admin=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2);
   window.open(url, '_blank');
-
   showStatus('✅ Aplikasi dibuka di tab baru (mode admin)', 'off');
 }
 
@@ -159,8 +322,9 @@ function showStatus(text, cls) {
   el.className = 'status ' + (cls || '');
 }
 
-// Cek status awal
+// Init
 cek();
+loadServices();
 </script>
 </body>
 </html>
