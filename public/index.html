@@ -125,6 +125,51 @@ button{cursor:pointer}
   line-height: 1.5;
   font-weight: 500;
 }
+
+/* Banner Broadcast */
+.broadcast-banner {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 9999;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  animation: slideDown .4s ease;
+  cursor: pointer;
+}
+.broadcast-banner.show { display: block; }
+.broadcast-banner.info { background: linear-gradient(135deg, #2196f3, #1976d2); }
+.broadcast-banner.success { background: linear-gradient(135deg, #00c896, #00a07a); }
+.broadcast-banner.warning { background: linear-gradient(135deg, #ffa726, #ff7043); }
+.broadcast-banner.danger { background: linear-gradient(135deg, #ff4b3f, #d32f2f); }
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+.broadcast-close {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.25);
+  border: 0;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+}
+body.has-broadcast {
+  padding-top: 50px;
+}
+  
   /* ========================================== */
 /* BLOCKING OVERLAY — muncul sebelum cek selesai */
 /* ========================================== */
@@ -924,6 +969,12 @@ setInterval(() => {
       Tutup
     </button>
   </div>
+</div>
+
+  <!-- Banner Broadcast -->
+<div class="broadcast-banner" id="broadcastBanner">
+  <span id="broadcastText"></span>
+  <button class="broadcast-close" onclick="event.stopPropagation();tutupBanner()">×</button>
 </div>
 </body>
 </html>
