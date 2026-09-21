@@ -108,6 +108,70 @@ button:active { transform: scale(.98); }
 }
 .collapsible-body.open { max-height: 1500px; opacity: 1; margin-top: 12px; }
 
+  /* Stats */
+  .stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.stat-card {
+  background: #1b1e2a;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+}
+.stat-card .num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #8b5cff;
+  margin-bottom: 4px;
+}
+.stat-card .label {
+  font-size: 11px;
+  color: #8d91a2;
+  font-weight: 600;
+}
+.stat-section {
+  background: #1b1e2a;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.stat-section h3 {
+  font-size: 13px;
+  color: #8d91a2;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+  border-bottom: 1px solid #252936;
+}
+.stat-row:last-child { border-bottom: 0; }
+.stat-row .svc { color: #fff; font-weight: 600; }
+.stat-row .val { color: #8b5cff; font-weight: 700; }
+.chart-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+.chart-bar .day { width: 32px; color: #8d91a2; }
+.chart-bar .bar {
+  flex: 1;
+  height: 18px;
+  background: linear-gradient(90deg, #7d43ff, #b45cff);
+  border-radius: 4px;
+  min-width: 2px;
+  transition: width .3s;
+}
+.chart-bar .num { width: 34px; text-align: right; color: #fff; font-weight: 700; }
+
 /* Service */
 .service-item {
   display: flex; align-items: center; justify-content: space-between;
@@ -186,6 +250,22 @@ button:active { transform: scale(.98); }
       💾 TERAPKAN PERUBAHAN SERVICE
     </button>
   </div>
+
+  <!-- ========================================== -->
+<!-- DASHBOARD STATISTIK — COLLAPSIBLE -->
+<!-- ========================================== -->
+<div class="collapsible-header" onclick="toggleStatsPanel()">
+  <h2>📊 DASHBOARD STATISTIK</h2>
+  <span class="arrow-toggle" id="arrowStats">▼</span>
+</div>
+
+<div class="collapsible-body" id="statsPanel">
+  <button class="btn-check" onclick="loadStats()">🔄 REFRESH STATISTIK</button>
+
+  <div id="statsContent" style="text-align:left;font-size:13px;">
+    <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk memuat data.</div>
+  </div>
+</div>
 
   <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
 
@@ -487,6 +567,117 @@ async function matikanBroadcast() {
     showStatus('❌ Error: ' + err.message, 'error');
   }
 }
+
+  // ==========================================
+// DASHBOARD STATISTIK
+// ==========================================
+function toggleStatsPanel() {
+  const panel = $('statsPanel');
+  const arrow = $('arrowStats');
+  panel.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+async function loadStats() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const box = $('statsContent');
+  box.innerHTML = '<div style="color:#8d91a2;text-align:center;padding:20px;">⏳ Memuat...</div>';
+
+  try {
+    const res = await fetch(
+      '/api/stats?key1=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ ' + (data.error || 'Gagal') + '</div>';
+      return;
+    }
+
+    const SERVICE_NAMES = {
+      adlink: 'AdLinkSumo', sfl: 'SFL', delta: 'Delta',
+      linkvertise: 'Linkvertise', move2link: 'Move2link',
+      sub2unlock: 'Sub2Unlock', sub4unlock: 'Sub4Unlock', universal: 'Universal'
+    };
+
+    // Grafik 7 hari
+    let chartHtml = '';
+    const maxCount = Math.max(...data.last7Days.map(d => d.count), 1);
+    data.last7Days.forEach(d => {
+      const pct = (d.count / maxCount) * 100;
+      const dayName = new Date(d.date).toLocaleDateString('id-ID', { weekday: 'short' });
+      chartHtml += `
+        <div class="chart-bar">
+          <span class="day">${dayName}</span>
+          <div class="bar" style="width:${pct}%;"></div>
+          <span class="num">${d.count}</span>
+        </div>
+      `;
+    });
+
+    // Service hari ini
+    let todayServiceHtml = '';
+    Object.keys(data.today.byService).forEach(s => {
+      const count = parseInt(data.today.byService[s]) || 0;
+      if (count > 0) {
+        todayServiceHtml += `<div class="stat-row"><span class="svc">${SERVICE_NAMES[s]}</span><span class="val">${count}</span></div>`;
+      }
+    });
+    if (!todayServiceHtml) todayServiceHtml = '<div style="color:#5a5f70;font-size:12px;text-align:center;padding:8px;">Belum ada bypass hari ini</div>';
+
+    // Service keseluruhan
+    let allServiceHtml = '';
+    Object.keys(data.allTime.byService).forEach(s => {
+      const count = parseInt(data.allTime.byService[s]) || 0;
+      allServiceHtml += `<div class="stat-row"><span class="svc">${SERVICE_NAMES[s]}</span><span class="val">${count}</span></div>`;
+    });
+
+    box.innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="num">${data.today.total}</div>
+          <div class="label">Bypass Hari Ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">${data.today.users}</div>
+          <div class="label">User Aktif</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">${data.allTime.total}</div>
+          <div class="label">Total Bypass</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" style="font-size:16px;">${SERVICE_NAMES[data.allTime.topService] || '-'}</div>
+          <div class="label">Terpopuler</div>
+        </div>
+      </div>
+
+      <div class="stat-section">
+        <h3>📈 7 HARI TERAKHIR</h3>
+        ${chartHtml}
+      </div>
+
+      <div class="stat-section">
+        <h3>🔥 SERVICE HARI INI</h3>
+        ${todayServiceHtml}
+      </div>
+
+      <div class="stat-section">
+        <h3>🏆 SERVICE KESELURUHAN</h3>
+        ${allServiceHtml}
+      </div>
+    `;
+
+    showStatus('✅ Statistik dimuat', 'off');
+  } catch (err) {
+    box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ Error: ' + err.message + '</div>';
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+                              }
 
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
