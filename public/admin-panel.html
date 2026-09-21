@@ -172,6 +172,16 @@ button:active { transform: scale(.98); }
 }
 .chart-bar .num { width: 34px; text-align: right; color: #fff; font-weight: 700; }
 
+  /* Emergency */
+  .btn-panic {
+  font-weight: 800;
+  letter-spacing: .5px;
+  position: relative;
+}
+.btn-panic:active {
+  transform: scale(.97);
+}
+
 /* Service */
 .service-item {
   display: flex; align-items: center; justify-content: space-between;
@@ -266,6 +276,25 @@ button:active { transform: scale(.98); }
     <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk memuat data.</div>
   </div>
 </div>
+
+  <!-- ========================================== -->
+<!-- TOMBOL PANIK -->
+<!-- ========================================== -->
+<div class="divider"></div>
+<h2 style="color:#ff4b3f;">🚨 EMERGENCY</h2>
+
+<button class="btn-panic" onclick="konfirmasiPanic('on')" style="background:linear-gradient(135deg,#ff4b3f,#d32f2f);color:#fff;font-size:16px;">
+  🚨 EMERGENCY MODE ON
+</button>
+
+<button class="btn-panic" onclick="konfirmasiPanic('off')" style="background:linear-gradient(135deg,#39df88,#00a07a);color:#08130d;font-size:16px;">
+  🟢 EMERGENCY MODE OFF
+</button>
+
+<p style="color:#8d91a2;font-size:11px;text-align:left;margin-top:8px;line-height:1.5;">
+  <b>EMERGENCY ON:</b> Matikan semua service + maintenance ON + broadcast otomatis.<br>
+  <b>EMERGENCY OFF:</b> Nyalakan semua service + maintenance OFF + broadcast OFF.
+</p>
 
   <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
 
@@ -678,6 +707,42 @@ async function loadStats() {
     showStatus('❌ Error: ' + err.message, 'error');
   }
                               }
+
+  // ==========================================
+// EMERGENCY MODE
+// ==========================================
+async function konfirmasiPanic(action) {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const pesan = action === 'on'
+    ? '🚨 Yakin aktifkan EMERGENCY MODE?\n\nSemua service akan DIMATIKAN, maintenance ON, dan broadcast terkirim ke semua user.'
+    : '🟢 Yakin matikan EMERGENCY MODE?\n\nSemua service akan DINYALAKAN kembali, maintenance OFF, broadcast dimatikan.';
+
+  if (!confirm(pesan)) return;
+
+  showStatus('⏳ ' + (action === 'on' ? 'Mengaktifkan' : 'Mematikan') + ' emergency mode...', 'warn');
+
+  try {
+    const res = await fetch(
+      '/api/panic?action=' + action +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, action === 'on' ? 'error' : 'off');
+      await loadServices();
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
 
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
