@@ -278,6 +278,8 @@ async function loadServices() {
     const res = await fetch(SERVICES_API, { cache: 'no-store' });
     const data = await res.json();
     servicesData = data.services || {};
+    pendingChanges = {};
+    updateApplyButton();
     renderServices();
   } catch (err) {
     console.error('Load services failed:', err);
@@ -289,7 +291,8 @@ function renderServices() {
   container.innerHTML = '';
 
   SERVICES.forEach(svc => {
-    const info = servicesData[svc.id] || { status: 'on', reason: '' };
+    const serverInfo = servicesData[svc.id] || { status: 'on', reason: '' };
+    const info = pendingChanges[svc.id] || serverInfo;
     const isOn = info.status === 'on';
 
     const item = document.createElement('div');
@@ -300,7 +303,7 @@ function renderServices() {
         <small>${isOn ? 'Aktif' : 'Nonaktif: ' + (info.reason || 'tanpa alasan')}</small>
       </div>
       <button class="service-btn ${isOn ? 'on' : 'off'}"
-              onclick="toggleService('${svc.id}')">
+              onclick="toggleServiceLocal('${svc.id}')"
         ${isOn ? '🟢 ON' : '🔴 OFF'}
       </button>
     `;
@@ -312,59 +315,92 @@ function renderServices() {
       reasonInput.className = 'reason-input';
       reasonInput.placeholder = 'Alasan OFF (tampil ke user)';
       reasonInput.value = info.reason || '';
-      reasonInput.onchange = () => updateReason(svc.id, reasonInput.value);
+      reasonInput.oninput = () => updateReason(svc.id, reasonInput.value);
       container.appendChild(reasonInput);
     }
   });
 }
 
-async function toggleService(serviceId) {
+let pendingChanges = {};
+
+function toggleServiceLocal(serviceId) {
+  const serverInfo = servicesData[serviceId] || { status: 'on', reason: '' };
+  const current = pendingChanges[serviceId] || { ...serverInfo };
+  const newStatus = current.status === 'on' ? 'off' : 'on';
+
+  pendingChanges[serviceId] = {
+    status: newStatus,
+    reason: current.reason || ''
+  };
+
+  updateApplyButton();
+  renderServices();
+}
+
+function updateApplyButton() {
+  const btn = $('applyBtn');
+  const count = Object.keys(pendingChanges).length;
+  if (count > 0) {
+    btn.classList.add('dirty');
+    btn.textContent = `💾 TERAPKAN (${count} perubahan)`;
+  } else {
+    btn.classList.remove('dirty');
+    btn.textContent = '💾 TERAPKAN PERUBAHAN SERVICE';
+  }
+    }
+
+  async function applyServices() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
   if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
 
-  const current = servicesData[serviceId] || { status: 'on' };
-  const newStatus = current.status === 'on' ? 'off' : 'on';
-  const reason = current.reason || '';
-
-  try {
-    const res = await fetch(
-      SERVICES_API + '?action=set&service=' + serviceId +
-      '&status=' + newStatus +
-      '&reason=' + encodeURIComponent(reason) +
-      '&key1=' + encodeURIComponent(key1) +
-      '&key2=' + encodeURIComponent(key2),
-      { cache: 'no-store' }
-    );
-    const data = await res.json();
-    if (res.ok && data.success) {
-      showStatus('✅ ' + data.message, newStatus === 'on' ? 'off' : 'on');
-      await loadServices();
-    } else {
-      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
-    }
-  } catch (err) {
-    showStatus('❌ Error: ' + err.message, 'error');
+  const keys = Object.keys(pendingChanges);
+  if (keys.length === 0) {
+    return showStatus('ℹ️ Tidak ada perubahan.', 'warn');
   }
-}
 
-async function updateReason(serviceId, reason) {
-  const key1 = $('key1').value.trim();
-  const key2 = $('key2').value.trim();
-  const current = servicesData[serviceId] || { status: 'off' };
+  showStatus('⏳ Menerapkan ' + keys.length + ' perubahan...', 'warn');
 
-  try {
-    await fetch(
-      SERVICES_API + '?action=set&service=' + serviceId +
-      '&status=' + current.status +
-      '&reason=' + encodeURIComponent(reason) +
-      '&key1=' + encodeURIComponent(key1) +
-      '&key2=' + encodeURIComponent(key2),
-      { cache: 'no-store' }
-    );
-    await loadServices();
-    showStatus('✅ Alasan disimpan', 'off');
-  } catch (err) {}
+  let berhasil = 0, gagal = 0;
+  for (const serviceId of keys) {
+    const info = pendingChanges[serviceId];
+    try {
+      const res = await fetch(
+        SERVICES_API + '?action=set&service=' + serviceId +
+        '&status=' + info.status +
+        '&reason=' + encodeURIComponent(info.reason || '') +
+        '&key1=' + encodeURIComponent(key1) +
+        '&key2=' + encodeURIComponent(key2),
+        { cache: 'no-store' }
+      );
+      const data = await res.json();
+      if (res.ok && data.success) {
+        berhasil++;
+        servicesData[serviceId] = { status: info.status, reason: info.reason || '' };
+      } else {
+        gagal++;
+      }
+    } catch (err) {
+      gagal++;
+    }
+  }
+
+  pendingChanges = {};
+  updateApplyButton();
+  renderServices();
+
+  if (gagal === 0) showStatus('✅ Berhasil: ' + berhasil + ' service', 'off');
+  else showStatus('⚠️ Berhasil: ' + berhasil + ' | Gagal: ' + gagal, 'error');
+  }
+
+
+function updateReason(serviceId, reason) {
+  const serverInfo = servicesData[serviceId] || { status: 'off', reason: '' };
+  if (!pendingChanges[serviceId]) {
+    pendingChanges[serviceId] = { ...serverInfo };
+  }
+  pendingChanges[serviceId].reason = reason;
+  updateApplyButton();
 }
 
 // ==========================================
