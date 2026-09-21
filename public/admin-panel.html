@@ -278,23 +278,28 @@ button:active { transform: scale(.98); }
 </div>
 
   <!-- ========================================== -->
-<!-- TOMBOL PANIK -->
+<!<!-- ========================================== -->
+<!-- EMERGENCY — COLLAPSIBLE -->
 <!-- ========================================== -->
-<div class="divider"></div>
-<h2 style="color:#ff4b3f;">🚨 EMERGENCY</h2>
+<div class="collapsible-header" onclick="togglePanicPanel()" style="border-color:#ff4b3f;">
+  <h2 style="color:#ff4b3f;">🚨 EMERGENCY</h2>
+  <span class="arrow-toggle" id="arrowPanic" style="color:#ff4b3f;">▼</span>
+</div>
 
-<button class="btn-panic" onclick="konfirmasiPanic('on')" style="background:linear-gradient(135deg,#ff4b3f,#d32f2f);color:#fff;font-size:16px;">
-  🚨 EMERGENCY MODE ON
-</button>
+<div class="collapsible-body" id="panicPanel">
+  <button class="btn-panic" onclick="konfirmasiPanic('on')" style="background:linear-gradient(135deg,#ff4b3f,#d32f2f);color:#fff;font-size:16px;">
+    🚨 EMERGENCY MODE ON
+  </button>
 
-<button class="btn-panic" onclick="konfirmasiPanic('off')" style="background:linear-gradient(135deg,#39df88,#00a07a);color:#08130d;font-size:16px;">
-  🟢 EMERGENCY MODE OFF
-</button>
+  <button class="btn-panic" onclick="konfirmasiPanic('off')" style="background:linear-gradient(135deg,#39df88,#00a07a);color:#08130d;font-size:16px;">
+    🟢 EMERGENCY MODE OFF
+  </button>
 
-<p style="color:#8d91a2;font-size:11px;text-align:left;margin-top:8px;line-height:1.5;">
-  <b>EMERGENCY ON:</b> Matikan semua service + maintenance ON + broadcast otomatis.<br>
-  <b>EMERGENCY OFF:</b> Nyalakan semua service + maintenance OFF + broadcast OFF.
-</p>
+  <p style="color:#8d91a2;font-size:11px;text-align:left;margin-top:8px;line-height:1.5;">
+    <b>PANIC ON:</b> Matikan semua service + maintenance ON + broadcast otomatis.<br>
+    <b>PANIC OFF:</b> Nyalakan semua service + maintenance OFF + broadcast OFF.
+  </p>
+</div>
 
   <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
 
@@ -743,6 +748,13 @@ async function konfirmasiPanic(action) {
     showStatus('❌ Error: ' + err.message, 'error');
   }
 }
+
+  function togglePanicPanel() {
+  const panel = $('panicPanel');
+  const arrow = $('arrowPanic');
+  panel.classList.toggle('open');
+  arrow.classList.toggle('open');
+  }
 
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
