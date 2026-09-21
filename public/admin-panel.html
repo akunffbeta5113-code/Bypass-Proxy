@@ -149,6 +149,26 @@ button:active { transform: scale(.98); }
   <button class="btn-on" onclick="ubah('on')">🔴 AKTIFKAN MAINTENANCE</button>
   <button class="btn-off" onclick="ubah('off')">🟢 MATIKAN MAINTENANCE</button>
   <button class="btn-check" onclick="cek()">🔍 Cek Status Maintenance</button>
+  
+  <!-- ========================================== -->
+<!-- NOTIFIKASI BROADCAST -->
+<!-- ========================================== -->
+<div class="divider"></div>
+<h2>📢 NOTIFIKASI BROADCAST</h2>
+
+<label>Tipe Notifikasi</label>
+<select id="bcastType" style="width:100%;height:44px;padding:0 12px;background:#1b1e2a;border:1px solid #303444;border-radius:12px;color:#fff;font-size:14px;margin-bottom:12px;outline:none;">
+  <option value="info">ℹ️ Info (biru)</option>
+  <option value="success">✅ Sukses (hijau)</option>
+  <option value="warning">⚠️ Peringatan (kuning)</option>
+  <option value="danger">🚨 Penting (merah)</option>
+</select>
+
+<label>Pesan</label>
+<textarea id="bcastMessage" placeholder="Ketik pengumuman untuk semua user..." rows="3" style="width:100%;padding:12px;background:#1b1e2a;border:1px solid #303444;border-radius:12px;color:#fff;font-size:13px;margin-bottom:12px;outline:none;resize:vertical;font-family:inherit;"></textarea>
+
+<button class="btn-apply" onclick="kirimBroadcast()" style="background:linear-gradient(135deg,#00c896,#00a07a);">📢 KIRIM BROADCAST</button>
+<button class="btn-check" onclick="matikanBroadcast()">🔇 MATIKAN BROADCAST</button>
 
   <!-- MANAJEMEN SERVICE -->
   <div class="collapsible-header" onclick="toggleServicePanel()">
@@ -396,6 +416,62 @@ function toggleServicePanel() {
   const arrow = $('arrowToggle');
   panel.classList.toggle('open');
   arrow.classList.toggle('open');
+}
+
+  // ==========================================
+// BROADCAST
+// ==========================================
+async function kirimBroadcast() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  const message = $('bcastMessage').value.trim();
+  const type = $('bcastType').value;
+
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+  if (!message) return showStatus('⚠️ Pesan tidak boleh kosong!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/broadcast?action=set' +
+      '&message=' + encodeURIComponent(message) +
+      '&type=' + encodeURIComponent(type) +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, 'off');
+      $('bcastMessage').value = '';
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function matikanBroadcast() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/broadcast?action=off' +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, 'off');
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
 }
 
 // ==========================================
