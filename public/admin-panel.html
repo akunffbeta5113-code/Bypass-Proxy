@@ -57,6 +57,18 @@ button:active { transform: scale(.98); }
   color: #fff;
   margin-top: 4px;
 }
+.btn-apply {
+  background: linear-gradient(135deg, #ffa726, #ff7043);
+  color: #fff;
+  font-size: 16px;
+  margin-top: 6px;
+  position: relative;
+}
+.btn-apply.dirty::after {
+  content: " ●";
+  color: #ffea00;
+  font-size: 20px;
+}
 .status {
   margin-top: 18px; padding: 16px; border-radius: 12px;
   background: #0d0f17; font-size: 13px; color: #b8ffcf;
@@ -67,12 +79,12 @@ button:active { transform: scale(.98); }
 .status.on { background: #4b1e22; color: #ff6262; font-weight: 700; }
 .status.off { background: #1a3a24; color: #39df88; font-weight: 700; }
 .status.error { background: #3a1a1a; color: #ff8888; }
+.status.warn { background: #3a2a0f; color: #ffca18; font-weight: 700; }
 .divider {
   height: 1px;
   background: #292c3b;
   margin: 20px 0 18px;
 }
-/* Service management */
 .service-item {
   display: flex;
   align-items: center;
@@ -144,6 +156,8 @@ button:active { transform: scale(.98); }
   <h2>⚙️ MANAJEMEN SERVICE</h2>
   <div id="serviceList"></div>
 
+  <button class="btn-apply" id="applyBtn" onclick="applyServices()">💾 TERAPKAN PERUBAHAN</button>
+
   <div class="divider"></div>
 
   <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
@@ -196,7 +210,7 @@ async function cek() {
 }
 
 // ==========================================
-// MANAJEMEN SERVICE
+// MANAJEMEN SERVICE (dengan tombol Terapkan)
 // ==========================================
 const SERVICES = [
   { id: 'adlink', name: 'AdLinkSumo' },
@@ -207,13 +221,16 @@ const SERVICES = [
   { id: 'universal', name: 'Universal' }
 ];
 
-let servicesData = {};
+let servicesData = {};       // data dari server (asli)
+let pendingChanges = {};     // perubahan lokal yang belum diterapkan
 
 async function loadServices() {
   try {
     const res = await fetch(SERVICES_API, { cache: 'no-store' });
     const data = await res.json();
     servicesData = data.services || {};
+    pendingChanges = {};   // reset pending saat load
+    updateApplyButton();
     renderServices();
   } catch (err) {
     console.error('Load services failed:', err);
@@ -225,7 +242,10 @@ function renderServices() {
   container.innerHTML = '';
 
   SERVICES.forEach(svc => {
-    const info = servicesData[svc.id] || { status: 'on', reason: '' };
+    // Gabungkan data server + pending changes
+    const serverInfo = servicesData[svc.id] || { status: 'on', reason: '' };
+    const pendingInfo = pendingChanges[svc.id] || null;
+    const info = pendingInfo || serverInfo;
     const isOn = info.status === 'on';
 
     const item = document.createElement('div');
@@ -236,7 +256,7 @@ function renderServices() {
         <small>${isOn ? 'Aktif' : 'Nonaktif: ' + (info.reason || 'tanpa alasan')}</small>
       </div>
       <button class="service-btn ${isOn ? 'on' : 'off'}"
-              onclick="toggleService('${svc.id}')">
+              onclick="toggleServiceLocal('${svc.id}')">
         ${isOn ? '🟢 ON' : '🔴 OFF'}
       </button>
     `;
@@ -248,59 +268,97 @@ function renderServices() {
       reasonInput.className = 'reason-input';
       reasonInput.placeholder = 'Alasan OFF (tampil ke user)';
       reasonInput.value = info.reason || '';
-      reasonInput.onchange = () => updateReason(svc.id, reasonInput.value);
+      reasonInput.oninput = () => {
+        if (!pendingChanges[svc.id]) {
+          pendingChanges[svc.id] = { ...serverInfo };
+        }
+        pendingChanges[svc.id].reason = reasonInput.value;
+        updateApplyButton();
+      };
       container.appendChild(reasonInput);
     }
   });
 }
 
-async function toggleService(serviceId) {
+// Toggle HANYA di layar (belum kirim ke server)
+function toggleServiceLocal(serviceId) {
+  const serverInfo = servicesData[serviceId] || { status: 'on', reason: '' };
+  const current = pendingChanges[serviceId] || { ...serverInfo };
+  const newStatus = current.status === 'on' ? 'off' : 'on';
+
+  pendingChanges[serviceId] = {
+    status: newStatus,
+    reason: current.reason || ''
+  };
+
+  updateApplyButton();
+  renderServices();
+}
+
+function updateApplyButton() {
+  const btn = $('applyBtn');
+  const count = Object.keys(pendingChanges).length;
+  if (count > 0) {
+    btn.classList.add('dirty');
+    btn.textContent = `💾 TERAPKAN (${count} perubahan)`;
+  } else {
+    btn.classList.remove('dirty');
+    btn.textContent = '💾 TERAPKAN PERUBAHAN';
+  }
+}
+
+// Kirim SEMUA perubahan sekaligus ke server
+async function applyServices() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
   if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
 
-  const current = servicesData[serviceId] || { status: 'on' };
-  const newStatus = current.status === 'on' ? 'off' : 'on';
-  const reason = current.reason || '';
-
-  try {
-    const res = await fetch(
-      SERVICES_API + '?action=set&service=' + serviceId +
-      '&status=' + newStatus +
-      '&reason=' + encodeURIComponent(reason) +
-      '&key1=' + encodeURIComponent(key1) +
-      '&key2=' + encodeURIComponent(key2),
-      { cache: 'no-store' }
-    );
-    const data = await res.json();
-    if (res.ok && data.success) {
-      showStatus('✅ ' + data.message, newStatus === 'on' ? 'off' : 'on');
-      await loadServices();
-    } else {
-      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
-    }
-  } catch (err) {
-    showStatus('❌ Error: ' + err.message, 'error');
+  const keys = Object.keys(pendingChanges);
+  if (keys.length === 0) {
+    return showStatus('ℹ️ Tidak ada perubahan untuk diterapkan.', 'warn');
   }
-}
 
-async function updateReason(serviceId, reason) {
-  const key1 = $('key1').value.trim();
-  const key2 = $('key2').value.trim();
-  const current = servicesData[serviceId] || { status: 'off' };
+  showStatus('⏳ Menerapkan ' + keys.length + ' perubahan...', 'warn');
 
-  try {
-    await fetch(
-      SERVICES_API + '?action=set&service=' + serviceId +
-      '&status=' + current.status +
-      '&reason=' + encodeURIComponent(reason) +
-      '&key1=' + encodeURIComponent(key1) +
-      '&key2=' + encodeURIComponent(key2),
-      { cache: 'no-store' }
-    );
-    await loadServices();
-    showStatus('✅ Alasan disimpan', 'off');
-  } catch (err) {}
+  let berhasil = 0;
+  let gagal = 0;
+
+  for (const serviceId of keys) {
+    const info = pendingChanges[serviceId];
+    try {
+      const res = await fetch(
+        SERVICES_API + '?action=set&service=' + serviceId +
+        '&status=' + info.status +
+        '&reason=' + encodeURIComponent(info.reason || '') +
+        '&key1=' + encodeURIComponent(key1) +
+        '&key2=' + encodeURIComponent(key2),
+        { cache: 'no-store' }
+      );
+      const data = await res.json();
+      if (res.ok && data.success) {
+        berhasil++;
+        // Update data server lokal
+        servicesData[serviceId] = {
+          status: info.status,
+          reason: info.reason || ''
+        };
+      } else {
+        gagal++;
+      }
+    } catch (err) {
+      gagal++;
+    }
+  }
+
+  pendingChanges = {};
+  updateApplyButton();
+  renderServices();
+
+  if (gagal === 0) {
+    showStatus('✅ Berhasil diterapkan: ' + berhasil + ' service', 'off');
+  } else {
+    showStatus('⚠️ Berhasil: ' + berhasil + ' | Gagal: ' + gagal, 'error');
+  }
 }
 
 // ==========================================
