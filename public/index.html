@@ -261,6 +261,16 @@ button{cursor:pointer}
       <div class="info"><b>MOVE2LINK BYPASS</b><small>Bypass Link • Fast</small></div>
       <div class="arrow">›</div>
     </div>
+    <div class="service" style="--accent:#00c896" data-type="sub2unlock">
+  <div class="icon">≡★</div>
+  <div class="info"><b>SUB2UNLOCK BYPASS</b><small>Bypass Link • Fast</small></div>
+  <div class="arrow">›</div>
+</div>
+<div class="service" style="--accent:#e91e63" data-type="sub4unlock">
+  <div class="icon">≡★</div>
+  <div class="info"><b>SUB4UNLOCK BYPASS</b><small>Bypass Link • Fast</small></div>
+  <div class="arrow">›</div>
+</div>
     <div class="service" style="--accent:#a855f7" data-type="universal">
       <div class="icon">≡★</div>
       <div class="info"><b>UNIVERSAL BYPASS</b><small>Bypass All Link • Fast</small></div>
@@ -531,6 +541,8 @@ const ENDPOINTS = {
   delta: 'izen',
   linkvertise: 'linkvertise',
   move2link: 'move2link',
+  sub2unlock: 'sub2unlock',  
+  sub4unlock: 'sub4unlock',  
   universal: 'universal'
 };
 
@@ -563,21 +575,25 @@ document.querySelectorAll(".service").forEach(card => {
   if (!cekService(card.dataset.type)) return;
   currentType = card.dataset.type;
     const names = {
-      adlink: "AdLinkSumo Bypass",
-      sfl: "SFL Bypass",
-      delta: "Delta Bypass",
-      linkvertise: "Linkvertise Bypass",
-      move2link: "Move2link Bypass",
-      universal: "Universal Bypass"
-    };
-    const placeholders = {
-      adlink: "Tempel link AdLinkSumo di sini",
-      sfl: "Tempel link SFL di sini",
-      delta: "Tempel link DeltaBypass di sini",
-      linkvertise: "Tempel link Linkvertise di sini",
-      move2link: "Tempel link Move2link di sini",
-      universal: "Tempel link Universal Bypass di sini"
-    };
+  adlink: "AdLinkSumo Bypass",
+  sfl: "SFL Bypass",
+  delta: "Delta Bypass",
+  linkvertise: "Linkvertise Bypass",
+  move2link: "Move2link Bypass",
+  sub2unlock: "Sub2Unlock Bypass",
+  sub4unlock: "Sub4Unlock Bypass",
+  universal: "Universal Bypass"
+};
+const placeholders = {
+  adlink: "Tempel link AdLinkSumo di sini",
+  sfl: "Tempel link SFL di sini",
+  delta: "Tempel link DeltaBypass di sini",
+  linkvertise: "Tempel link Linkvertise di sini",
+  move2link: "Tempel link Move2link di sini",
+  sub2unlock: "Tempel link Sub2Unlock di sini",
+  sub4unlock: "Tempel link Sub4Unlock di sini",
+  universal: "Tempel link Universal Bypass di sini"
+};
     $("modalTitle").textContent = names[currentType];
     $("url").placeholder = placeholders[currentType];
     $("url").value = "";
@@ -742,9 +758,15 @@ async function bypass(){
       success = !!(json && json.status);
       bypassed = json && json.bypassed_url;
     } else if(currentType === "move2link") {
-      success = !!(json && json.status);
-      bypassed = json && (json.bypassed_url || json.url || json.result);
-    } else if(currentType === "universal") {
+  success = !!(json && json.status);
+  bypassed = json && (json.bypassed_url || json.url || json.result);
+} else if(currentType === "sub2unlock") {
+  success = !!(json && json.status);
+  bypassed = json && (json.bypassed_url || json.url || json.result);
+} else if(currentType === "sub4unlock") {
+  success = !!(json && json.status);
+  bypassed = json && (json.bypassed_url || json.url || json.result);
+} else if(currentType === "universal") {
       success = !!(json && json.status);
       bypassed = json && (json.result || json.url || json.bypassed_url);
     }
