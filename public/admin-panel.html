@@ -57,120 +57,80 @@ button:active { transform: scale(.98); }
   color: #fff;
   margin-top: 4px;
 }
+.btn-apply {
+  background: linear-gradient(135deg, #ffa726, #ff7043);
+  color: #fff;
+  font-size: 15px;
+  margin-top: 6px;
+  position: relative;
+}
+.btn-apply.dirty::after {
+  content: " ●";
+  color: #ffea00;
+  font-size: 20px;
+}
 .status {
   margin-top: 18px; padding: 16px; border-radius: 12px;
   background: #0d0f17; font-size: 13px; color: #b8ffcf;
   word-break: break-word; min-height: 50px;
-  display: flex; align-items: center; justify-content: center;
+  display: none;
+  align-items: center; justify-content: center;
   text-align: center; line-height: 1.5;
 }
+.status.show { display: flex; }
 .status.on { background: #4b1e22; color: #ff6262; font-weight: 700; }
 .status.off { background: #1a3a24; color: #39df88; font-weight: 700; }
 .status.error { background: #3a1a1a; color: #ff8888; }
-.divider {
-  height: 1px;
-  background: #292c3b;
-  margin: 20px 0 18px;
-}
+.status.warn { background: #3a2a0f; color: #ffca18; font-weight: 700; }
+.divider { height: 1px; background: #292c3b; margin: 20px 0 18px; }
 
-/* ========================================== */
-/* COLLAPSIBLE SERVICE PANEL */
-/* ========================================== */
+/* Collapsible */
 .collapsible-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  background: #1b1e2a;
-  border: 1px solid #303444;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: .2s;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  margin-bottom: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: #1b1e2a;
+  border: 1px solid #303444; border-radius: 14px;
+  cursor: pointer; transition: .2s;
+  user-select: none; -webkit-tap-highlight-color: transparent;
+  margin-top: 6px;
 }
-.collapsible-header:hover {
-  background: #222633;
-}
-.collapsible-header h2 {
-  margin: 0;
-  font-size: 15px;
-  color: #fff;
-  text-align: left;
-}
+.collapsible-header:hover { background: #222633; }
+.collapsible-header h2 { margin: 0; font-size: 15px; color: #fff; text-align: left; }
 .arrow-toggle {
-  font-size: 16px;
-  color: #8b5cff;
+  font-size: 16px; color: #8b5cff;
   transition: transform .3s ease;
-  display: inline-block;
-  font-weight: 800;
+  display: inline-block; font-weight: 800;
 }
-.arrow-toggle.open {
-  transform: rotate(180deg);
-}
+.arrow-toggle.open { transform: rotate(180deg); }
 .collapsible-body {
-  max-height: 0;
-  overflow: hidden;
+  max-height: 0; overflow: hidden;
   transition: max-height .4s ease, opacity .3s ease, margin .3s ease;
-  opacity: 0;
-  margin-top: 0;
+  opacity: 0; margin-top: 0;
 }
-.collapsible-body.open {
-  max-height: 1200px;
-  opacity: 1;
-  margin-top: 12px;
-}
-  
-/* Service management */
+.collapsible-body.open { max-height: 1500px; opacity: 1; margin-top: 12px; }
+
+/* Service */
 .service-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  background: #1b1e2a;
-  border-radius: 12px;
-  margin-bottom: 8px;
-  gap: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: #1b1e2a;
+  border-radius: 12px; margin-bottom: 8px; gap: 10px;
 }
-.service-name {
-  font-size: 14px;
-  font-weight: 700;
-  flex: 1;
-  text-align: left;
-}
+.service-name { font-size: 14px; font-weight: 700; flex: 1; text-align: left; }
 .service-name small {
-  display: block;
-  font-size: 11px;
-  color: #8d91a2;
-  font-weight: 500;
-  margin-top: 2px;
+  display: block; font-size: 11px; color: #8d91a2;
+  font-weight: 500; margin-top: 2px;
 }
 .service-btn {
-  padding: 8px 14px;
-  border: 0;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .15s;
-  width: auto;
-  height: auto;
-  margin: 0;
+  padding: 8px 14px; border: 0; border-radius: 8px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: .15s; width: auto; height: auto; margin: 0;
 }
 .service-btn.on { background: #39df88; color: #08130d; }
 .service-btn.off { background: #ff4b3f; color: #fff; }
 .reason-input {
-  width: 100%;
-  height: 40px;
-  font-size: 12px;
-  margin: 0 0 10px 0;
-  padding: 0 12px;
-  background: #12151f;
-  border: 1px solid #303444;
-  border-radius: 10px;
-  color: #fff;
-  outline: none;
+  width: 100%; height: 40px; font-size: 12px;
+  margin: 0 0 10px 0; padding: 0 12px;
+  background: #12151f; border: 1px solid #303444;
+  border-radius: 10px; color: #fff; outline: none;
 }
 .reason-input::placeholder { color: #5a5f70; }
 </style>
@@ -190,33 +150,41 @@ button:active { transform: scale(.98); }
   <button class="btn-off" onclick="ubah('off')">🟢 MATIKAN MAINTENANCE</button>
   <button class="btn-check" onclick="cek()">🔍 Cek Status Maintenance</button>
 
-  <!-- ========================================== -->
-<!-- MANAJEMEN SERVICE — COLLAPSIBLE -->
-<!-- ========================================== -->
-<div class="collapsible-header" onclick="toggleServicePanel()">
-  <h2>⚙️ MANAJEMEN SERVICE</h2>
-  <span class="arrow-toggle" id="arrowToggle">▼</span>
-</div>
-
-<div class="collapsible-body" id="servicePanel">
-  <div id="serviceList">
-    <!-- Card service diisi otomatis oleh JavaScript -->
+  <!-- MANAJEMEN SERVICE -->
+  <div class="collapsible-header" onclick="toggleServicePanel()">
+    <h2>⚙️ MANAJEMEN SERVICE</h2>
+    <span class="arrow-toggle" id="arrowToggle">▼</span>
   </div>
 
-  <button class="btn-apply" id="applyBtn" onclick="applyServices()">
-    💾 TERAPKAN PERUBAHAN SERVICE
-  </button>
-</div>
+  <div class="collapsible-body" id="servicePanel">
+    <div id="serviceList"></div>
+    <button class="btn-apply" id="applyBtn" onclick="applyServices()">
+      💾 TERAPKAN PERUBAHAN SERVICE
+    </button>
+  </div>
 
   <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
 
-  <div class="status" id="status">Siap.</div>
+  <div class="status" id="status"></div>
 </div>
 
 <script>
 const MAINT_API = '/api/maintenance';
 const SERVICES_API = '/api/services';
 const $ = id => document.getElementById(id);
+
+// ==========================================
+// STATUS
+// ==========================================
+function showStatus(text, cls) {
+  const el = $('status');
+  if (!text) {
+    el.classList.remove('show');
+    return;
+  }
+  el.textContent = text;
+  el.className = 'status show ' + (cls || '');
+}
 
 // ==========================================
 // MAINTENANCE
@@ -266,19 +234,20 @@ const SERVICES = [
   { id: 'delta', name: 'Delta' },
   { id: 'linkvertise', name: 'Linkvertise' },
   { id: 'move2link', name: 'Move2link' },
-  { id: 'sub2unlock', name: 'Sub2Unlock' },     
-  { id: 'sub4unlock', name: 'Sub4Unlock' },     
+  { id: 'sub2unlock', name: 'Sub2Unlock' },
+  { id: 'sub4unlock', name: 'Sub4Unlock' },
   { id: 'universal', name: 'Universal' }
 ];
 
-let servicesData = {};
+let servicesData = {};      // data dari server
+let pendingChanges = {};    // perubahan lokal (belum diterapkan)
 
 async function loadServices() {
   try {
     const res = await fetch(SERVICES_API, { cache: 'no-store' });
     const data = await res.json();
     servicesData = data.services || {};
-    pendingChanges = {};
+    pendingChanges = {};    // reset pending saat load
     updateApplyButton();
     renderServices();
   } catch (err) {
@@ -292,7 +261,8 @@ function renderServices() {
 
   SERVICES.forEach(svc => {
     const serverInfo = servicesData[svc.id] || { status: 'on', reason: '' };
-    const info = pendingChanges[svc.id] || serverInfo;
+    const pendingInfo = pendingChanges[svc.id];
+    const info = pendingInfo ? { ...serverInfo, ...pendingInfo } : serverInfo;
     const isOn = info.status === 'on';
 
     const item = document.createElement('div');
@@ -303,7 +273,7 @@ function renderServices() {
         <small>${isOn ? 'Aktif' : 'Nonaktif: ' + (info.reason || 'tanpa alasan')}</small>
       </div>
       <button class="service-btn ${isOn ? 'on' : 'off'}"
-              onclick="toggleServiceLocal('${svc.id}')"
+              onclick="toggleServiceLocal('${svc.id}')">
         ${isOn ? '🟢 ON' : '🔴 OFF'}
       </button>
     `;
@@ -315,17 +285,18 @@ function renderServices() {
       reasonInput.className = 'reason-input';
       reasonInput.placeholder = 'Alasan OFF (tampil ke user)';
       reasonInput.value = info.reason || '';
-      reasonInput.oninput = () => updateReason(svc.id, reasonInput.value);
+      reasonInput.oninput = (e) => updateReasonLocal(svc.id, e.target.value);
       container.appendChild(reasonInput);
     }
   });
 }
 
-let pendingChanges = {};
-
+// Toggle HANYA di layar — TIDAK kirim ke server
 function toggleServiceLocal(serviceId) {
   const serverInfo = servicesData[serviceId] || { status: 'on', reason: '' };
-  const current = pendingChanges[serviceId] || { ...serverInfo };
+  const current = pendingChanges[serviceId]
+    ? { ...serverInfo, ...pendingChanges[serviceId] }
+    : { ...serverInfo };
   const newStatus = current.status === 'on' ? 'off' : 'on';
 
   pendingChanges[serviceId] = {
@@ -335,6 +306,21 @@ function toggleServiceLocal(serviceId) {
 
   updateApplyButton();
   renderServices();
+}
+
+// Update alasan HANYA di layar — TIDAK kirim ke server
+function updateReasonLocal(serviceId, reason) {
+  const serverInfo = servicesData[serviceId] || { status: 'off', reason: '' };
+  const current = pendingChanges[serviceId]
+    ? { ...serverInfo, ...pendingChanges[serviceId] }
+    : { ...serverInfo };
+
+  pendingChanges[serviceId] = {
+    status: current.status,
+    reason: reason
+  };
+
+  updateApplyButton();
 }
 
 function updateApplyButton() {
@@ -347,21 +333,24 @@ function updateApplyButton() {
     btn.classList.remove('dirty');
     btn.textContent = '💾 TERAPKAN PERUBAHAN SERVICE';
   }
-    }
+}
 
-  async function applyServices() {
+// Kirim perubahan ke server — HANYA saat tombol Terapkan diklik
+async function applyServices() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
   if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
 
   const keys = Object.keys(pendingChanges);
   if (keys.length === 0) {
-    return showStatus('ℹ️ Tidak ada perubahan.', 'warn');
+    return showStatus('ℹ️ Tidak ada perubahan untuk diterapkan.', 'warn');
   }
 
   showStatus('⏳ Menerapkan ' + keys.length + ' perubahan...', 'warn');
 
-  let berhasil = 0, gagal = 0;
+  let berhasil = 0;
+  let gagal = 0;
+
   for (const serviceId of keys) {
     const info = pendingChanges[serviceId];
     try {
@@ -376,7 +365,10 @@ function updateApplyButton() {
       const data = await res.json();
       if (res.ok && data.success) {
         berhasil++;
-        servicesData[serviceId] = { status: info.status, reason: info.reason || '' };
+        servicesData[serviceId] = {
+          status: info.status,
+          reason: info.reason || ''
+        };
       } else {
         gagal++;
       }
@@ -389,31 +381,23 @@ function updateApplyButton() {
   updateApplyButton();
   renderServices();
 
-  if (gagal === 0) showStatus('✅ Berhasil: ' + berhasil + ' service', 'off');
-  else showStatus('⚠️ Berhasil: ' + berhasil + ' | Gagal: ' + gagal, 'error');
+  if (gagal === 0) {
+    showStatus('✅ Berhasil diterapkan: ' + berhasil + ' service', 'off');
+  } else {
+    showStatus('⚠️ Berhasil: ' + berhasil + ' | Gagal: ' + gagal, 'error');
   }
-
-
-function updateReason(serviceId, reason) {
-  const serverInfo = servicesData[serviceId] || { status: 'off', reason: '' };
-  if (!pendingChanges[serviceId]) {
-    pendingChanges[serviceId] = { ...serverInfo };
-  }
-  pendingChanges[serviceId].reason = reason;
-  updateApplyButton();
 }
 
 // ==========================================
-// TOGGLE SERVICE PANEL
+// TOGGLE PANEL
 // ==========================================
 function toggleServicePanel() {
-  const panel = document.getElementById('servicePanel');
-  const arrow = document.getElementById('arrowToggle');
-
+  const panel = $('servicePanel');
+  const arrow = $('arrowToggle');
   panel.classList.toggle('open');
   arrow.classList.toggle('open');
 }
-  
+
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
 // ==========================================
@@ -425,12 +409,6 @@ function bukaAplikasi() {
   const url = '/?admin=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2);
   window.open(url, '_blank');
   showStatus('✅ Aplikasi dibuka di tab baru (mode admin)', 'off');
-}
-
-function showStatus(text, cls) {
-  const el = $('status');
-  el.textContent = text;
-  el.className = 'status ' + (cls || '');
 }
 
 // Init
