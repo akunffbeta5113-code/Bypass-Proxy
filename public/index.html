@@ -368,6 +368,18 @@ body.has-broadcast {
 <div class="toast" id="toast">Berhasil</div>
 
 <script>
+
+// ==========================================
+// PENGAMAN — Sembunyikan overlay kalau macet
+// ==========================================
+setTimeout(() => {
+  const blocking = document.getElementById('blockingOverlay');
+  if (blocking) {
+    blocking.classList.add('hide');
+    setTimeout(() => blocking.remove(), 400);
+  }
+}, 5000);  // 5 detik maksimal
+  
 // ============================================
 // VERCEL PROXY
 // ============================================
