@@ -9,7 +9,7 @@ import { kv } from '@vercel/kv';
 const ADMIN_KEY_1 = '5113';
 const ADMIN_KEY_2 = '25413';
 
-const VALID_SERVICES = ['adlink', 'sfl', 'delta', 'linkvertise', 'move2link', 'universal'];
+const VALID_SERVICES = ['adlink', 'sfl', 'delta', 'linkvertise', 'move2link', 'sub2unlock', 'sub4unlock', 'universal'];
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
