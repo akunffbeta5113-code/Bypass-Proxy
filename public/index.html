@@ -158,6 +158,65 @@ button{cursor:pointer}
   font-size: 13px;
   font-weight: 600;
 }
+
+    /* Popup service OFF */
+.service-off-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.service-off-overlay.show { display: flex; }
+.service-off-box {
+  max-width: 380px;
+  width: 100%;
+  background: #1a1d29;
+  border: 2px solid #ff4b3f;
+  border-radius: 24px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  animation: popIn .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.service-off-icon { font-size: 54px; margin-bottom: 14px; }
+.service-off-title {
+  color: #ff6262;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.service-off-text {
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.service-off-reason {
+  color: #ffca18;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  padding: 12px;
+  background: #2a1e0f;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.service-off-close {
+  margin-top: 12px;
+  padding: 12px 24px;
+  background: #242834;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -420,6 +479,52 @@ setInterval(async () => {
   } catch (e) {}
 }, 10000);
 
+  // ==========================================
+// SERVICE ON/OFF CHECK
+// ==========================================
+const SERVICES_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
+  ? 'https://bypass-proxy.vercel.app/api/services'
+  : '/api/services';
+
+let servicesCache = {};
+
+async function loadServiceStatus() {
+  try {
+    const res = await fetch(SERVICES_API, { cache: 'no-store' });
+    const data = await res.json();
+    servicesCache = data.services || {};
+    localStorage.setItem('sd_services', JSON.stringify(servicesCache));
+  } catch (err) {}
+}
+
+function cekService(serviceId) {
+  const info = servicesCache[serviceId] || { status: 'on', reason: '' };
+  if (info.status === 'off') {
+    const overlay = document.getElementById('serviceOffOverlay');
+    const text = document.getElementById('serviceOffText');
+    const reason = document.getElementById('serviceOffReason');
+
+    const names = {
+      adlink: 'AdLinkSumo', sfl: 'SFL', delta: 'Delta',
+      linkvertise: 'Linkvertise', move2link: 'Move2link', universal: 'Universal'
+    };
+
+    text.textContent = 'Layanan ' + (names[serviceId] || serviceId) + ' sedang tidak tersedia.';
+    if (info.reason) {
+      reason.textContent = '💬 ' + info.reason;
+      reason.style.display = 'block';
+    } else {
+      reason.style.display = 'none';
+    }
+    overlay.classList.add('show');
+    return false;
+  }
+  return true;
+}
+
+loadServiceStatus();
+setInterval(loadServiceStatus, 30000);
+
 const ENDPOINTS = {
   adlink: 'adlink',
   sfl: 'sfl',
@@ -455,7 +560,8 @@ function debug(text){
 
 document.querySelectorAll(".service").forEach(card => {
   card.addEventListener("click", () => {
-    currentType = card.dataset.type;
+  if (!cekService(card.dataset.type)) return;
+  currentType = card.dataset.type;
     const names = {
       adlink: "AdLinkSumo Bypass",
       sfl: "SFL Bypass",
@@ -780,6 +886,21 @@ setInterval(() => {
     <div class="maintenance-sub">
       Aplikasi akan aktif otomatis setelah maintenance selesai.
     </div>
+  </div>
+</div>
+
+  <!-- Popup Service OFF -->
+<div class="service-off-overlay" id="serviceOffOverlay">
+  <div class="service-off-box">
+    <div class="service-off-icon">🚫</div>
+    <div class="service-off-title">SERVICE DIMATIKAN</div>
+    <div class="service-off-text" id="serviceOffText">
+      Service ini sedang tidak tersedia.
+    </div>
+    <div class="service-off-reason" id="serviceOffReason" style="display:none;"></div>
+    <button class="service-off-close" onclick="document.getElementById('serviceOffOverlay').classList.remove('show')">
+      Tutup
+    </button>
   </div>
 </div>
 </body>
