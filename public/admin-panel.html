@@ -210,6 +210,56 @@ button:active { transform: scale(.98); }
   border-radius: 10px; color: #fff; outline: none;
 }
 .reason-input::placeholder { color: #5a5f70; }
+
+  /* Health Check Server*/
+  .health-item {
+  background: #1b1e2a;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-left: 4px solid #8d91a2;
+}
+.health-item.online { border-left-color: #39df88; }
+.health-item.warning { border-left-color: #ffca18; }
+.health-item.offline { border-left-color: #ff4b3f; }
+.health-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.health-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+.health-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.health-badge.online { background: #1a3a24; color: #39df88; }
+.health-badge.warning { background: #3a2a0f; color: #ffca18; }
+.health-badge.offline { background: #3a1a1a; color: #ff8888; }
+.health-msg {
+  font-size: 12px;
+  color: #b8ffcf;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+.health-time {
+  font-size: 11px;
+  color: #5a5f70;
+  font-weight: 600;
+}
+.health-timestamp {
+  text-align: center;
+  color: #5a5f70;
+  font-size: 11px;
+  margin-top: 10px;
+}
 </style>
 </head>
 <body>
@@ -251,7 +301,10 @@ button:active { transform: scale(.98); }
   <button class="btn-check" onclick="matikanBroadcast()">🔇 MATIKAN BROADCAST</button>
 </div>
 
-  <!-- MANAJEMEN SERVICE -->
+  <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- MANAJEMEN SERVICE -->
+<!-- ========================================== -->
   <div class="collapsible-header" onclick="toggleServicePanel()">
     <h2>⚙️ MANAJEMEN SERVICE</h2>
     <span class="arrow-toggle" id="arrowToggle">▼</span>
@@ -264,7 +317,7 @@ button:active { transform: scale(.98); }
     </button>
   </div>
 
-  <!-- ========================================== -->
+<!-- ========================================== -->
 <!-- DASHBOARD STATISTIK — COLLAPSIBLE -->
 <!-- ========================================== -->
 <div class="collapsible-header" onclick="toggleStatsPanel()">
@@ -279,9 +332,9 @@ button:active { transform: scale(.98); }
     <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk memuat data.</div>
   </div>
 </div>
-
-  <!-- ========================================== -->
-<!<!-- ========================================== -->
+  
+<!-- ========================================== -->
+<!-- ========================================== -->
 <!-- EMERGENCY — COLLAPSIBLE -->
 <!-- ========================================== -->
 <div class="collapsible-header" onclick="togglePanicPanel()" style="border-color:#ff4b3f;">
@@ -304,6 +357,27 @@ button:active { transform: scale(.98); }
   </p>
 </div>
 
+<!-- ========================================== -->
+<!-- ========================================== -->
+<!-- HEALTH CHECK SERVER — COLLAPSIBLE -->
+<!-- ========================================== -->
+<div class="collapsible-header" onclick="toggleHealthPanel()">
+  <h2>🩺 HEALTH CHECK SERVER</h2>
+  <span class="arrow-toggle" id="arrowHealth">▼</span>
+</div>
+
+<div class="collapsible-body" id="healthPanel">
+  <button class="btn-check" onclick="loadHealth()">🔄 REFRESH STATUS</button>
+
+  <div id="healthContent" style="text-align:left;margin-top:14px;">
+    <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk cek status server.</div>
+  </div>
+</div>
+
+  <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- TESTER — COLLAPSIBLE -->
+<!-- ========================================== -->
   <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
 
   <div class="status" id="status"></div>
@@ -758,6 +832,76 @@ async function konfirmasiPanic(action) {
   panel.classList.toggle('open');
   arrow.classList.toggle('open');
   }
+
+// ==========================================
+// HEALTH CHECK SERVER
+// ==========================================
+function toggleHealthPanel() {
+  const panel = $('healthPanel');
+  const arrow = $('arrowHealth');
+  panel.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+async function loadHealth() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const box = $('healthContent');
+  box.innerHTML = '<div style="color:#8d91a2;text-align:center;padding:20px;">⏳ Mengecek server...</div>';
+
+  try {
+    const res = await fetch(
+      '/api/health?key1=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ ' + (data.error || 'Gagal') + '</div>';
+      return;
+    }
+
+    const SERVERS = [
+      { id: 'vercel', name: '🟣 Vercel (API)', desc: 'Server API aplikasi' },
+      { id: 'upstash', name: '🔵 Upstash KV', desc: 'Database key-value' },
+      { id: 'theresav', name: '🟢 Theresav API', desc: 'Backend bypass' }
+    ];
+
+    let html = '';
+
+    SERVERS.forEach(srv => {
+      const info = data.results[srv.id] || { status: 'offline', time: 0, message: '' };
+      const statusText = {
+        online: '● ONLINE',
+        warning: '● WARNING',
+        offline: '● OFFLINE',
+        checking: '● CHECKING'
+      }[info.status] || '● UNKNOWN';
+
+      html += `
+        <div class="health-item ${info.status}">
+          <div class="health-head">
+            <span class="health-name">${srv.name}</span>
+            <span class="health-badge ${info.status}">${statusText}</span>
+          </div>
+          <div class="health-msg">${info.message || '-'}</div>
+          <div class="health-time">⏱️ ${info.time != null ? info.time + ' ms' : '-'}</div>
+        </div>
+      `;
+    });
+
+    const ts = new Date(data.timestamp).toLocaleString('id-ID');
+    html += `<div class="health-timestamp">🕒 Terakhir cek: ${ts}</div>`;
+
+    box.innerHTML = html;
+    showStatus('✅ Health check selesai', 'off');
+  } catch (err) {
+    box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ Error: ' + err.message + '</div>';
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+                    }
 
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
