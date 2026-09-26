@@ -357,6 +357,32 @@ button:active { transform: scale(.98); }
   </div>
 </div>
 
+  <!-- CUSTOM FAVICON — COLLAPSIBLE -->
+<div class="collapsible-header" onclick="toggleFaviconPanel()">
+  <h2>🖼️ CUSTOM ICON</h2>
+  <span class="arrow-toggle" id="arrowFavicon">▼</span>
+</div>
+
+<div class="collapsible-body" id="faviconPanel">
+  <label>URL Gambar Icon</label>
+  <input id="faviconUrl" type="text" placeholder="https://contoh.com/icon.png" style="margin-bottom:12px;">
+
+  <p style="color:#8d91a2;font-size:11px;text-align:left;margin-bottom:12px;line-height:1.5;">
+    <b>Cara upload gambar:</b><br>
+    1. Upload gambar ke <a href="https://imgur.com" target="_blank" style="color:#8b5cff;">imgur.com</a> atau <a href="https://postimages.org" target="_blank" style="color:#8b5cff;">postimages.org</a><br>
+    2. Copy <b>direct link</b>-nya (yang berakhiran .png / .jpg)<br>
+    3. Paste di kolom di atas → Simpan<br>
+    <b>Ukuran disarankan:</b> 192×192 atau 512×512 piksel.
+  </p>
+
+  <div id="faviconPreview" style="display:none;text-align:center;margin-bottom:12px;">
+    <img id="faviconPreviewImg" src="" alt="Preview" style="width:64px;height:64px;border-radius:12px;border:2px solid #303444;">
+  </div>
+
+  <button class="btn-apply" onclick="simpanFavicon()" style="background:linear-gradient(135deg,#00c896,#00a07a);">💾 SIMPAN FAVICON</button>
+  <button class="btn-check" onclick="hapusFavicon()">🗑️ HAPUS FAVICON</button>
+</div>
+
   <!-- ========================================== -->
 <!-- ========================================== -->
 <!-- EMERGENCY — COLLAPSIBLE -->
@@ -919,6 +945,90 @@ async function loadHealth() {
     showStatus('❌ Error: ' + err.message, 'error');
   }
 }
+
+  // ==========================================
+// CUSTOM FAVICON
+// ==========================================
+function toggleFaviconPanel() {
+  const panel = $('faviconPanel');
+  const arrow = $('arrowFavicon');
+  panel.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+async function simpanFavicon() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  const url = $('faviconUrl').value.trim();
+
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+  if (!url) return showStatus('⚠️ URL gambar tidak boleh kosong!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/favicon?action=set' +
+      '&url=' + encodeURIComponent(url) +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, 'off');
+      previewFavicon(url);
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function hapusFavicon() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/favicon?action=off' +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, 'off');
+      $('faviconPreview').style.display = 'none';
+    }
+  } catch (err) {}
+}
+
+function previewFavicon(url) {
+  const preview = $('faviconPreview');
+  const img = $('faviconPreviewImg');
+  img.src = url;
+  img.onerror = () => { preview.style.display = 'none'; showStatus('⚠️ Gambar tidak bisa dimuat', 'error'); };
+  img.onload = () => { preview.style.display = 'block'; };
+}
+
+// Preview saat input berubah
+$('faviconUrl').addEventListener('change', (e) => {
+  if (e.target.value.trim()) previewFavicon(e.target.value.trim());
+});
+
+// Load favicon sekarang saat halaman buka
+async function loadCurrentFavicon() {
+  try {
+    const res = await fetch('/api/favicon', { cache: 'no-store' });
+    const data = await res.json();
+    if (data.url) {
+      $('faviconUrl').value = data.url;
+      previewFavicon(data.url);
+    }
+  } catch (e) {}
+}
+loadCurrentFavicon();
 
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
