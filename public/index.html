@@ -538,6 +538,37 @@ async function cekMaintenance() {
   }
 }
 
+  // ==========================================
+// CUSTOM ICON
+// ==========================================
+const FAVICON_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
+  ? 'https://bypass-proxy.vercel.app/api/favicon'
+  : '/api/favicon';
+
+async function applyCustomFavicon() {
+  try {
+    const res = await fetch(FAVICON_API, { cache: 'no-store' });
+    const data = await res.json();
+    if (data.active && data.url) {
+      // Ganti favicon di tab browser
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = data.url;
+      link.type = 'image/png';
+
+      // Ganti apple-touch-icon
+      let apple = document.querySelector("link[rel='apple-touch-icon']");
+      if (apple) apple.href = data.url;
+    }
+  } catch (err) {}
+}
+
+applyCustomFavicon();
+
 // ==========================================
 // BROADCAST CHECK
 // ==========================================
