@@ -357,30 +357,26 @@ button:active { transform: scale(.98); }
   </div>
 </div>
 
-  <!-- CUSTOM FAVICON — COLLAPSIBLE -->
-<div class="collapsible-header" onclick="toggleFaviconPanel()">
-  <h2>🖼️ CUSTOM ICON</h2>
-  <span class="arrow-toggle" id="arrowFavicon">▼</span>
+  <!-- KONTAK ADMIN — COLLAPSIBLE -->
+<div class="collapsible-header" onclick="toggleContactPanel()">
+  <h2>📞 KONTAK ADMIN</h2>
+  <span class="arrow-toggle" id="arrowContact">▼</span>
 </div>
 
-<div class="collapsible-body" id="faviconPanel">
-  <label>URL Gambar Icon</label>
-  <input id="faviconUrl" type="text" placeholder="https://contoh.com/icon.png" style="margin-bottom:12px;">
+<div class="collapsible-body" id="contactPanel">
+  <label>Nomor WhatsApp</label>
+  <input id="contactWa" type="text" placeholder="6281234567890 (tanpa + dan spasi)" style="margin-bottom:12px;">
+
+  <label>Username Telegram</label>
+  <input id="contactTg" type="text" placeholder="username (tanpa @)" style="margin-bottom:12px;">
 
   <p style="color:#8d91a2;font-size:11px;text-align:left;margin-bottom:12px;line-height:1.5;">
-    <b>Cara upload gambar:</b><br>
-    1. Upload gambar ke <a href="https://imgur.com" target="_blank" style="color:#8b5cff;">imgur.com</a> atau <a href="https://postimages.org" target="_blank" style="color:#8b5cff;">postimages.org</a><br>
-    2. Copy <b>direct link</b>-nya (yang berakhiran .png / .jpg)<br>
-    3. Paste di kolom di atas → Simpan<br>
-    <b>Ukuran disarankan:</b> 192×192 atau 512×512 piksel.
+    <b>Format WA:</b> <code style="background:#0d0f17;padding:2px 6px;border-radius:4px;">6281234567890</code> (kode negara 62, tanpa + atau spasi)<br>
+    <b>Format Telegram:</b> <code style="background:#0d0f17;padding:2px 6px;border-radius:4px;">username</code> (tanpa @)
   </p>
 
-  <div id="faviconPreview" style="display:none;text-align:center;margin-bottom:12px;">
-    <img id="faviconPreviewImg" src="" alt="Preview" style="width:64px;height:64px;border-radius:12px;border:2px solid #303444;">
-  </div>
-
-  <button class="btn-apply" onclick="simpanFavicon()" style="background:linear-gradient(135deg,#00c896,#00a07a);">💾 SIMPAN FAVICON</button>
-  <button class="btn-check" onclick="hapusFavicon()">🗑️ HAPUS FAVICON</button>
+  <button class="btn-apply" onclick="simpanContact()" style="background:linear-gradient(135deg,#00c896,#00a07a);">💾 SIMPAN KONTAK</button>
+  <button class="btn-check" onclick="hapusContact()">🗑️ HAPUS KONTAK</button>
 </div>
 
   <!-- ========================================== -->
@@ -947,51 +943,49 @@ async function loadHealth() {
 }
 
   // ==========================================
-// CUSTOM FAVICON
+// KONTAK ADMIN
 // ==========================================
-function toggleFaviconPanel() {
-  const panel = $('faviconPanel');
-  const arrow = $('arrowFavicon');
+function toggleContactPanel() {
+  const panel = $('contactPanel');
+  const arrow = $('arrowContact');
   panel.classList.toggle('open');
   arrow.classList.toggle('open');
 }
 
-async function simpanFavicon() {
+async function simpanContact() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
-  const url = $('faviconUrl').value.trim();
+  const wa = $('contactWa').value.trim();
+  const tg = $('contactTg').value.trim();
 
   if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
-  if (!url) return showStatus('⚠️ URL gambar tidak boleh kosong!', 'error');
+  if (!wa && !tg) return showStatus('⚠️ Isi minimal 1 kontak!', 'error');
 
   try {
     const res = await fetch(
-      '/api/favicon?action=set' +
-      '&url=' + encodeURIComponent(url) +
+      '/api/contact?action=set' +
+      '&wa=' + encodeURIComponent(wa) +
+      '&telegram=' + encodeURIComponent(tg) +
       '&key1=' + encodeURIComponent(key1) +
       '&key2=' + encodeURIComponent(key2),
       { cache: 'no-store' }
     );
     const data = await res.json();
-    if (res.ok && data.success) {
-      showStatus('✅ ' + data.message, 'off');
-      previewFavicon(url);
-    } else {
-      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
-    }
+    if (res.ok && data.success) showStatus('✅ ' + data.message, 'off');
+    else showStatus('❌ ' + (data.error || 'Gagal'), 'error');
   } catch (err) {
     showStatus('❌ Error: ' + err.message, 'error');
   }
 }
 
-async function hapusFavicon() {
+async function hapusContact() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
   if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
 
   try {
     const res = await fetch(
-      '/api/favicon?action=off' +
+      '/api/contact?action=off' +
       '&key1=' + encodeURIComponent(key1) +
       '&key2=' + encodeURIComponent(key2),
       { cache: 'no-store' }
@@ -999,36 +993,22 @@ async function hapusFavicon() {
     const data = await res.json();
     if (res.ok && data.success) {
       showStatus('✅ ' + data.message, 'off');
-      $('faviconPreview').style.display = 'none';
+      $('contactWa').value = '';
+      $('contactTg').value = '';
     }
   } catch (err) {}
 }
 
-function previewFavicon(url) {
-  const preview = $('faviconPreview');
-  const img = $('faviconPreviewImg');
-  img.src = url;
-  img.onerror = () => { preview.style.display = 'none'; showStatus('⚠️ Gambar tidak bisa dimuat', 'error'); };
-  img.onload = () => { preview.style.display = 'block'; };
-}
-
-// Preview saat input berubah
-$('faviconUrl').addEventListener('change', (e) => {
-  if (e.target.value.trim()) previewFavicon(e.target.value.trim());
-});
-
-// Load favicon sekarang saat halaman buka
-async function loadCurrentFavicon() {
+// Load kontak sekarang
+async function loadContact() {
   try {
-    const res = await fetch('/api/favicon', { cache: 'no-store' });
+    const res = await fetch('/api/contact', { cache: 'no-store' });
     const data = await res.json();
-    if (data.url) {
-      $('faviconUrl').value = data.url;
-      previewFavicon(data.url);
-    }
+    if (data.wa) $('contactWa').value = data.wa;
+    if (data.telegram) $('contactTg').value = data.telegram;
   } catch (e) {}
 }
-loadCurrentFavicon();
+loadContact();
 
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
