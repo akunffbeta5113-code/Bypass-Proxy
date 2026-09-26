@@ -332,8 +332,32 @@ button:active { transform: scale(.98); }
     <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk memuat data.</div>
   </div>
 </div>
-  
+
 <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- HEALTH CHECK SERVER — COLLAPSIBLE -->
+<!-- ========================================== -->
+<div class="collapsible-header" onclick="toggleHealthPanel()">
+  <h2>🩺 HEALTH CHECK SERVER</h2>
+  <span class="arrow-toggle" id="arrowHealth">▼</span>
+</div>
+
+<div class="collapsible-body" id="healthPanel">
+  <button class="btn-check" onclick="loadHealth()">🔄 REFRESH STATUS</button>
+
+  <div id="healthContent" style="text-align:left;margin-top:14px;">
+    <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk cek status server.</div>
+  </div>
+
+  <div style="background:#1b1e2a;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:#8d91a2;line-height:1.6;text-align:left;">
+    <b style="color:#ffca18;">⚙️ Auto-Maintenance:</b><br>
+    • Kalau ada server <b style="color:#ff8888;">OFFLINE</b> → maintenance otomatis <b>ON</b>.<br>
+    • Kalau semua server <b style="color:#39df88;">ONLINE</b> → maintenance otomatis <b>OFF</b>.<br>
+    <span style="color:#5a5f70;">Cek otomatis via cron-job.org tiap 5 menit.</span>
+  </div>
+</div>
+
+  <!-- ========================================== -->
 <!-- ========================================== -->
 <!-- EMERGENCY — COLLAPSIBLE -->
 <!-- ========================================== -->
@@ -356,24 +380,7 @@ button:active { transform: scale(.98); }
     <b>PANIC OFF:</b> Nyalakan semua service + maintenance OFF + broadcast OFF.
   </p>
 </div>
-
-<!-- ========================================== -->
-<!-- ========================================== -->
-<!-- HEALTH CHECK SERVER — COLLAPSIBLE -->
-<!-- ========================================== -->
-<div class="collapsible-header" onclick="toggleHealthPanel()">
-  <h2>🩺 HEALTH CHECK SERVER</h2>
-  <span class="arrow-toggle" id="arrowHealth">▼</span>
-</div>
-
-<div class="collapsible-body" id="healthPanel">
-  <button class="btn-check" onclick="loadHealth()">🔄 REFRESH STATUS</button>
-
-  <div id="healthContent" style="text-align:left;margin-top:14px;">
-    <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk cek status server.</div>
-  </div>
-</div>
-
+  
   <!-- ========================================== -->
 <!-- ========================================== -->
 <!-- TESTER — COLLAPSIBLE -->
@@ -834,7 +841,7 @@ async function konfirmasiPanic(action) {
   }
 
 // ==========================================
-// HEALTH CHECK SERVER
+// HEALTH CHECK
 // ==========================================
 function toggleHealthPanel() {
   const panel = $('healthPanel');
@@ -864,20 +871,18 @@ async function loadHealth() {
     }
 
     const SERVERS = [
-      { id: 'vercel', name: '🟣 Vercel (API)', desc: 'Server API aplikasi' },
-      { id: 'upstash', name: '🔵 Upstash KV', desc: 'Database key-value' },
-      { id: 'theresav', name: '🟢 Theresav API', desc: 'Backend bypass' }
+      { id: 'vercel', name: '🟣 Vercel (API)' },
+      { id: 'upstash', name: '🔵 Upstash KV' },
+      { id: 'theresav', name: '🟢 Theresav API' }
     ];
 
     let html = '';
-
     SERVERS.forEach(srv => {
       const info = data.results[srv.id] || { status: 'offline', time: 0, message: '' };
       const statusText = {
         online: '● ONLINE',
         warning: '● WARNING',
-        offline: '● OFFLINE',
-        checking: '● CHECKING'
+        offline: '● OFFLINE'
       }[info.status] || '● UNKNOWN';
 
       html += `
@@ -892,6 +897,18 @@ async function loadHealth() {
       `;
     });
 
+    // Cek status maintenance sekarang
+    try {
+      const mRes = await fetch('/api/maintenance', { cache: 'no-store' });
+      const mData = await mRes.json();
+      html += `
+        <div style="background:#1b1e2a;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;text-align:left;">
+          <b style="color:#ffca18;">🔧 Status Maintenance:</b><br>
+          ${mData.maintenance ? '🔴 Maintenance sedang <b>AKTIF</b>' : '🟢 Maintenance sedang <b>NONAKTIF</b>'}
+        </div>
+      `;
+    } catch (e) {}
+
     const ts = new Date(data.timestamp).toLocaleString('id-ID');
     html += `<div class="health-timestamp">🕒 Terakhir cek: ${ts}</div>`;
 
@@ -901,7 +918,7 @@ async function loadHealth() {
     box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ Error: ' + err.message + '</div>';
     showStatus('❌ Error: ' + err.message, 'error');
   }
-                    }
+}
 
 // ==========================================
 // BUKA APLIKASI (MODE ADMIN)
