@@ -1024,7 +1024,10 @@ async function init() {
   // Cek broadcast & service
   cekBroadcast();
   loadServiceStatus();
-}
+  // Cek welcome & kontak
+  cekWelcome();
+  cekKontak();
+  }
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
