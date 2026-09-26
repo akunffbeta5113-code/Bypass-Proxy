@@ -10,8 +10,7 @@ export default async function handler(req, res) {
   // ==========================================
   // EDIT PESAN DI SINI
   // ==========================================
-  const WELCOME_MESSAGE = `Halo bro! 👋
-
+  const WELCOME_MESSAGE = `
 Selamat datang di BYPASS WEB.
 Jangan lupa follow TikTok kami ya! 🎵
 
