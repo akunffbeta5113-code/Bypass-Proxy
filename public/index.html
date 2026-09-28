@@ -138,6 +138,58 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
   font-weight: 600;
 }
 
+  /* Statistik Pribadi */
+.personal-stats {
+  margin-top: 20px;
+  padding: 16px;
+  background: #1b1e2a;
+  border-radius: 16px;
+  text-align: center;
+}
+.personal-stats-title {
+  color: #8d91a2;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.personal-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.personal-stat {
+  background: #12151f;
+  padding: 12px;
+  border-radius: 12px;
+}
+.personal-stat .num {
+  font-size: 22px;
+  font-weight: 800;
+  color: #8b5cff;
+}
+.personal-stat .label {
+  font-size: 10px;
+  color: #8d91a2;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.personal-reset {
+  width: 100%;
+  height: 40px;
+  background: #3a1a1a;
+  color: #ff8888;
+  border: 0;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0;
+}
+.personal-reset:active { transform: scale(.97); }
+
 /* ========================================== */
 /* POPUP MAINTENANCE */
 /* ========================================== */
@@ -418,6 +470,22 @@ body.has-broadcast{padding-top:60px}
       <div class="arrow">›</div>
     </div>
   </section>
+
+  <!-- STATISTIK PRIBADI USER -->
+<div class="personal-stats">
+  <div class="personal-stats-title">📊 Statistik Kamu</div>
+  <div class="personal-stats-grid">
+    <div class="personal-stat">
+      <div class="num" id="myTotalBypass">0</div>
+      <div class="label">Total Bypass</div>
+    </div>
+    <div class="personal-stat">
+      <div class="num" style="font-size:14px;padding-top:6px;" id="myTopService">-</div>
+      <div class="label">Favorit Kamu</div>
+    </div>
+  </div>
+  <button class="personal-reset" onclick="resetPersonalStats()">🗑️ Bersihkan Riwayat Saya</button>
+</div>
 
   <!-- KONTAK ADMIN -->
 <div class="contact-section" id="contactSection">
@@ -992,6 +1060,7 @@ startProgress();
     resultLink = bypassed;
     $("result").style.display = "block";
     finishProgress(true, '✅ Bypass berhasil!');
+    addPersonalBypass(currentType);
     toast("Bypass berhasil");
   } catch(err) {
     debug({
@@ -1167,8 +1236,74 @@ function finishProgress(success, text) {
     if (container) container.classList.remove('show');
   }, 1200);
   }
-    
 
+// ==========================================
+// STATISTIK PRIBADI USER
+// ==========================================
+const SERVICE_NAMES_SHORT = {
+  adlink: 'AdLinkSumo', sfl: 'SFL', delta: 'Delta',
+  linkvertise: 'Linkvertise', move2link: 'Move2link',
+  sub2unlock: 'Sub2Unlock', sub4unlock: 'Sub4Unlock', universal: 'Universal'
+};
+
+function getPersonalStats() {
+  try {
+    return JSON.parse(localStorage.getItem('sd_personal_stats') || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+
+function savePersonalStats(stats) {
+  try {
+    localStorage.setItem('sd_personal_stats', JSON.stringify(stats));
+  } catch (e) {}
+}
+
+function addPersonalBypass(service) {
+  const stats = getPersonalStats();
+  stats.total = (stats.total || 0) + 1;
+  stats.services = stats.services || {};
+  stats.services[service] = (stats.services[service] || 0) + 1;
+  stats.lastUpdated = new Date().toISOString();
+  savePersonalStats(stats);
+  renderPersonalStats();
+}
+
+function renderPersonalStats() {
+  const stats = getPersonalStats();
+  const totalEl = $('myTotalBypass');
+  const topEl = $('myTopService');
+  if (!totalEl || !topEl) return;
+
+  totalEl.textContent = stats.total || 0;
+
+  // Cari service favorit
+  if (stats.services && Object.keys(stats.services).length > 0) {
+    let top = '-';
+    let max = 0;
+    Object.keys(stats.services).forEach(s => {
+      if (stats.services[s] > max) {
+        max = stats.services[s];
+        top = s;
+      }
+    });
+    topEl.textContent = SERVICE_NAMES_SHORT[top] || top;
+  } else {
+    topEl.textContent = '-';
+  }
+}
+
+function resetPersonalStats() {
+  if (!confirm('🗑️ Hapus semua riwayat bypass kamu?\n\nTindakan ini tidak bisa dibatalkan.')) return;
+  localStorage.removeItem('sd_personal_stats');
+  renderPersonalStats();
+  toast('Riwayat dihapus');
+}
+
+// Render saat halaman buka
+renderPersonalStats();
+  
   // ==========================================
 // KONTAK ADMIN — Ambil dari API
 // ==========================================
