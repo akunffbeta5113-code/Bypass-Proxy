@@ -5,202 +5,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin Panel</title>
-  <!-- Icon Panel Admin -->
-<link rel="icon" type="image/png" href="/icons/admin-512.png">
-<link rel="apple-touch-icon" href="/icons/admin-512.png">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
 body {
   min-height: 100vh;
   background: #0d0f18;
   color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  padding-bottom: 90px;
+  overflow-x: hidden;
 }
-.box {
-  max-width: 420px;
-  width: 100%;
-  background: #171a25;
-  border: 1px solid #292c3b;
-  border-radius: 24px;
-  padding: 30px 26px;
+
+/* Header */
+.header {
+  padding: 22px 20px 16px;
   text-align: center;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  background: linear-gradient(180deg, #171a25, #0d0f18);
+  border-bottom: 1px solid #1e2130;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
-h1 { font-size: 22px; margin-bottom: 6px; }
-h2 { font-size: 15px; color: #8d91a2; margin-bottom: 14px; text-align: left; }
-.sub { color: #8d91a2; font-size: 13px; margin-bottom: 24px; }
+.header h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.header .sub { color: #8d91a2; font-size: 13px; }
+
+/* Container */
+.container { padding: 20px 20px 40px; max-width: 480px; margin: 0 auto; }
+
+/* Kunci */
 label {
-  display: block; text-align: left;
-  color: #858a9c; font-size: 12px; font-weight: 600;
+  display: block;
+  color: #858a9c;
+  font-size: 12px;
+  font-weight: 600;
   margin-bottom: 6px;
 }
-input {
-  width: 100%; height: 50px; padding: 0 14px;
-  background: #1b1e2a; border: 1px solid #303444;
-  border-radius: 12px; color: #fff; font-size: 14px;
-  margin-bottom: 14px; outline: none;
+input, textarea, select {
+  width: 100%;
+  height: 50px;
+  padding: 0 14px;
+  background: #1b1e2a;
+  border: 1px solid #303444;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 14px;
+  outline: none;
   transition: .15s;
+  font-family: inherit;
 }
-input:focus { border-color: #8b5cff; box-shadow: 0 0 14px rgba(139,92,255,.3); }
+input:focus, textarea:focus, select:focus {
+  border-color: #8b5cff;
+  box-shadow: 0 0 14px rgba(139,92,255,.3);
+}
+textarea {
+  height: auto;
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Buttons */
 button {
-  width: 100%; height: 52px; border: 0; border-radius: 12px;
-  font-size: 15px; font-weight: 800; cursor: pointer;
-  margin-bottom: 10px; transition: .15s;
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: .15s;
   letter-spacing: .3px;
+  -webkit-tap-highlight-color: transparent;
 }
 button:active { transform: scale(.98); }
+
 .btn-on { background: #ff4b3f; color: #fff; }
 .btn-off { background: #39df88; color: #08130d; }
 .btn-check { background: #242834; color: #fff; }
-.btn-use {
-  background: linear-gradient(135deg, #7d43ff, #b45cff);
-  color: #fff;
-  margin-top: 4px;
-}
-.btn-apply {
-  background: linear-gradient(135deg, #ffa726, #ff7043);
-  color: #fff;
-  font-size: 15px;
-  margin-top: 6px;
-  position: relative;
-}
-.btn-apply.dirty::after {
-  content: " ●";
-  color: #ffea00;
-  font-size: 20px;
-}
+.btn-apply { background: linear-gradient(135deg, #ffa726, #ff7043); color: #fff; font-size: 15px; position: relative; }
+.btn-apply.dirty::after { content: " ●"; color: #ffea00; font-size: 20px; }
+.btn-use { background: linear-gradient(135deg, #7d43ff, #b45cff); color: #fff; margin-top: 6px; }
+.btn-panic { font-weight: 800; letter-spacing: .5px; margin-bottom: 10px; }
+
+/* Status */
 .status {
-  margin-top: 18px; padding: 16px; border-radius: 12px;
-  background: #0d0f17; font-size: 13px; color: #b8ffcf;
-  word-break: break-word; min-height: 50px;
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #0d0f17;
+  font-size: 13px;
+  color: #b8ffcf;
+  word-break: break-word;
+  min-height: 50px;
   display: none;
-  align-items: center; justify-content: center;
-  text-align: center; line-height: 1.5;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.5;
 }
 .status.show { display: flex; }
 .status.on { background: #4b1e22; color: #ff6262; font-weight: 700; }
 .status.off { background: #1a3a24; color: #39df88; font-weight: 700; }
 .status.error { background: #3a1a1a; color: #ff8888; }
 .status.warn { background: #3a2a0f; color: #ffca18; font-weight: 700; }
-.divider { height: 1px; background: #292c3b; margin: 20px 0 18px; }
 
 /* Collapsible */
 .collapsible-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px; background: #1b1e2a;
-  border: 1px solid #303444; border-radius: 14px;
-  cursor: pointer; transition: .2s;
-  user-select: none; -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #1b1e2a;
+  border: 1px solid #303444;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: .2s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   margin-top: 6px;
 }
 .collapsible-header:hover { background: #222633; }
 .collapsible-header h2 { margin: 0; font-size: 15px; color: #fff; text-align: left; }
 .arrow-toggle {
-  font-size: 16px; color: #8b5cff;
+  font-size: 16px;
+  color: #8b5cff;
   transition: transform .3s ease;
-  display: inline-block; font-weight: 800;
+  display: inline-block;
+  font-weight: 800;
 }
 .arrow-toggle.open { transform: rotate(180deg); }
 .collapsible-body {
-  max-height: 0; overflow: hidden;
+  max-height: 0;
+  overflow: hidden;
   transition: max-height .4s ease, opacity .3s ease, margin .3s ease;
-  opacity: 0; margin-top: 0;
+  opacity: 0;
+  margin-top: 0;
 }
-.collapsible-body.open { max-height: 1500px; opacity: 1; margin-top: 12px; }
-
-  /* Stats */
-  .stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-.stat-card {
-  background: #1b1e2a;
-  border-radius: 12px;
-  padding: 14px;
-  text-align: center;
-}
-.stat-card .num {
-  font-size: 24px;
-  font-weight: 800;
-  color: #8b5cff;
-  margin-bottom: 4px;
-}
-.stat-card .label {
-  font-size: 11px;
-  color: #8d91a2;
-  font-weight: 600;
-}
-.stat-section {
-  background: #1b1e2a;
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 10px;
-}
-.stat-section h3 {
-  font-size: 13px;
-  color: #8d91a2;
-  margin-bottom: 10px;
-  font-weight: 700;
-}
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 12px;
-  border-bottom: 1px solid #252936;
-}
-.stat-row:last-child { border-bottom: 0; }
-.stat-row .svc { color: #fff; font-weight: 600; }
-.stat-row .val { color: #8b5cff; font-weight: 700; }
-.chart-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  font-size: 11px;
-}
-.chart-bar .day { width: 32px; color: #8d91a2; }
-.chart-bar .bar {
-  flex: 1;
-  height: 18px;
-  background: linear-gradient(90deg, #7d43ff, #b45cff);
-  border-radius: 4px;
-  min-width: 2px;
-  transition: width .3s;
-}
-.chart-bar .num { width: 34px; text-align: right; color: #fff; font-weight: 700; }
-
-  /* Emergency */
-  .btn-panic {
-  font-weight: 800;
-  letter-spacing: .5px;
-  position: relative;
-}
-.btn-panic:active {
-  transform: scale(.97);
-}
+.collapsible-body.open { max-height: 2000px; opacity: 1; margin-top: 12px; }
 
 /* Service */
 .service-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 14px; background: #1b1e2a;
-  border-radius: 12px; margin-bottom: 8px; gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #1b1e2a;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  gap: 10px;
 }
 .service-name { font-size: 14px; font-weight: 700; flex: 1; text-align: left; }
-.service-name small {
-  display: block; font-size: 11px; color: #8d91a2;
-  font-weight: 500; margin-top: 2px;
-}
-.service-btn {
-  padding: 8px 14px; border: 0; border-radius: 8px;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  transition: .15s; width: auto; height: auto; margin: 0;
-}
+.service-name small { display: block; font-size: 11px; color: #8d91a2; font-weight: 500; margin-top: 2px; }
+.service-btn { padding: 8px 14px; border: 0; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; width: auto; height: auto; margin: 0; }
 .service-btn.on { background: #39df88; color: #08130d; }
 .service-btn.off { background: #ff4b3f; color: #fff; }
 .reason-input {
@@ -211,206 +168,307 @@ button:active { transform: scale(.98); }
 }
 .reason-input::placeholder { color: #5a5f70; }
 
-  /* Health Check Server*/
-  .health-item {
-  background: #1b1e2a;
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 10px;
-  border-left: 4px solid #8d91a2;
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card { background: #1b1e2a; border-radius: 12px; padding: 14px; text-align: center; }
+.stat-card .num { font-size: 24px; font-weight: 800; color: #8b5cff; margin-bottom: 4px; }
+.stat-card .label { font-size: 11px; color: #8d91a2; font-weight: 600; }
+.stat-section { background: #1b1e2a; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.stat-section h3 { font-size: 13px; color: #8d91a2; margin-bottom: 10px; font-weight: 700; }
+.stat-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; border-bottom: 1px solid #252936; }
+.stat-row:last-child { border-bottom: 0; }
+.stat-row .svc { color: #fff; font-weight: 600; }
+.stat-row .val { color: #8b5cff; font-weight: 700; }
+.chart-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; }
+.chart-bar .day { width: 32px; color: #8d91a2; }
+.chart-bar .bar { flex: 1; height: 18px; background: linear-gradient(90deg, #7d43ff, #b45cff); border-radius: 4px; min-width: 2px; transition: width .3s; }
+.chart-bar .num { width: 34px; text-align: right; color: #fff; font-weight: 700; }
+
+/* Health */
+.health-item {
+  background: #1b1e2a; border-radius: 12px; padding: 14px;
+  margin-bottom: 10px; border-left: 4px solid #8d91a2;
 }
 .health-item.online { border-left-color: #39df88; }
 .health-item.warning { border-left-color: #ffca18; }
 .health-item.offline { border-left-color: #ff4b3f; }
-.health-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-.health-name {
-  font-size: 14px;
-  font-weight: 800;
-  color: #fff;
-}
-.health-badge {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
-  text-transform: uppercase;
-}
+.health-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.health-name { font-size: 14px; font-weight: 800; color: #fff; }
+.health-badge { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; }
 .health-badge.online { background: #1a3a24; color: #39df88; }
 .health-badge.warning { background: #3a2a0f; color: #ffca18; }
 .health-badge.offline { background: #3a1a1a; color: #ff8888; }
-.health-msg {
-  font-size: 12px;
-  color: #b8ffcf;
-  margin-bottom: 4px;
-  word-break: break-word;
+.health-msg { font-size: 12px; color: #b8ffcf; margin-bottom: 4px; word-break: break-word; }
+.health-time { font-size: 11px; color: #5a5f70; font-weight: 600; }
+.health-timestamp { text-align: center; color: #5a5f70; font-size: 11px; margin-top: 10px; }
+
+/* Activity */
+.activity-item {
+  background: #1b1e2a; border-radius: 10px; padding: 10px 12px;
+  margin-bottom: 8px; border-left: 3px solid #8b5cff; font-size: 12px;
 }
-.health-time {
-  font-size: 11px;
+.activity-item.maintenance { border-left-color: #ffa726; }
+.activity-item.service { border-left-color: #8b5cff; }
+.activity-item.broadcast { border-left-color: #2196f3; }
+.activity-item.panic { border-left-color: #ff4b3f; }
+.activity-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.activity-action { font-weight: 800; color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+.activity-time { font-size: 10px; color: #5a5f70; }
+.activity-detail { color: #b8ffcf; font-size: 12px; margin-bottom: 2px; word-break: break-word; }
+.activity-ip { color: #5a5f70; font-size: 10px; font-weight: 600; }
+
+/* Tab Content */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  /* ========================================== */
+/* BOTTOM NAVIGATION */
+/* ========================================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: #171a25;
+  border-top: 1px solid #292c3b;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  padding: 0 8px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.4);
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  padding: 8px 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: .2s;
   color: #5a5f70;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
+  margin: 0;
+  height: auto;
+  letter-spacing: 0;
 }
-.health-timestamp {
-  text-align: center;
-  color: #5a5f70;
-  font-size: 11px;
-  margin-top: 10px;
+.nav-item.active {
+  color: #b45cff;
+  background: rgba(180, 92, 255, 0.1);
 }
+.nav-item:active { transform: scale(.95); }
+.nav-icon {
+  font-size: 22px;
+  line-height: 1;
+  transition: .2s;
+}
+.nav-item.active .nav-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 8px rgba(180,92,255,.6));
+}
+.nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* Divider */
+.divider { height: 1px; background: #292c3b; margin: 20px 0 18px; }
 </style>
 </head>
 <body>
-<div class="box">
-  <h1>🔐 Admin Panel</h1>
-  <p class="sub">Masukkan 2 kunci rahasia</p>
 
+<!-- HEADER -->
+<div class="header">
+  <h1>🔐 Admin Panel</h1>
+  <div class="sub">Masukkan 2 kunci rahasia</div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <!-- KUNCI -->
   <label>Kunci Pertama</label>
   <input id="key1" type="password" placeholder="Kunci 1" autocomplete="off">
 
   <label>Kunci Kedua</label>
   <input id="key2" type="password" placeholder="Kunci 2" autocomplete="off">
 
+  <!-- MAINTENANCE -->
   <button class="btn-on" onclick="ubah('on')">🔴 AKTIFKAN MAINTENANCE</button>
   <button class="btn-off" onclick="ubah('off')">🟢 MATIKAN MAINTENANCE</button>
   <button class="btn-check" onclick="cek()">🔍 Cek Status Maintenance</button>
-  
-  <!-- ========================================== -->
-<!-- NOTIFIKASI BROADCAST — COLLAPSIBLE -->
-<!-- ========================================== -->
-<div class="collapsible-header" onclick="toggleBroadcastPanel()">
-  <h2>📢 NOTIFIKASI BROADCAST</h2>
-  <span class="arrow-toggle" id="arrowBroadcast">▼</span>
-</div>
 
-<div class="collapsible-body" id="broadcastPanel">
-  <label>Tipe Notifikasi</label>
-  <select id="bcastType" style="width:100%;height:44px;padding:0 12px;background:#1b1e2a;border:1px solid #303444;border-radius:12px;color:#fff;font-size:14px;margin-bottom:12px;outline:none;">
-    <option value="info">ℹ️ Info (biru)</option>
-    <option value="success">✅ Sukses (hijau)</option>
-    <option value="warning">⚠️ Peringatan (kuning)</option>
-    <option value="danger">🚨 Penting (merah)</option>
-  </select>
-
-  <label>Pesan</label>
-  <textarea id="bcastMessage" placeholder="Ketik pengumuman untuk semua user..." rows="3" style="width:100%;padding:12px;background:#1b1e2a;border:1px solid #303444;border-radius:12px;color:#fff;font-size:13px;margin-bottom:12px;outline:none;resize:vertical;font-family:inherit;"></textarea>
-
-  <button class="btn-apply" onclick="kirimBroadcast()" style="background:linear-gradient(135deg,#00c896,#00a07a);">📢 KIRIM BROADCAST</button>
-  <button class="btn-check" onclick="matikanBroadcast()">🔇 MATIKAN BROADCAST</button>
-</div>
+  <div class="divider"></div>
 
   <!-- ========================================== -->
-<!-- ========================================== -->
-<!-- MANAJEMEN SERVICE -->
-<!-- ========================================== -->
-  <div class="collapsible-header" onclick="toggleServicePanel()">
-    <h2>⚙️ MANAJEMEN SERVICE</h2>
-    <span class="arrow-toggle" id="arrowToggle">▼</span>
+  <!-- TAB: BROADCAST -->
+  <!-- ========================================== -->
+  <div class="tab-content active" id="tab-broadcast">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">📢 NOTIFIKASI BROADCAST</h2>
+
+    <label>Tipe Notifikasi</label>
+    <select id="bcastType">
+      <option value="info">ℹ️ Info (biru)</option>
+      <option value="success">✅ Sukses (hijau)</option>
+      <option value="warning">⚠️ Peringatan (kuning)</option>
+      <option value="danger">🚨 Penting (merah)</option>
+    </select>
+
+    <label>Pesan</label>
+    <textarea id="bcastMessage" placeholder="Ketik pengumuman untuk semua user..."></textarea>
+
+    <button class="btn-apply" onclick="kirimBroadcast()" style="background:linear-gradient(135deg,#00c896,#00a07a);">📢 KIRIM BROADCAST</button>
+    <button class="btn-check" onclick="matikanBroadcast()">🔇 MATIKAN BROADCAST</button>
   </div>
 
-  <div class="collapsible-body" id="servicePanel">
+  <!-- ========================================== -->
+  <!-- TAB: SERVICE -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-service">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">⚙️ MANAJEMEN SERVICE</h2>
     <div id="serviceList"></div>
-    <button class="btn-apply" id="applyBtn" onclick="applyServices()">
-      💾 TERAPKAN PERUBAHAN SERVICE
+    <button class="btn-apply" id="applyBtn" onclick="applyServices()">💾 TERAPKAN PERUBAHAN SERVICE</button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: STATISTIK -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-stats">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">📊 DASHBOARD STATISTIK</h2>
+    <button class="btn-check" onclick="loadStats()">🔄 REFRESH STATISTIK</button>
+    <div id="statsContent" style="text-align:left;font-size:13px;margin-top:14px;">
+      <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk memuat data.</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: HEALTH -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-health">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">🩺 HEALTH CHECK SERVER</h2>
+    <button class="btn-check" onclick="loadHealth()">🔄 REFRESH STATUS</button>
+    <div id="healthContent" style="text-align:left;margin-top:14px;">
+      <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk cek status server.</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: KONTAK -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-contact">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">📞 KONTAK ADMIN</h2>
+
+    <label>Nomor WhatsApp</label>
+    <input id="contactWa" type="text" placeholder="6281234567890">
+
+    <label>Username Telegram</label>
+    <input id="contactTg" type="text" placeholder="username (tanpa @)">
+
+    <p style="color:#8d91a2;font-size:11px;text-align:left;margin-bottom:12px;line-height:1.5;">
+      <b>Format WA:</b> <code style="background:#0d0f17;padding:2px 6px;border-radius:4px;">6281234567890</code> (kode negara 62, tanpa + atau spasi)<br>
+      <b>Format Telegram:</b> <code style="background:#0d0f17;padding:2px 6px;border-radius:4px;">username</code> (tanpa @)
+    </p>
+
+    <button class="btn-apply" onclick="simpanContact()" style="background:linear-gradient(135deg,#00c896,#00a07a);">💾 SIMPAN KONTAK</button>
+    <button class="btn-check" onclick="hapusContact()">🗑️ HAPUS KONTAK</button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: EMERGENCY -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-emergency">
+    <h2 style="font-size:16px;color:#ff4b3f;margin-bottom:14px;">🚨 EMERGENCY</h2>
+
+    <button class="btn-panic" onclick="konfirmasiPanic('on')" style="background:linear-gradient(135deg,#ff4b3f,#d32f2f);color:#fff;font-size:16px;">
+      🚨 EMERGENCY MODE ON
     </button>
+    <button class="btn-panic" onclick="konfirmasiPanic('off')" style="background:linear-gradient(135deg,#39df88,#00a07a);color:#08130d;font-size:16px;">
+      🟢 EMERGENCY MODE OFF
+    </button>
+
+    <p style="color:#8d91a2;font-size:11px;text-align:left;margin-top:8px;line-height:1.5;">
+      <b>EMERGENCY ON:</b> Matikan semua service + maintenance ON + broadcast otomatis.<br>
+      <b>EMERGENCY OFF:</b> Nyalakan semua service + maintenance OFF + broadcast OFF.
+    </p>
   </div>
 
-<!-- ========================================== -->
-<!-- DASHBOARD STATISTIK — COLLAPSIBLE -->
-<!-- ========================================== -->
-<div class="collapsible-header" onclick="toggleStatsPanel()">
-  <h2>📊 DASHBOARD STATISTIK</h2>
-  <span class="arrow-toggle" id="arrowStats">▼</span>
-</div>
+  <div class="divider"></div>
 
-<div class="collapsible-body" id="statsPanel">
-  <button class="btn-check" onclick="loadStats()">🔄 REFRESH STATISTIK</button>
-
-  <div id="statsContent" style="text-align:left;font-size:13px;">
-    <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk memuat data.</div>
-  </div>
-</div>
-
-<!-- ========================================== -->
-<!-- ========================================== -->
-<!-- HEALTH CHECK SERVER — COLLAPSIBLE -->
-<!-- ========================================== -->
-<div class="collapsible-header" onclick="toggleHealthPanel()">
-  <h2>🩺 HEALTH CHECK SERVER</h2>
-  <span class="arrow-toggle" id="arrowHealth">▼</span>
-</div>
-
-<div class="collapsible-body" id="healthPanel">
-  <button class="btn-check" onclick="loadHealth()">🔄 REFRESH STATUS</button>
-
-  <div id="healthContent" style="text-align:left;margin-top:14px;">
-    <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk cek status server.</div>
-  </div>
-
-  <div style="background:#1b1e2a;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:#8d91a2;line-height:1.6;text-align:left;">
-    <b style="color:#ffca18;">⚙️ Auto-Maintenance:</b><br>
-    • Kalau ada server <b style="color:#ff8888;">OFFLINE</b> → maintenance otomatis <b>ON</b>.<br>
-    • Kalau semua server <b style="color:#39df88;">ONLINE</b> → maintenance otomatis <b>OFF</b>.<br>
-    <span style="color:#5a5f70;">Cek otomatis via cron-job.org tiap 5 menit.</span>
-  </div>
-</div>
-
-  <!-- KONTAK ADMIN — COLLAPSIBLE -->
-<div class="collapsible-header" onclick="toggleContactPanel()">
-  <h2>📞 KONTAK ADMIN</h2>
-  <span class="arrow-toggle" id="arrowContact">▼</span>
-</div>
-
-<div class="collapsible-body" id="contactPanel">
-  <label>Nomor WhatsApp</label>
-  <input id="contactWa" type="text" placeholder="6281234567890" style="margin-bottom:12px;">
-
-  <label>Username Telegram</label>
-  <input id="contactTg" type="text" placeholder="username (tanpa @)" style="margin-bottom:12px;">
-
-  <button class="btn-apply" onclick="simpanContact()" style="background:linear-gradient(135deg,#00c896,#00a07a);">💾 SIMPAN KONTAK</button>
-  <button class="btn-check" onclick="hapusContact()">🗑️ HAPUS KONTAK</button>
-</div>
-
-  <!-- ========================================== -->
-<!-- ========================================== -->
-<!-- EMERGENCY — COLLAPSIBLE -->
-<!-- ========================================== -->
-<div class="collapsible-header" onclick="togglePanicPanel()" style="border-color:#ff4b3f;">
-  <h2 style="color:#ff4b3f;">🚨 EMERGENCY</h2>
-  <span class="arrow-toggle" id="arrowPanic" style="color:#ff4b3f;">▼</span>
-</div>
-
-<div class="collapsible-body" id="panicPanel">
-  <button class="btn-panic" onclick="konfirmasiPanic('on')" style="background:linear-gradient(135deg,#ff4b3f,#d32f2f);color:#fff;font-size:16px;">
-    🚨 EMERGENCY MODE ON
-  </button>
-
-  <button class="btn-panic" onclick="konfirmasiPanic('off')" style="background:linear-gradient(135deg,#39df88,#00a07a);color:#08130d;font-size:16px;">
-    🟢 EMERGENCY MODE OFF
-  </button>
-
-  <p style="color:#8d91a2;font-size:11px;text-align:left;margin-top:8px;line-height:1.5;">
-    <b>PANIC ON:</b> Matikan semua service + maintenance ON + broadcast otomatis.<br>
-    <b>PANIC OFF:</b> Nyalakan semua service + maintenance OFF + broadcast OFF.
-  </p>
-</div>
-  
-  <!-- ========================================== -->
-<!-- ========================================== -->
-<!-- TESTER — COLLAPSIBLE -->
-<!-- ========================================== -->
+  <!-- PAKAI APLIKASI -->
   <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
 
+  <!-- STATUS -->
   <div class="status" id="status"></div>
+
+</div>
+
+  <!-- BOTTOM NAVIGATION -->
+<div class="bottom-nav">
+  <button class="nav-item active" data-tab="broadcast" onclick="switchTab('broadcast', this)">
+    <div class="nav-icon">📢</div>
+    <div class="nav-label">Broadcast</div>
+  </button>
+  <button class="nav-item" data-tab="service" onclick="switchTab('service', this)">
+    <div class="nav-icon">⚙️</div>
+    <div class="nav-label">Service</div>
+  </button>
+  <button class="nav-item" data-tab="stats" onclick="switchTab('stats', this)">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Statistik</div>
+  </button>
+  <button class="nav-item" data-tab="health" onclick="switchTab('health', this)">
+    <div class="nav-icon">🩺</div>
+    <div class="nav-label">Health</div>
+  </button>
+  <button class="nav-item" data-tab="contact" onclick="switchTab('contact', this)">
+    <div class="nav-icon">📞</div>
+    <div class="nav-label">Kontak</div>
+  </button>
+  <button class="nav-item" data-tab="emergency" onclick="switchTab('emergency', this)">
+    <div class="nav-icon">🚨</div>
+    <div class="nav-label">Emerg.</div>
+  </button>
 </div>
 
 <script>
 const MAINT_API = '/api/maintenance';
 const SERVICES_API = '/api/services';
 const $ = id => document.getElementById(id);
+
+// ==========================================
+// TAB SWITCH
+// ==========================================
+function switchTab(tabName, el) {
+  // Sembunyikan semua tab
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  // Tampilkan tab yang dipilih
+  const target = document.getElementById('tab-' + tabName);
+  if (target) target.classList.add('active');
+
+  // Update nav item
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+
+  // Auto-load data sesuai tab
+  if (tabName === 'stats') {
+    const k1 = $('key1').value.trim();
+    const k2 = $('key2').value.trim();
+    if (k1 && k2) loadStats();
+  }
+  if (tabName === 'health') {
+    const k1 = $('key1').value.trim();
+    const k2 = $('key2').value.trim();
+    if (k1 && k2) loadHealth();
+  }
+}
 
 // ==========================================
 // STATUS
@@ -478,15 +536,15 @@ const SERVICES = [
   { id: 'universal', name: 'Universal' }
 ];
 
-let servicesData = {};      // data dari server
-let pendingChanges = {};    // perubahan lokal (belum diterapkan)
+let servicesData = {};
+let pendingChanges = {};
 
 async function loadServices() {
   try {
     const res = await fetch(SERVICES_API, { cache: 'no-store' });
     const data = await res.json();
     servicesData = data.services || {};
-    pendingChanges = {};    // reset pending saat load
+    pendingChanges = {};
     updateApplyButton();
     renderServices();
   } catch (err) {
@@ -530,7 +588,6 @@ function renderServices() {
   });
 }
 
-// Toggle HANYA di layar — TIDAK kirim ke server
 function toggleServiceLocal(serviceId) {
   const serverInfo = servicesData[serviceId] || { status: 'on', reason: '' };
   const current = pendingChanges[serviceId]
@@ -547,7 +604,6 @@ function toggleServiceLocal(serviceId) {
   renderServices();
 }
 
-// Update alasan HANYA di layar — TIDAK kirim ke server
 function updateReasonLocal(serviceId, reason) {
   const serverInfo = servicesData[serviceId] || { status: 'off', reason: '' };
   const current = pendingChanges[serviceId]
@@ -574,7 +630,6 @@ function updateApplyButton() {
   }
 }
 
-// Kirim perubahan ke server — HANYA saat tombol Terapkan diklik
 async function applyServices() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
@@ -604,10 +659,7 @@ async function applyServices() {
       const data = await res.json();
       if (res.ok && data.success) {
         berhasil++;
-        servicesData[serviceId] = {
-          status: info.status,
-          reason: info.reason || ''
-        };
+        servicesData[serviceId] = { status: info.status, reason: info.reason || '' };
       } else {
         gagal++;
       }
@@ -620,32 +672,9 @@ async function applyServices() {
   updateApplyButton();
   renderServices();
 
-  if (gagal === 0) {
-    showStatus('✅ Berhasil diterapkan: ' + berhasil + ' service', 'off');
-  } else {
-    showStatus('⚠️ Berhasil: ' + berhasil + ' | Gagal: ' + gagal, 'error');
-  }
+  if (gagal === 0) showStatus('✅ Berhasil: ' + berhasil + ' service', 'off');
+  else showStatus('⚠️ Berhasil: ' + berhasil + ' | Gagal: ' + gagal, 'error');
 }
-
-// ==========================================
-// TOGGLE PANEL
-// ==========================================
-function toggleServicePanel() {
-  const panel = $('servicePanel');
-  const arrow = $('arrowToggle');
-  panel.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
-
-  // ========================================
-  // Tambahan
-  // ========================================
-  function toggleBroadcastPanel() {
-  const panel = document.getElementById('broadcastPanel');
-  const arrow = document.getElementById('arrowBroadcast');
-  panel.classList.toggle('open');
-  arrow.classList.toggle('open');
-  }
 
   // ==========================================
 // BROADCAST
@@ -693,26 +722,13 @@ async function matikanBroadcast() {
       { cache: 'no-store' }
     );
     const data = await res.json();
-    if (res.ok && data.success) {
-      showStatus('✅ ' + data.message, 'off');
-    } else {
-      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
-    }
-  } catch (err) {
-    showStatus('❌ Error: ' + err.message, 'error');
-  }
+    if (res.ok && data.success) showStatus('✅ ' + data.message, 'off');
+  } catch (err) {}
 }
 
-  // ==========================================
-// DASHBOARD STATISTIK
 // ==========================================
-function toggleStatsPanel() {
-  const panel = $('statsPanel');
-  const arrow = $('arrowStats');
-  panel.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
-
+// STATISTIK
+// ==========================================
 async function loadStats() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
@@ -739,7 +755,6 @@ async function loadStats() {
       sub2unlock: 'Sub2Unlock', sub4unlock: 'Sub4Unlock', universal: 'Universal'
     };
 
-    // Grafik 7 hari
     let chartHtml = '';
     const maxCount = Math.max(...data.last7Days.map(d => d.count), 1);
     data.last7Days.forEach(d => {
@@ -754,7 +769,6 @@ async function loadStats() {
       `;
     });
 
-    // Service hari ini
     let todayServiceHtml = '';
     Object.keys(data.today.byService).forEach(s => {
       const count = parseInt(data.today.byService[s]) || 0;
@@ -764,7 +778,6 @@ async function loadStats() {
     });
     if (!todayServiceHtml) todayServiceHtml = '<div style="color:#5a5f70;font-size:12px;text-align:center;padding:8px;">Belum ada bypass hari ini</div>';
 
-    // Service keseluruhan
     let allServiceHtml = '';
     Object.keys(data.allTime.byService).forEach(s => {
       const count = parseInt(data.allTime.byService[s]) || 0;
@@ -773,38 +786,14 @@ async function loadStats() {
 
     box.innerHTML = `
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="num">${data.today.total}</div>
-          <div class="label">Bypass Hari Ini</div>
-        </div>
-        <div class="stat-card">
-          <div class="num">${data.today.users}</div>
-          <div class="label">User Aktif</div>
-        </div>
-        <div class="stat-card">
-          <div class="num">${data.allTime.total}</div>
-          <div class="label">Total Bypass</div>
-        </div>
-        <div class="stat-card">
-          <div class="num" style="font-size:16px;">${SERVICE_NAMES[data.allTime.topService] || '-'}</div>
-          <div class="label">Terpopuler</div>
-        </div>
+        <div class="stat-card"><div class="num">${data.today.total}</div><div class="label">Bypass Hari Ini</div></div>
+        <div class="stat-card"><div class="num">${data.today.users}</div><div class="label">User Aktif</div></div>
+        <div class="stat-card"><div class="num">${data.allTime.total}</div><div class="label">Total Bypass</div></div>
+        <div class="stat-card"><div class="num" style="font-size:16px;">${SERVICE_NAMES[data.allTime.topService] || '-'}</div><div class="label">Terpopuler</div></div>
       </div>
-
-      <div class="stat-section">
-        <h3>📈 7 HARI TERAKHIR</h3>
-        ${chartHtml}
-      </div>
-
-      <div class="stat-section">
-        <h3>🔥 SERVICE HARI INI</h3>
-        ${todayServiceHtml}
-      </div>
-
-      <div class="stat-section">
-        <h3>🏆 SERVICE KESELURUHAN</h3>
-        ${allServiceHtml}
-      </div>
+      <div class="stat-section"><h3>📈 7 HARI TERAKHIR</h3>${chartHtml}</div>
+      <div class="stat-section"><h3>🔥 SERVICE HARI INI</h3>${todayServiceHtml}</div>
+      <div class="stat-section"><h3>🏆 SERVICE KESELURUHAN</h3>${allServiceHtml}</div>
     `;
 
     showStatus('✅ Statistik dimuat', 'off');
@@ -812,61 +801,11 @@ async function loadStats() {
     box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ Error: ' + err.message + '</div>';
     showStatus('❌ Error: ' + err.message, 'error');
   }
-                              }
-
-  // ==========================================
-// EMERGENCY MODE
-// ==========================================
-async function konfirmasiPanic(action) {
-  const key1 = $('key1').value.trim();
-  const key2 = $('key2').value.trim();
-  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
-
-  const pesan = action === 'on'
-    ? '🚨 Yakin aktifkan EMERGENCY MODE?\n\nSemua service akan DIMATIKAN, maintenance ON, dan broadcast terkirim ke semua user.'
-    : '🟢 Yakin matikan EMERGENCY MODE?\n\nSemua service akan DINYALAKAN kembali, maintenance OFF, broadcast dimatikan.';
-
-  if (!confirm(pesan)) return;
-
-  showStatus('⏳ ' + (action === 'on' ? 'Mengaktifkan' : 'Mematikan') + ' emergency mode...', 'warn');
-
-  try {
-    const res = await fetch(
-      '/api/panic?action=' + action +
-      '&key1=' + encodeURIComponent(key1) +
-      '&key2=' + encodeURIComponent(key2),
-      { cache: 'no-store' }
-    );
-    const data = await res.json();
-
-    if (res.ok && data.success) {
-      showStatus('✅ ' + data.message, action === 'on' ? 'error' : 'off');
-      await loadServices();
-    } else {
-      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
-    }
-  } catch (err) {
-    showStatus('❌ Error: ' + err.message, 'error');
-  }
 }
-
-  function togglePanicPanel() {
-  const panel = $('panicPanel');
-  const arrow = $('arrowPanic');
-  panel.classList.toggle('open');
-  arrow.classList.toggle('open');
-  }
 
 // ==========================================
 // HEALTH CHECK
 // ==========================================
-function toggleHealthPanel() {
-  const panel = $('healthPanel');
-  const arrow = $('arrowHealth');
-  panel.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
-
 async function loadHealth() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
@@ -914,7 +853,6 @@ async function loadHealth() {
       `;
     });
 
-    // Cek status maintenance sekarang
     try {
       const mRes = await fetch('/api/maintenance', { cache: 'no-store' });
       const mData = await mRes.json();
@@ -935,18 +873,11 @@ async function loadHealth() {
     box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ Error: ' + err.message + '</div>';
     showStatus('❌ Error: ' + err.message, 'error');
   }
-}
+  }
 
-// ==========================================
+  // ==========================================
 // KONTAK ADMIN
 // ==========================================
-function toggleContactPanel() {
-  const panel = $('contactPanel');
-  const arrow = $('arrowContact');
-  panel.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
-
 async function simpanContact() {
   const key1 = $('key1').value.trim();
   const key2 = $('key2').value.trim();
@@ -1002,10 +933,44 @@ async function loadContact() {
     if (data.telegram) $('contactTg').value = data.telegram;
   } catch (e) {}
 }
-loadContact();
 
 // ==========================================
-// BUKA APLIKASI (MODE ADMIN)
+// EMERGENCY (PANIC)
+// ==========================================
+async function konfirmasiPanic(action) {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const pesan = action === 'on'
+    ? '🚨 Yakin aktifkan PANIC MODE?\n\nSemua service akan DIMATIKAN, maintenance ON, dan broadcast terkirim ke semua user.'
+    : '🟢 Yakin matikan PANIC MODE?\n\nSemua service akan DINYALAKAN kembali, maintenance OFF, broadcast dimatikan.';
+
+  if (!confirm(pesan)) return;
+
+  showStatus('⏳ ' + (action === 'on' ? 'Mengaktifkan' : 'Mematikan') + ' panic mode...', 'warn');
+
+  try {
+    const res = await fetch(
+      '/api/panic?action=' + action +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, action === 'on' ? 'error' : 'off');
+      await loadServices();
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+// ==========================================
+// PAKAI APLIKASI
 // ==========================================
 function bukaAplikasi() {
   const key1 = $('key1').value.trim();
@@ -1017,9 +982,12 @@ function bukaAplikasi() {
   showStatus('✅ Aplikasi dibuka di tab baru (mode admin)', 'off');
 }
 
-// Init
+// ==========================================
+// INIT
+// ==========================================
 cek();
 loadServices();
+loadContact();
 </script>
 </body>
 </html>
