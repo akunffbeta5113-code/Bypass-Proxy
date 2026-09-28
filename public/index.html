@@ -51,6 +51,45 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .small{flex:1;height:46px;border:0;border-radius:13px;background:#242834;color:#fff;font-weight:700}
 .run{width:100%;height:53px;border:0;border-radius:15px;background:linear-gradient(135deg,#7d43ff,#b45cff);color:#fff;font-size:16px;font-weight:800}
 .loader{display:none;width:40px;height:40px;border:4px solid #ffffff22;border-top-color:#a55cff;border-radius:50%;margin:18px auto;animation:spin .7s linear infinite}
+
+  /* Progress Bar */
+.progress-container {
+  display: none;
+  margin: 16px 0;
+  background: #1b1e2a;
+  border-radius: 12px;
+  padding: 14px;
+}
+.progress-container.show { display: block; }
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #8d91a2;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.progress-label .percent { color: #8b5cff; }
+.progress-track {
+  height: 8px;
+  background: #0d0f17;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7d43ff, #b45cff);
+  border-radius: 20px;
+  transition: width .3s ease;
+}
+.progress-status {
+  text-align: center;
+  font-size: 11px;
+  color: #5a5f70;
+  margin-top: 8px;
+  font-weight: 600;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
 .result{display:none;margin-top:15px;padding:15px;border-radius:17px;background:#191c28;border:1px solid #2d3140}
 .item{margin-bottom:12px}
@@ -405,6 +444,17 @@ body.has-broadcast{padding-top:60px}
       <button class="small" id="clear">🗑 Clear</button>
     </div>
     <button class="run" id="run">🚀 Bypass Sekarang</button>
+    <!-- PROGRESS BAR -->
+<div class="progress-container" id="progressContainer">
+  <div class="progress-label">
+    <span>Memproses...</span>
+    <span class="percent" id="progressPercent">0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-status" id="progressStatus">Mengirim request...</div>
+</div>
     <div class="loader" id="loader"></div>
 
     <div class="result" id="result">
@@ -862,8 +912,9 @@ async function bypass(){
   const url = $("url").value.trim();
   if (!url) return toast("Masukkan URL");
 
-  $("loader").style.display = "block";
+  $("loader").style.display = "none";
   $("result").style.display = "none";
+startProgress();
   debug({
     status: "Mengirim request...",
     endpoint: ENDPOINTS[currentType],
@@ -924,6 +975,7 @@ async function bypass(){
 
     if (!success || !bypassed) {
       const message = (json && (json.error || json.message)) || "Request gagal";
+      finishProgress(false, '❌ ' + message);
       throw new Error(message);
     }
 
@@ -939,6 +991,7 @@ async function bypass(){
 
     resultLink = bypassed;
     $("result").style.display = "block";
+    finishProgress(true, '✅ Bypass berhasil!');
     toast("Bypass berhasil");
   } catch(err) {
     debug({
@@ -948,9 +1001,12 @@ async function bypass(){
     });
     toast(err.message || "Terjadi kesalahan");
   } finally {
-    $("loader").style.display = "none";
+  $("loader").style.display = "none";
+  setTimeout(() => {
+    clearInterval(progressInterval);
+  }, 1500);
   }
-  }
+}
 
   // ==========================================
 // TANGGAL & HIJRIAH
@@ -1046,6 +1102,71 @@ setInterval(() => {
 
 updateDateTime();
 setInterval(updateDateTime, 1000);
+
+  // ==========================================
+// PROGRESS BAR
+// ==========================================
+let progressInterval = null;
+
+function startProgress() {
+  const container = $('progressContainer');
+  const fill = $('progressFill');
+  const percent = $('progressPercent');
+  const status = $('progressStatus');
+  if (!container) return;
+
+  container.classList.add('show');
+  let p = 0;
+  fill.style.width = '0%';
+  percent.textContent = '0%';
+  status.textContent = 'Mengirim request...';
+
+  clearInterval(progressInterval);
+  progressInterval = setInterval(() => {
+    if (p < 30) {
+      p += 3;
+      status.textContent = 'Mengirim request...';
+    } else if (p < 60) {
+      p += 2;
+      status.textContent = 'Memproses link...';
+    } else if (p < 90) {
+      p += 1;
+      status.textContent = 'Menunggu response...';
+    } else if (p < 99) {
+      p += 0.5;
+      status.textContent = 'Hampir selesai...';
+    } else {
+      return;
+    }
+    fill.style.width = p + '%';
+    percent.textContent = Math.floor(p) + '%';
+  }, 100);
+}
+
+function updateProgress(p, text) {
+  const fill = $('progressFill');
+  const percent = $('progressPercent');
+  const status = $('progressStatus');
+  if (fill) fill.style.width = p + '%';
+  if (percent) percent.textContent = Math.floor(p) + '%';
+  if (status && text) status.textContent = text;
+}
+
+function finishProgress(success, text) {
+  clearInterval(progressInterval);
+  const fill = $('progressFill');
+  const percent = $('progressPercent');
+  const status = $('progressStatus');
+
+  if (fill) fill.style.width = '100%';
+  if (percent) percent.textContent = '100%';
+  if (status) status.textContent = text || (success ? '✅ Berhasil!' : '❌ Gagal');
+
+  setTimeout(() => {
+    const container = $('progressContainer');
+    if (container) container.classList.remove('show');
+  }, 1200);
+        }
 
   // ==========================================
 // KONTAK ADMIN — Ambil dari API
