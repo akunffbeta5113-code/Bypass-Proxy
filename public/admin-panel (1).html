@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin Panel</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+body {
+  min-height: 100vh;
+  background: #0d0f18;
+  color: #fff;
+  padding-bottom: 90px;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  padding: 22px 20px 16px;
+  text-align: center;
+  background: linear-gradient(180deg, #171a25, #0d0f18);
+  border-bottom: 1px solid #1e2130;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.header .sub { color: #8d91a2; font-size: 13px; }
+
+/* Container */
+.container { padding: 20px 20px 40px; max-width: 480px; margin: 0 auto; }
+
+/* Kunci */
+label {
+  display: block;
+  color: #858a9c;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+input, textarea, select {
+  width: 100%;
+  height: 50px;
+  padding: 0 14px;
+  background: #1b1e2a;
+  border: 1px solid #303444;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 14px;
+  outline: none;
+  transition: .15s;
+  font-family: inherit;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: #8b5cff;
+  box-shadow: 0 0 14px rgba(139,92,255,.3);
+}
+textarea {
+  height: auto;
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: .15s;
+  letter-spacing: .3px;
+  -webkit-tap-highlight-color: transparent;
+}
+button:active { transform: scale(.98); }
+
+.btn-on { background: #ff4b3f; color: #fff; }
+.btn-off { background: #39df88; color: #08130d; }
+.btn-check { background: #242834; color: #fff; }
+.btn-apply { background: linear-gradient(135deg, #ffa726, #ff7043); color: #fff; font-size: 15px; position: relative; }
+.btn-apply.dirty::after { content: " ●"; color: #ffea00; font-size: 20px; }
+.btn-use { background: linear-gradient(135deg, #7d43ff, #b45cff); color: #fff; margin-top: 6px; }
+.btn-panic { font-weight: 800; letter-spacing: .5px; margin-bottom: 10px; }
+
+/* Status */
+.status {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #0d0f17;
+  font-size: 13px;
+  color: #b8ffcf;
+  word-break: break-word;
+  min-height: 50px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.5;
+}
+.status.show { display: flex; }
+.status.on { background: #4b1e22; color: #ff6262; font-weight: 700; }
+.status.off { background: #1a3a24; color: #39df88; font-weight: 700; }
+.status.error { background: #3a1a1a; color: #ff8888; }
+.status.warn { background: #3a2a0f; color: #ffca18; font-weight: 700; }
+
+/* Collapsible */
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #1b1e2a;
+  border: 1px solid #303444;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: .2s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  margin-top: 6px;
+}
+.collapsible-header:hover { background: #222633; }
+.collapsible-header h2 { margin: 0; font-size: 15px; color: #fff; text-align: left; }
+.arrow-toggle {
+  font-size: 16px;
+  color: #8b5cff;
+  transition: transform .3s ease;
+  display: inline-block;
+  font-weight: 800;
+}
+.arrow-toggle.open { transform: rotate(180deg); }
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s ease, opacity .3s ease, margin .3s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+.collapsible-body.open { max-height: 2000px; opacity: 1; margin-top: 12px; }
+
+/* Service */
+.service-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #1b1e2a;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+.service-name { font-size: 14px; font-weight: 700; flex: 1; text-align: left; }
+.service-name small { display: block; font-size: 11px; color: #8d91a2; font-weight: 500; margin-top: 2px; }
+.service-btn { padding: 8px 14px; border: 0; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; width: auto; height: auto; margin: 0; }
+.service-btn.on { background: #39df88; color: #08130d; }
+.service-btn.off { background: #ff4b3f; color: #fff; }
+.reason-input {
+  width: 100%; height: 40px; font-size: 12px;
+  margin: 0 0 10px 0; padding: 0 12px;
+  background: #12151f; border: 1px solid #303444;
+  border-radius: 10px; color: #fff; outline: none;
+}
+.reason-input::placeholder { color: #5a5f70; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card { background: #1b1e2a; border-radius: 12px; padding: 14px; text-align: center; }
+.stat-card .num { font-size: 24px; font-weight: 800; color: #8b5cff; margin-bottom: 4px; }
+.stat-card .label { font-size: 11px; color: #8d91a2; font-weight: 600; }
+.stat-section { background: #1b1e2a; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.stat-section h3 { font-size: 13px; color: #8d91a2; margin-bottom: 10px; font-weight: 700; }
+.stat-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; border-bottom: 1px solid #252936; }
+.stat-row:last-child { border-bottom: 0; }
+.stat-row .svc { color: #fff; font-weight: 600; }
+.stat-row .val { color: #8b5cff; font-weight: 700; }
+.chart-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; }
+.chart-bar .day { width: 32px; color: #8d91a2; }
+.chart-bar .bar { flex: 1; height: 18px; background: linear-gradient(90deg, #7d43ff, #b45cff); border-radius: 4px; min-width: 2px; transition: width .3s; }
+.chart-bar .num { width: 34px; text-align: right; color: #fff; font-weight: 700; }
+
+/* Health */
+.health-item {
+  background: #1b1e2a; border-radius: 12px; padding: 14px;
+  margin-bottom: 10px; border-left: 4px solid #8d91a2;
+}
+.health-item.online { border-left-color: #39df88; }
+.health-item.warning { border-left-color: #ffca18; }
+.health-item.offline { border-left-color: #ff4b3f; }
+.health-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.health-name { font-size: 14px; font-weight: 800; color: #fff; }
+.health-badge { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; }
+.health-badge.online { background: #1a3a24; color: #39df88; }
+.health-badge.warning { background: #3a2a0f; color: #ffca18; }
+.health-badge.offline { background: #3a1a1a; color: #ff8888; }
+.health-msg { font-size: 12px; color: #b8ffcf; margin-bottom: 4px; word-break: break-word; }
+.health-time { font-size: 11px; color: #5a5f70; font-weight: 600; }
+.health-timestamp { text-align: center; color: #5a5f70; font-size: 11px; margin-top: 10px; }
+
+/* Activity */
+.activity-item {
+  background: #1b1e2a; border-radius: 10px; padding: 10px 12px;
+  margin-bottom: 8px; border-left: 3px solid #8b5cff; font-size: 12px;
+}
+.activity-item.maintenance { border-left-color: #ffa726; }
+.activity-item.service { border-left-color: #8b5cff; }
+.activity-item.broadcast { border-left-color: #2196f3; }
+.activity-item.panic { border-left-color: #ff4b3f; }
+.activity-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.activity-action { font-weight: 800; color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+.activity-time { font-size: 10px; color: #5a5f70; }
+.activity-detail { color: #b8ffcf; font-size: 12px; margin-bottom: 2px; word-break: break-word; }
+.activity-ip { color: #5a5f70; font-size: 10px; font-weight: 600; }
+
+/* Tab Content */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  /* ========================================== */
+/* BOTTOM NAVIGATION */
+/* ========================================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: #171a25;
+  border-top: 1px solid #292c3b;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  padding: 0 8px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.4);
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  padding: 8px 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: .2s;
+  color: #5a5f70;
+  font-size: 10px;
+  font-weight: 700;
+  margin: 0;
+  height: auto;
+  letter-spacing: 0;
+}
+.nav-item.active {
+  color: #b45cff;
+  background: rgba(180, 92, 255, 0.1);
+}
+.nav-item:active { transform: scale(.95); }
+.nav-icon {
+  font-size: 22px;
+  line-height: 1;
+  transition: .2s;
+}
+.nav-item.active .nav-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 8px rgba(180,92,255,.6));
+}
+.nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* Divider */
+.divider { height: 1px; background: #292c3b; margin: 20px 0 18px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>🔐 Admin Panel</h1>
+  <div class="sub">Masukkan 2 kunci rahasia</div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <!-- KUNCI -->
+  <label>Kunci Pertama</label>
+  <input id="key1" type="password" placeholder="Kunci 1" autocomplete="off">
+
+  <label>Kunci Kedua</label>
+  <input id="key2" type="password" placeholder="Kunci 2" autocomplete="off">
+
+  <!-- MAINTENANCE -->
+  <button class="btn-on" onclick="ubah('on')">🔴 AKTIFKAN MAINTENANCE</button>
+  <button class="btn-off" onclick="ubah('off')">🟢 MATIKAN MAINTENANCE</button>
+  <button class="btn-check" onclick="cek()">🔍 Cek Status Maintenance</button>
+
+  <div class="divider"></div>
+
+  <!-- ========================================== -->
+  <!-- TAB: BROADCAST -->
+  <!-- ========================================== -->
+  <div class="tab-content active" id="tab-broadcast">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">📢 NOTIFIKASI BROADCAST</h2>
+
+    <label>Tipe Notifikasi</label>
+    <select id="bcastType">
+      <option value="info">ℹ️ Info (biru)</option>
+      <option value="success">✅ Sukses (hijau)</option>
+      <option value="warning">⚠️ Peringatan (kuning)</option>
+      <option value="danger">🚨 Penting (merah)</option>
+    </select>
+
+    <label>Pesan</label>
+    <textarea id="bcastMessage" placeholder="Ketik pengumuman untuk semua user..."></textarea>
+
+    <button class="btn-apply" onclick="kirimBroadcast()" style="background:linear-gradient(135deg,#00c896,#00a07a);">📢 KIRIM BROADCAST</button>
+    <button class="btn-check" onclick="matikanBroadcast()">🔇 MATIKAN BROADCAST</button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: SERVICE -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-service">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">⚙️ MANAJEMEN SERVICE</h2>
+    <div id="serviceList"></div>
+    <button class="btn-apply" id="applyBtn" onclick="applyServices()">💾 TERAPKAN PERUBAHAN SERVICE</button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: STATISTIK -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-stats">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">📊 DASHBOARD STATISTIK</h2>
+    <button class="btn-check" onclick="loadStats()">🔄 REFRESH STATISTIK</button>
+    <div id="statsContent" style="text-align:left;font-size:13px;margin-top:14px;">
+      <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk memuat data.</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: HEALTH -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-health">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">🩺 HEALTH CHECK SERVER</h2>
+    <button class="btn-check" onclick="loadHealth()">🔄 REFRESH STATUS</button>
+    <div id="healthContent" style="text-align:left;margin-top:14px;">
+      <div style="color:#8d91a2;text-align:center;padding:20px;">Klik "Refresh" untuk cek status server.</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB: KONTAK -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-contact">
+    <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">📞 KONTAK ADMIN</h2>
+
+    <label>Nomor WhatsApp</label>
+    <input id="contactWa" type="text" placeholder="6281234567890">
+
+    <label>Username Telegram</label>
+    <input id="contactTg" type="text" placeholder="username (tanpa @)">
+
+    <p style="color:#8d91a2;font-size:11px;text-align:left;margin-bottom:12px;line-height:1.5;">
+      <b>Format WA:</b> <code style="background:#0d0f17;padding:2px 6px;border-radius:4px;">6281234567890</code> (kode negara 62, tanpa + atau spasi)<br>
+      <b>Format Telegram:</b> <code style="background:#0d0f17;padding:2px 6px;border-radius:4px;">username</code> (tanpa @)
+    </p>
+
+    <button class="btn-apply" onclick="simpanContact()" style="background:linear-gradient(135deg,#00c896,#00a07a);">💾 SIMPAN KONTAK</button>
+    <button class="btn-check" onclick="hapusContact()">🗑️ HAPUS KONTAK</button>
+  </div>
+
+  <!-- ========================================== -->
+<!-- TAB: INFO -->
+<!-- ========================================== -->
+<div class="tab-content" id="tab-info">
+  <h2 style="font-size:16px;color:#8d91a2;margin-bottom:14px;">ℹ️ INFO APLIKASI</h2>
+
+  <label>Judul Info</label>
+  <input id="infoTitle" type="text" placeholder="Tentang Aplikasi" style="margin-bottom:12px;">
+
+  <label>Isi Info</label>
+  <textarea id="infoContent" placeholder="Tulis info aplikasi di sini..." rows="6" style="width:100%;padding:12px;background:#1b1e2a;border:1px solid #303444;border-radius:12px;color:#fff;font-size:13px;margin-bottom:12px;outline:none;resize:vertical;font-family:inherit;"></textarea>
+
+  <label>Kontak / Info Tambahan</label>
+  <input id="infoContact" type="text" placeholder="WhatsApp: 628xxx | Telegram: @xxx" style="margin-bottom:12px;">
+
+  <button class="btn-apply" onclick="simpanInfo()" style="background:linear-gradient(135deg,#00c896,#00a07a);">💾 SIMPAN INFO</button>
+</div>
+
+  <!-- ========================================== -->
+  <!-- TAB: EMERGENCY -->
+  <!-- ========================================== -->
+  <div class="tab-content" id="tab-emergency">
+    <h2 style="font-size:16px;color:#ff4b3f;margin-bottom:14px;">🚨 EMERGENCY</h2>
+
+    <button class="btn-panic" onclick="konfirmasiPanic('on')" style="background:linear-gradient(135deg,#ff4b3f,#d32f2f);color:#fff;font-size:16px;">
+      🚨 EMERGENCY MODE ON
+    </button>
+    <button class="btn-panic" onclick="konfirmasiPanic('off')" style="background:linear-gradient(135deg,#39df88,#00a07a);color:#08130d;font-size:16px;">
+      🟢 EMERGENCY MODE OFF
+    </button>
+
+    <p style="color:#8d91a2;font-size:11px;text-align:left;margin-top:8px;line-height:1.5;">
+      <b>EMERGENCY ON:</b> Matikan semua service + maintenance ON + broadcast otomatis.<br>
+      <b>EMERGENCY OFF:</b> Nyalakan semua service + maintenance OFF + broadcast OFF.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PAKAI APLIKASI -->
+  <button class="btn-use" onclick="bukaAplikasi()">🚀 Pakai Aplikasi (Mode Admin)</button>
+
+  <!-- STATUS -->
+  <div class="status" id="status"></div>
+
+</div>
+
+  <!-- BOTTOM NAVIGATION -->
+<div class="bottom-nav">
+  <button class="nav-item active" data-tab="broadcast" onclick="switchTab('broadcast', this)">
+    <div class="nav-icon">📢</div>
+    <div class="nav-label">Broadcast</div>
+  </button>
+  <button class="nav-item" data-tab="service" onclick="switchTab('service', this)">
+    <div class="nav-icon">⚙️</div>
+    <div class="nav-label">Service</div>
+  </button>
+  <button class="nav-item" data-tab="stats" onclick="switchTab('stats', this)">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Statistik</div>
+  </button>
+  <button class="nav-item" data-tab="health" onclick="switchTab('health', this)">
+    <div class="nav-icon">🩺</div>
+    <div class="nav-label">Health</div>
+  </button>
+  <button class="nav-item" data-tab="contact" onclick="switchTab('contact', this)">
+    <div class="nav-icon">📞</div>
+    <div class="nav-label">Kontak</div>
+  </button>
+  <button class="nav-item" data-tab="info" onclick="switchTab('info', this)">
+  <div class="nav-icon">ℹ️</div>
+  <div class="nav-label">Info</div>
+  </button>
+  <button class="nav-item" data-tab="emergency" onclick="switchTab('emergency', this)">
+    <div class="nav-icon">🚨</div>
+    <div class="nav-label">Emerg.</div>
+  </button>
+</div>
+
+<script>
+const MAINT_API = '/api/maintenance';
+const SERVICES_API = '/api/services';
+const $ = id => document.getElementById(id);
+
+// ==========================================
+// TAB SWITCH
+// ==========================================
+function switchTab(tabName, el) {
+  // Sembunyikan semua tab
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  // Tampilkan tab yang dipilih
+  const target = document.getElementById('tab-' + tabName);
+  if (target) target.classList.add('active');
+
+  // Update nav item
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+
+  // Auto-load data sesuai tab
+  if (tabName === 'stats') {
+    const k1 = $('key1').value.trim();
+    const k2 = $('key2').value.trim();
+    if (k1 && k2) loadStats();
+  }
+  if (tabName === 'health') {
+    const k1 = $('key1').value.trim();
+    const k2 = $('key2').value.trim();
+    if (k1 && k2) loadHealth();
+  }
+}
+
+// ==========================================
+// STATUS
+// ==========================================
+function showStatus(text, cls) {
+  const el = $('status');
+  if (!text) {
+    el.classList.remove('show');
+    return;
+  }
+  el.textContent = text;
+  el.className = 'status show ' + (cls || '');
+}
+
+// ==========================================
+// MAINTENANCE
+// ==========================================
+async function ubah(action) {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  try {
+    const res = await fetch(
+      MAINT_API + '?action=' + action +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, data.maintenance ? 'on' : 'off');
+    } else {
+      showStatus('❌ ' + (data.message || data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function cek() {
+  try {
+    const res = await fetch(MAINT_API, { cache: 'no-store' });
+    const data = await res.json();
+    showStatus(
+      (data.maintenance ? '🔴 MAINTENANCE AKTIF' : '🟢 NORMAL — Aplikasi Jalan'),
+      data.maintenance ? 'on' : 'off'
+    );
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+// ==========================================
+// MANAJEMEN SERVICE
+// ==========================================
+const SERVICES = [
+  { id: 'adlink', name: 'AdLinkSumo' },
+  { id: 'sfl', name: 'SFL' },
+  { id: 'delta', name: 'Delta' },
+  { id: 'linkvertise', name: 'Linkvertise' },
+  { id: 'move2link', name: 'Move2link' },
+  { id: 'sub2unlock', name: 'Sub2Unlock' },
+  { id: 'sub4unlock', name: 'Sub4Unlock' },
+  { id: 'universal', name: 'Universal' }
+];
+
+let servicesData = {};
+let pendingChanges = {};
+
+async function loadServices() {
+  try {
+    const res = await fetch(SERVICES_API, { cache: 'no-store' });
+    const data = await res.json();
+    servicesData = data.services || {};
+    pendingChanges = {};
+    updateApplyButton();
+    renderServices();
+  } catch (err) {
+    console.error('Load services failed:', err);
+  }
+}
+
+function renderServices() {
+  const container = $('serviceList');
+  container.innerHTML = '';
+
+  SERVICES.forEach(svc => {
+    const serverInfo = servicesData[svc.id] || { status: 'on', reason: '' };
+    const pendingInfo = pendingChanges[svc.id];
+    const info = pendingInfo ? { ...serverInfo, ...pendingInfo } : serverInfo;
+    const isOn = info.status === 'on';
+
+    const item = document.createElement('div');
+    item.className = 'service-item';
+    item.innerHTML = `
+      <div class="service-name">
+        ${svc.name}
+        <small>${isOn ? 'Aktif' : 'Nonaktif: ' + (info.reason || 'tanpa alasan')}</small>
+      </div>
+      <button class="service-btn ${isOn ? 'on' : 'off'}"
+              onclick="toggleServiceLocal('${svc.id}')">
+        ${isOn ? '🟢 ON' : '🔴 OFF'}
+      </button>
+    `;
+    container.appendChild(item);
+
+    if (!isOn) {
+      const reasonInput = document.createElement('input');
+      reasonInput.type = 'text';
+      reasonInput.className = 'reason-input';
+      reasonInput.placeholder = 'Alasan OFF (tampil ke user)';
+      reasonInput.value = info.reason || '';
+      reasonInput.oninput = (e) => updateReasonLocal(svc.id, e.target.value);
+      container.appendChild(reasonInput);
+    }
+  });
+}
+
+function toggleServiceLocal(serviceId) {
+  const serverInfo = servicesData[serviceId] || { status: 'on', reason: '' };
+  const current = pendingChanges[serviceId]
+    ? { ...serverInfo, ...pendingChanges[serviceId] }
+    : { ...serverInfo };
+  const newStatus = current.status === 'on' ? 'off' : 'on';
+
+  pendingChanges[serviceId] = {
+    status: newStatus,
+    reason: current.reason || ''
+  };
+
+  updateApplyButton();
+  renderServices();
+}
+
+function updateReasonLocal(serviceId, reason) {
+  const serverInfo = servicesData[serviceId] || { status: 'off', reason: '' };
+  const current = pendingChanges[serviceId]
+    ? { ...serverInfo, ...pendingChanges[serviceId] }
+    : { ...serverInfo };
+
+  pendingChanges[serviceId] = {
+    status: current.status,
+    reason: reason
+  };
+
+  updateApplyButton();
+}
+
+function updateApplyButton() {
+  const btn = $('applyBtn');
+  const count = Object.keys(pendingChanges).length;
+  if (count > 0) {
+    btn.classList.add('dirty');
+    btn.textContent = `💾 TERAPKAN (${count} perubahan)`;
+  } else {
+    btn.classList.remove('dirty');
+    btn.textContent = '💾 TERAPKAN PERUBAHAN SERVICE';
+  }
+}
+
+async function applyServices() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const keys = Object.keys(pendingChanges);
+  if (keys.length === 0) {
+    return showStatus('ℹ️ Tidak ada perubahan untuk diterapkan.', 'warn');
+  }
+
+  showStatus('⏳ Menerapkan ' + keys.length + ' perubahan...', 'warn');
+
+  let berhasil = 0;
+  let gagal = 0;
+
+  for (const serviceId of keys) {
+    const info = pendingChanges[serviceId];
+    try {
+      const res = await fetch(
+        SERVICES_API + '?action=set&service=' + serviceId +
+        '&status=' + info.status +
+        '&reason=' + encodeURIComponent(info.reason || '') +
+        '&key1=' + encodeURIComponent(key1) +
+        '&key2=' + encodeURIComponent(key2),
+        { cache: 'no-store' }
+      );
+      const data = await res.json();
+      if (res.ok && data.success) {
+        berhasil++;
+        servicesData[serviceId] = { status: info.status, reason: info.reason || '' };
+      } else {
+        gagal++;
+      }
+    } catch (err) {
+      gagal++;
+    }
+  }
+
+  pendingChanges = {};
+  updateApplyButton();
+  renderServices();
+
+  if (gagal === 0) showStatus('✅ Berhasil: ' + berhasil + ' service', 'off');
+  else showStatus('⚠️ Berhasil: ' + berhasil + ' | Gagal: ' + gagal, 'error');
+}
+
+  // ==========================================
+// BROADCAST
+// ==========================================
+async function kirimBroadcast() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  const message = $('bcastMessage').value.trim();
+  const type = $('bcastType').value;
+
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+  if (!message) return showStatus('⚠️ Pesan tidak boleh kosong!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/broadcast?action=set' +
+      '&message=' + encodeURIComponent(message) +
+      '&type=' + encodeURIComponent(type) +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, 'off');
+      $('bcastMessage').value = '';
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function matikanBroadcast() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/broadcast?action=off' +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) showStatus('✅ ' + data.message, 'off');
+  } catch (err) {}
+}
+
+// ==========================================
+// STATISTIK
+// ==========================================
+async function loadStats() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const box = $('statsContent');
+  box.innerHTML = '<div style="color:#8d91a2;text-align:center;padding:20px;">⏳ Memuat...</div>';
+
+  try {
+    const res = await fetch(
+      '/api/stats?key1=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ ' + (data.error || 'Gagal') + '</div>';
+      return;
+    }
+
+    const SERVICE_NAMES = {
+      adlink: 'AdLinkSumo', sfl: 'SFL', delta: 'Delta',
+      linkvertise: 'Linkvertise', move2link: 'Move2link',
+      sub2unlock: 'Sub2Unlock', sub4unlock: 'Sub4Unlock', universal: 'Universal'
+    };
+
+    let chartHtml = '';
+    const maxCount = Math.max(...data.last7Days.map(d => d.count), 1);
+    data.last7Days.forEach(d => {
+      const pct = (d.count / maxCount) * 100;
+      const dayName = new Date(d.date).toLocaleDateString('id-ID', { weekday: 'short' });
+      chartHtml += `
+        <div class="chart-bar">
+          <span class="day">${dayName}</span>
+          <div class="bar" style="width:${pct}%;"></div>
+          <span class="num">${d.count}</span>
+        </div>
+      `;
+    });
+
+    let todayServiceHtml = '';
+    Object.keys(data.today.byService).forEach(s => {
+      const count = parseInt(data.today.byService[s]) || 0;
+      if (count > 0) {
+        todayServiceHtml += `<div class="stat-row"><span class="svc">${SERVICE_NAMES[s]}</span><span class="val">${count}</span></div>`;
+      }
+    });
+    if (!todayServiceHtml) todayServiceHtml = '<div style="color:#5a5f70;font-size:12px;text-align:center;padding:8px;">Belum ada bypass hari ini</div>';
+
+    let allServiceHtml = '';
+    Object.keys(data.allTime.byService).forEach(s => {
+      const count = parseInt(data.allTime.byService[s]) || 0;
+      allServiceHtml += `<div class="stat-row"><span class="svc">${SERVICE_NAMES[s]}</span><span class="val">${count}</span></div>`;
+    });
+
+    box.innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card"><div class="num">${data.today.total}</div><div class="label">Bypass Hari Ini</div></div>
+        <div class="stat-card"><div class="num">${data.today.users}</div><div class="label">User Aktif</div></div>
+        <div class="stat-card"><div class="num">${data.allTime.total}</div><div class="label">Total Bypass</div></div>
+        <div class="stat-card"><div class="num" style="font-size:16px;">${SERVICE_NAMES[data.allTime.topService] || '-'}</div><div class="label">Terpopuler</div></div>
+      </div>
+      <div class="stat-section"><h3>📈 7 HARI TERAKHIR</h3>${chartHtml}</div>
+      <div class="stat-section"><h3>🔥 SERVICE HARI INI</h3>${todayServiceHtml}</div>
+      <div class="stat-section"><h3>🏆 SERVICE KESELURUHAN</h3>${allServiceHtml}</div>
+    `;
+
+    showStatus('✅ Statistik dimuat', 'off');
+  } catch (err) {
+    box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ Error: ' + err.message + '</div>';
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+// ==========================================
+// HEALTH CHECK
+// ==========================================
+async function loadHealth() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const box = $('healthContent');
+  box.innerHTML = '<div style="color:#8d91a2;text-align:center;padding:20px;">⏳ Mengecek server...</div>';
+
+  try {
+    const res = await fetch(
+      '/api/health?key1=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ ' + (data.error || 'Gagal') + '</div>';
+      return;
+    }
+
+    const SERVERS = [
+      { id: 'vercel', name: '🟣 Vercel (API)' },
+      { id: 'upstash', name: '🔵 Upstash KV' },
+      { id: 'theresav', name: '🟢 Theresav API' }
+    ];
+
+    let html = '';
+    SERVERS.forEach(srv => {
+      const info = data.results[srv.id] || { status: 'offline', time: 0, message: '' };
+      const statusText = {
+        online: '● ONLINE',
+        warning: '● WARNING',
+        offline: '● OFFLINE'
+      }[info.status] || '● UNKNOWN';
+
+      html += `
+        <div class="health-item ${info.status}">
+          <div class="health-head">
+            <span class="health-name">${srv.name}</span>
+            <span class="health-badge ${info.status}">${statusText}</span>
+          </div>
+          <div class="health-msg">${info.message || '-'}</div>
+          <div class="health-time">⏱️ ${info.time != null ? info.time + ' ms' : '-'}</div>
+        </div>
+      `;
+    });
+
+    try {
+      const mRes = await fetch('/api/maintenance', { cache: 'no-store' });
+      const mData = await mRes.json();
+      html += `
+        <div style="background:#1b1e2a;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;text-align:left;">
+          <b style="color:#ffca18;">🔧 Status Maintenance:</b><br>
+          ${mData.maintenance ? '🔴 Maintenance sedang <b>AKTIF</b>' : '🟢 Maintenance sedang <b>NONAKTIF</b>'}
+        </div>
+      `;
+    } catch (e) {}
+
+    const ts = new Date(data.timestamp).toLocaleString('id-ID');
+    html += `<div class="health-timestamp">🕒 Terakhir cek: ${ts}</div>`;
+
+    box.innerHTML = html;
+    showStatus('✅ Health check selesai', 'off');
+  } catch (err) {
+    box.innerHTML = '<div style="color:#ff8888;text-align:center;padding:20px;">❌ Error: ' + err.message + '</div>';
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+  }
+
+  // ==========================================
+// KONTAK ADMIN
+// ==========================================
+async function simpanContact() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  const wa = $('contactWa').value.trim();
+  const tg = $('contactTg').value.trim();
+
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+  if (!wa && !tg) return showStatus('⚠️ Isi minimal 1 kontak!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/contact?action=set' +
+      '&wa=' + encodeURIComponent(wa) +
+      '&telegram=' + encodeURIComponent(tg) +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) showStatus('✅ ' + data.message, 'off');
+    else showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function hapusContact() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/contact?action=off' +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, 'off');
+      $('contactWa').value = '';
+      $('contactTg').value = '';
+    }
+  } catch (err) {}
+}
+
+async function loadContact() {
+  try {
+    const res = await fetch('/api/contact', { cache: 'no-store' });
+    const data = await res.json();
+    if (data.wa) $('contactWa').value = data.wa;
+    if (data.telegram) $('contactTg').value = data.telegram;
+  } catch (e) {}
+}
+
+  // ==========================================
+// INFO APLIKASI
+// ==========================================
+async function simpanInfo() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  const title = $('infoTitle').value.trim();
+  const content = $('infoContent').value.trim();
+  const contact = $('infoContact').value.trim();
+
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+  if (!content) return showStatus('⚠️ Isi info tidak boleh kosong!', 'error');
+
+  try {
+    const res = await fetch(
+      '/api/info?action=set' +
+      '&title=' + encodeURIComponent(title || 'Tentang Aplikasi') +
+      '&content=' + encodeURIComponent(content) +
+      '&contact=' + encodeURIComponent(contact) +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) showStatus('✅ ' + data.message, 'off');
+    else showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+async function loadInfoAdmin() {
+  try {
+    const res = await fetch('/api/info', { cache: 'no-store' });
+    const data = await res.json();
+    if (data.title) $('infoTitle').value = data.title;
+    if (data.content) $('infoContent').value = data.content;
+    if (data.contact) $('infoContact').value = data.contact;
+  } catch (e) {}
+}
+loadInfoAdmin();
+
+// ==========================================
+// EMERGENCY (PANIC)
+// ==========================================
+async function konfirmasiPanic(action) {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const pesan = action === 'on'
+    ? '🚨 Yakin aktifkan PANIC MODE?\n\nSemua service akan DIMATIKAN, maintenance ON, dan broadcast terkirim ke semua user.'
+    : '🟢 Yakin matikan PANIC MODE?\n\nSemua service akan DINYALAKAN kembali, maintenance OFF, broadcast dimatikan.';
+
+  if (!confirm(pesan)) return;
+
+  showStatus('⏳ ' + (action === 'on' ? 'Mengaktifkan' : 'Mematikan') + ' panic mode...', 'warn');
+
+  try {
+    const res = await fetch(
+      '/api/panic?action=' + action +
+      '&key1=' + encodeURIComponent(key1) +
+      '&key2=' + encodeURIComponent(key2),
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, action === 'on' ? 'error' : 'off');
+      await loadServices();
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    }
+  } catch (err) {
+    showStatus('❌ Error: ' + err.message, 'error');
+  }
+}
+
+// ==========================================
+// PAKAI APLIKASI
+// ==========================================
+function bukaAplikasi() {
+  const key1 = $('key1').value.trim();
+  const key2 = $('key2').value.trim();
+  if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
+
+  const url = '/?admin=' + encodeURIComponent(key1) + '&key2=' + encodeURIComponent(key2);
+  window.open(url, '_blank');
+  showStatus('✅ Aplikasi dibuka di tab baru (mode admin)', 'off');
+}
+
+// ==========================================
+// INIT
+// ==========================================
+cek();
+loadServices();
+loadContact();
+</script>
+</body>
+</html>
