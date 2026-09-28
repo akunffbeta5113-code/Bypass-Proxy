@@ -1104,10 +1104,9 @@ updateDateTime();
 setInterval(updateDateTime, 1000);
 
 // ==========================================
-// PROGRESS BAR — VERSI SMOOTH
+// PROGRESS BAR
 // ==========================================
 let progressInterval = null;
-let progressValue = 0;
 
 function startProgress() {
   const container = $('progressContainer');
@@ -1117,79 +1116,59 @@ function startProgress() {
   if (!container) return;
 
   container.classList.add('show');
-  progressValue = 0;
+  let p = 0;
   fill.style.width = '0%';
   percent.textContent = '0%';
   status.textContent = 'Mengirim request...';
 
   clearInterval(progressInterval);
-
-  // Interval lebih cepat (50ms) biar smooth, tapi kenaikan lebih kecil
   progressInterval = setInterval(() => {
-    if (progressValue >= 95) return;  // berhenti di 95%, tunggu response
+    if (p < 30) {
+      p += 3;
+      status.textContent = 'Mengirim request...';
+    } else if (p < 60) {
+      p += 2;
+      status.textContent = 'Memproses link...';
+    } else if (p < 90) {
+      p += 1;
+      status.textContent = 'Menunggu response...';
+    } else if (p < 99) {
+      p += 1;
+      status.textContent = 'Hampir selesai...';
+    } else {
+      return;
+    }
+    fill.style.width = p + '%';
+    percent.textContent = Math.floor(p) + '%';
+  }, 100);
+}
 
-    // Kenaikan makin pelan mendekati 95%
-    let step = 0;
-    if (progressValue < 30) step = 0.6;
-    else if (progressValue < 60) step = 0.4;
-    else if (progressValue < 80) step = 0.25;
-    else step = 0.1;
-
-    progressValue += step;
-    if (progressValue > 95) progressValue = 95;
-
-    fill.style.width = progressValue + '%';
-    percent.textContent = Math.floor(progressValue) + '%';
-
-    // Update teks status
-    if (progressValue < 30) status.textContent = 'Mengirim request...';
-    else if (progressValue < 60) status.textContent = 'Memproses link...';
-    else if (progressValue < 80) status.textContent = 'Menunggu response...';
-    else status.textContent = 'Hampir selesai...';
-  }, 50);
+function updateProgress(p, text) {
+  const fill = $('progressFill');
+  const percent = $('progressPercent');
+  const status = $('progressStatus');
+  if (fill) fill.style.width = p + '%';
+  if (percent) percent.textContent = Math.floor(p) + '%';
+  if (status && text) status.textContent = text;
 }
 
 function finishProgress(success, text) {
   clearInterval(progressInterval);
-
   const fill = $('progressFill');
   const percent = $('progressPercent');
   const status = $('progressStatus');
 
-  // Animasi halus dari 95% ke 100%
-  const start = progressValue;
-  const duration = 400;  // 0.4 detik
-  const startTime = Date.now();
+  if (fill) fill.style.width = '100%';
+  if (percent) percent.textContent = '100%';
+  if (status) status.textContent = text || (success ? '✅ Berhasil!' : '❌ Gagal');
 
-  function animate() {
-    const elapsed = Date.now() - startTime;
-    const t = Math.min(elapsed / duration, 1);
-    // Ease-out
-    const eased = 1 - Math.pow(1 - t, 3);
-    const val = start + (100 - start) * eased;
-
-    fill.style.width = val + '%';
-    percent.textContent = Math.floor(val) + '%';
-
-    if (t < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      fill.style.width = '100%';
-      percent.textContent = '100%';
-      if (status) status.textContent = text || (success ? '✅ Berhasil!' : '❌ Gagal');
-
-      // Tahan 1 detik sebelum hilang
-      setTimeout(() => {
-        const container = $('progressContainer');
-        if (container) container.classList.remove('show');
-      }, 1000);
-    }
+  setTimeout(() => {
+    const container = $('progressContainer');
+    if (container) container.classList.remove('show');
+  }, 1200);
   }
+    
 
-  requestAnimationFrame(animate);
-  progressValue = 100;
-  }
-  
   // ==========================================
 // KONTAK ADMIN — Ambil dari API
 // ==========================================
