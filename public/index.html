@@ -1151,7 +1151,7 @@ async function init() {
   loadServiceStatus();
   // Cek welcome & kontak
   cekWelcome();
-  cekContak();
+  cekKontak();
   }
 
 if (document.readyState === 'loading') {
@@ -1326,14 +1326,14 @@ async function cekKontak() {
     tg = data.telegram || '';
   } catch (err) {
     // fallback kalau API gagal
-    wa = '6285818739766';
-    tg = 'makak';
+    wa = '6285813439956';
+    tg = 'secretdevelop';
   }
 
   // Fallback kalau API kosong
   if (!wa && !tg) {
     wa = '6285813439956';
-    tg = 'makak';
+    tg = 'secretdevelop';
   }
 
   let html = '';
