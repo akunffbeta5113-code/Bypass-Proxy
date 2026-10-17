@@ -80,6 +80,180 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
   border-radius: 2px;
   margin: 3px 0;
   }
+
+  /* ========================================== */
+/* DRAWER MENU */
+/* ========================================== */
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9998;
+  animation: fadeIn .2s;
+}
+.drawer-overlay.show { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  max-width: 85%;
+  height: 100vh;
+  background: #11131e;
+  border-left: 1px solid #292c3b;
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+}
+.drawer.show {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  padding: 24px 22px 20px;
+  border-bottom: 1px solid #1e2130;
+  background: linear-gradient(180deg, #171a25, #11131e);
+}
+.drawer-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.drawer-header p {
+  font-size: 12px;
+  color: #8d91a2;
+  font-weight: 500;
+}
+
+.drawer-menu {
+  padding: 16px 12px;
+}
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: .15s;
+  margin-bottom: 6px;
+  color: #fff;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.drawer-item:active {
+  transform: scale(.97);
+  background: rgba(125, 67, 255, 0.15);
+}
+.drawer-item.active {
+  background: linear-gradient(135deg, rgba(125, 67, 255, 0.2), rgba(180, 92, 255, 0.1));
+  border: 1px solid rgba(180, 92, 255, 0.3);
+}
+.drawer-icon {
+  font-size: 22px;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.drawer-text {
+  flex: 1;
+  text-align: left;
+}
+.drawer-text b {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+.drawer-text small {
+  display: block;
+  font-size: 11px;
+  color: #8d91a2;
+  margin-top: 2px;
+}
+.drawer-arrow {
+  color: #5a5f70;
+  font-size: 18px;
+}
+.drawer-footer {
+  padding: 20px 22px;
+  border-top: 1px solid #1e2130;
+  text-align: center;
+  color: #5a5f70;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+/* Halaman Tab */
+.tab-page {
+  display: none;
+}
+.tab-page.active {
+  display: block;
+}
+
+/* Info Content */
+.info-box {
+  background: #1b1e2a;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 16px;
+  border: 1px solid #252936;
+}
+.info-box h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #b45cff;
+  margin-bottom: 12px;
+}
+.info-box .content {
+  color: #d0d3dd;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+/* Riwayat */
+.history-item {
+  background: #1b1e2a;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-left: 3px solid #8b5cff;
+  cursor: pointer;
+}
+.history-item .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.history-item .svc {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+.history-item .time {
+  font-size: 10px;
+  color: #5a5f70;
+  font-weight: 600;
+}
+.history-item .link {
+  font-size: 11px;
+  color: #b8ffcf;
+  word-break: break-all;
+  }
   
   /* Progress Bar */
 .progress-container {
@@ -449,6 +623,8 @@ body.has-broadcast{padding-top:60px}
 </div>
 
 <main class="app">
+  <!-- TAB: HOME -->
+<div class="tab-page active" id="page-home">
   <div class="topBadge">⚡ PREMIUM BYPASS AUTO ⚡</div>
   <!-- TOMBOL MENU HAMBURGER -->
 <button class="menu-btn" onclick="openDrawer()">
@@ -505,22 +681,6 @@ body.has-broadcast{padding-top:60px}
     </div>
   </section>
 
-  <!-- STATISTIK PRIBADI USER -->
-<div class="personal-stats">
-  <div class="personal-stats-title">📊 Statistik Kamu</div>
-  <div class="personal-stats-grid">
-    <div class="personal-stat">
-      <div class="num" id="myTotalBypass">0</div>
-      <div class="label">Total Bypass</div>
-    </div>
-    <div class="personal-stat">
-      <div class="num" style="font-size:14px;padding-top:6px;" id="myTopService">-</div>
-      <div class="label">Favorit Kamu</div>
-    </div>
-  </div>
-  <button class="personal-reset" onclick="resetPersonalStats()">🗑️ Bersihkan Riwayat Saya</button>
-</div>
-
   <!-- KONTAK ADMIN -->
 <div class="contact-section" id="contactSection">
   <div class="contact-title">💬 Butuh Bantuan?</div>
@@ -532,6 +692,32 @@ body.has-broadcast{padding-top:60px}
   <div class="hijriDisplay" id="hijriDisplay"></div>
   <div class="observanceDisplay" id="observanceDisplay"></div>
 </footer>
+</div>
+<!-- END TAB HOME -->
+
+<!-- TAB: RIWAYAT -->
+<div class="tab-page" id="page-history">
+  <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;">📜 Riwayat Bypass</h2>
+  <p style="color:#8d91a2;font-size:13px;margin-bottom:20px;">30 bypass terakhir kamu</p>
+  <div id="historyList"></div>
+</div>
+<!-- END TAB RIWAYAT -->
+
+<!-- TAB: INFO -->
+<div class="tab-page" id="page-info">
+  <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;">ℹ️ Info Aplikasi</h2>
+  <p style="color:#8d91a2;font-size:13px;margin-bottom:20px;">Tentang aplikasi ini</p>
+  <div class="info-box">
+    <h3>Tentang BYPASS WEB</h3>
+    <div class="content">Bypass Web — Bypass Generator Fast &amp; Secure.
+
+Dibuat oleh SECRETDEV.
+Versi 1.0.0
+
+© 2026 All Rights Reserved.</div>
+  </div>
+</div>
+<!-- END TAB INFO -->
 </main>
 
 <div class="modal" id="modal">
@@ -1066,10 +1252,11 @@ startProgress();
       : (json.time_taken || (elapsed + " ms"));
 
     resultLink = bypassed;
-    $("result").style.display = "block";
-    finishProgress(true, '✅ Bypass berhasil!');
-    addPersonalBypass(currentType);
-    toast("Bypass berhasil");
+$("result").style.display = "block";
+addHistory(currentType, url, bypassed);   // ← TAMBAH INI
+finishProgress(true, '✅ Bypass berhasil!');
+addPersonalBypass(currentType);
+toast("Bypass berhasil");
   } catch(err) {
     debug({
       error: String(err),
@@ -1377,6 +1564,110 @@ async function cekKontak() {
 cekKontak();
 
   // ==========================================
+// DRAWER MENU
+// ==========================================
+function openDrawer() {
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if (drawer) drawer.classList.add('show');
+  if (overlay) overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if (drawer) drawer.classList.remove('show');
+  if (overlay) overlay.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function switchPage(pageName, el) {
+  // Sembunyikan semua tab page
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + pageName);
+  if (target) target.classList.add('active');
+
+  // Update drawer item
+  document.querySelectorAll('.drawer-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  // Auto-load
+  if (pageName === 'history') renderHistory();
+  if (pageName === 'info') renderInfo();
+
+  // Tutup drawer
+  closeDrawer();
+}
+
+// ==========================================
+// RIWAYAT BYPASS
+// ==========================================
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('sd_history') || '[]'); }
+  catch (e) { return []; }
+}
+
+function saveHistory(list) {
+  try { localStorage.setItem('sd_history', JSON.stringify(list)); }
+  catch (e) {}
+}
+
+function addHistory(service, originalUrl, bypassedUrl) {
+  const history = getHistory();
+  history.unshift({
+    service: service,
+    original: originalUrl,
+    bypassed: bypassedUrl,
+    time: new Date().toISOString()
+  });
+  saveHistory(history.slice(0, 30));
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (!list) return;
+
+  const history = getHistory();
+  if (history.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#5a5f70;font-size:13px;">📭 Belum ada riwayat<br>Yuk mulai bypass!</div>';
+    return;
+  }
+
+  const SERVICE_SHORT = {
+    adlink: 'AdLinkSumo', sfl: 'SFL', delta: 'Delta',
+    linkvertise: 'Linkvertise', move2link: 'Move2link',
+    sub2unlock: 'Sub2Unlock', sub4unlock: 'Sub4Unlock', universal: 'Universal'
+  };
+
+  let html = '';
+  history.forEach((item, idx) => {
+    const date = new Date(item.time);
+    const timeStr = date.toLocaleString('id-ID', {
+      day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+    html += `
+      <div class="history-item" onclick="window.open('${item.bypassed}', '_blank')">
+        <div class="top">
+          <span class="svc">${SERVICE_SHORT[item.service] || item.service}</span>
+          <span class="time">${timeStr}</span>
+        </div>
+        <div class="link">🔗 ${item.original}</div>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+}
+
+function renderInfo() {
+  // Info statis — tidak perlu API
+}
+
+// Render awal
+renderHistory();
+
+  // ==========================================
 // WELCOME MESSAGE — SELALU MUNCUL SETIAP BUKA
 // ==========================================
 const WELCOME_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
@@ -1410,5 +1701,48 @@ function tutupWelcome() {
 
 cekWelcome();
 </script>
+  <!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER MENU -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2>Menu</h2>
+    <p>Bypass Web • v1.0.0</p>
+  </div>
+
+  <div class="drawer-menu">
+    <div class="drawer-item active" data-page="home" onclick="switchPage('home', this)">
+      <div class="drawer-icon">🏠</div>
+      <div class="drawer-text">
+        <b>Home</b>
+        <small>Halaman utama bypass</small>
+      </div>
+      <div class="drawer-arrow">›</div>
+    </div>
+
+    <div class="drawer-item" data-page="history" onclick="switchPage('history', this)">
+      <div class="drawer-icon">📜</div>
+      <div class="drawer-text">
+        <b>Riwayat</b>
+        <small>Bypass yang pernah kamu lakukan</small>
+      </div>
+      <div class="drawer-arrow">›</div>
+    </div>
+
+    <div class="drawer-item" data-page="info" onclick="switchPage('info', this)">
+      <div class="drawer-icon">ℹ️</div>
+      <div class="drawer-text">
+        <b>Info</b>
+        <small>Tentang aplikasi</small>
+      </div>
+      <div class="drawer-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="drawer-footer">
+    © SECRETDEV • PROGRAMMER REVERSE
+  </div>
+</div>
 </body>
 </html>
