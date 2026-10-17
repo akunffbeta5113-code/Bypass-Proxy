@@ -44,11 +44,11 @@ async function cekSemuaServer() {
         results.theresav.status = 'online';
         results.theresav.message = 'Theresav API berjalan normal';
       } else {
-        results.theresav.status = 'warning';
+        results.theresav.status = 'offline';
         results.theresav.message = 'Theresav respons tidak valid';
       }
     } else {
-      results.theresav.status = 'warning';
+      results.theresav.status = 'offline';
       results.theresav.message = 'Theresav HTTP ' + response.status;
     }
     results.theresav.time = elapsed;
