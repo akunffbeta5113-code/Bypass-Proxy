@@ -717,14 +717,11 @@ body.has-broadcast{padding-top:60px}
 <div class="tab-page" id="page-info">
   <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;">ℹ️ Info Aplikasi</h2>
   <p style="color:#8d91a2;font-size:13px;margin-bottom:20px;">Tentang aplikasi ini</p>
+  
   <div class="info-box">
-    <h3>Tentang BYPASS WEB</h3>
-    <div class="content">Bypass Web — Bypass Generator Fast &amp; Secure.
-
-Dibuat oleh SECRETDEV.
-Versi 1.0.0
-
-© 2026 All Rights Reserved.</div>
+    <h3 id="infoPageTitle">Memuat...</h3>
+    <div class="content" id="infoPageContent">Memuat informasi...</div>
+    <div id="infoPageContact" style="margin-top: 15px; font-size: 13px; color: #ffca18; font-weight: 700;"></div>
   </div>
 </div>
 <!-- END TAB INFO -->
@@ -1281,6 +1278,35 @@ toast("Bypass berhasil");
   }, 1500);
   }
 }
+  // ==========================================
+// INFO APLIKASI (WEB UTAMA)
+// ==========================================
+const INFO_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
+  ? 'https://bypass-proxy.vercel.app/api/info'
+  : '/api/info';
+
+async function loadInfoPage() {
+  try {
+    const res = await fetch(INFO_API, { cache: 'no-store' });
+    const data = await res.json();
+    
+    if (data.title) $('infoPageTitle').textContent = data.title;
+    if (data.content) $('infoPageContent').textContent = data.content;
+    
+    const contactEl = $('infoPageContact');
+    if (data.contact) {
+      contactEl.textContent = '📞 ' + data.contact;
+    } else {
+      contactEl.style.display = 'none';
+    }
+  } catch (err) {
+    $('infoPageTitle').textContent = 'Tentang Aplikasi';
+    $('infoPageContent').textContent = 'Gagal memuat info. Coba lagi nanti.';
+  }
+}
+
+// Panggil fungsi ini di dalam init()
+// Tambahkan loadInfoPage(); ke dalam fungsi init() yang sudah ada.
 
   // ==========================================
 // TANGGAL & HIJRIAH
