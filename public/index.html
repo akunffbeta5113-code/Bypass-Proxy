@@ -1677,14 +1677,21 @@ function renderInfo() {
 // Render awal
 renderHistory();
 
-  // ==========================================
-// WELCOME MESSAGE — SELALU MUNCUL SETIAP BUKA
+// ==========================================
+// WELCOME MESSAGE
 // ==========================================
 const WELCOME_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('github.io'))
   ? 'https://bypass-proxy.vercel.app/api/welcome'
   : '/api/welcome';
 
 async function cekWelcome() {
+  // PENGAMAN 1: Jangan tampilkan welcome jika sedang di halaman admin
+  if (isAdminMode) return;
+
+  // PENGAMAN 2: Jangan tampilkan welcome jika Maintenance Overlay sedang muncul
+  const mOverlay = document.getElementById('maintenanceOverlay');
+  if (mOverlay && mOverlay.classList.contains('show')) return;
+
   try {
     const res = await fetch(WELCOME_API, { cache: 'no-store' });
     const data = await res.json();
@@ -1709,7 +1716,7 @@ function tutupWelcome() {
   document.getElementById('welcomeOverlay').classList.remove('show');
 }
 
-cekWelcome();
+// Hapus panggilan cekWelcome() di luar sini, biarkan init() yang memanggilnya
 </script>
   <!-- DRAWER OVERLAY -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
