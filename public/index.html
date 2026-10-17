@@ -1003,8 +1003,13 @@ startProgress();
       success = !!(json && json.status);
       bypassed = json && json.bypassed_url;
     } else if (currentType === "move2link" || currentType === "sub2unlock" || currentType === "sub4unlock") {
-      success = !!(json && json.status);
-      bypassed = json && (json.bypassed_url || json.url || json.result);
+  success = !!(json && json.status);
+  bypassed = json && (
+    json.bypassed_url ||
+    (json.bypassed_urls && json.bypassed_urls[0]) ||  // ← TAMBAH INI
+    json.url ||
+    json.result
+    );
     } else if (currentType === "universal") {
       success = !!(json && json.status);
       bypassed = json && (json.result || json.url || json.bypassed_url);
