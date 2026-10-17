@@ -490,6 +490,11 @@ function switchTab(tabName, el) {
     const k2 = $('key2').value.trim();
     if (k1 && k2) loadHealth();
   }
+  if ( tabName === 'info') {
+    const k1 = $('key1').value.trim();
+    const k2 = $('key2').value.trim();
+    if (k1 && k2) loadInfoAdmin
+  }
 }
 
 // ==========================================
@@ -969,6 +974,8 @@ async function simpanInfo() {
   if (!key1 || !key2) return showStatus('⚠️ Isi kedua kunci dulu!', 'error');
   if (!content) return showStatus('⚠️ Isi info tidak boleh kosong!', 'error');
 
+  showStatus('⏳ Menyimpan info...', 'warn');
+
   try {
     const res = await fetch(
       '/api/info?action=set' +
@@ -980,8 +987,12 @@ async function simpanInfo() {
       { cache: 'no-store' }
     );
     const data = await res.json();
-    if (res.ok && data.success) showStatus('✅ ' + data.message, 'off');
-    else showStatus('❌ ' + (data.error || 'Gagal'), 'error');
+    
+    if (res.ok && data.success) {
+      showStatus('✅ ' + data.message, 'off');
+    } else {
+      showStatus('❌ ' + (data.error || 'Gagal menyimpan'), 'error');
+    }
   } catch (err) {
     showStatus('❌ Error: ' + err.message, 'error');
   }
@@ -994,9 +1005,10 @@ async function loadInfoAdmin() {
     if (data.title) $('infoTitle').value = data.title;
     if (data.content) $('infoContent').value = data.content;
     if (data.contact) $('infoContact').value = data.contact;
-  } catch (e) {}
+  } catch (e) {
+    console.error('Gagal load info admin:', e);
+  }
 }
-loadInfoAdmin();
 
 // ==========================================
 // EMERGENCY (PANIC)
