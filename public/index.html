@@ -21,7 +21,6 @@ body:before{width:230px;height:230px;background:#7a35ff;top:-70px;right:-60px}
 body:after{width:220px;height:220px;background:#ff3d3d;bottom:-70px;left:-60px}
 .app{position:relative;z-index:1;width:100%;max-width:430px;min-height:calc(100vh - 32px);background:#11131e;border:1px solid #292c3b;border-radius:32px;padding:26px 22px 24px;box-shadow:0 25px 70px #0008}
 .topBadge{width:max-content;margin:0 auto 22px;padding:10px 24px;border-radius:24px;background:#4a3d12;color:#ffd84d;font-size:14px;font-weight:800;box-shadow:0 8px 25px #0004}
-.music{position:absolute;right:28px;top:38px;width:58px;height:58px;border:2px solid #8b39ff;border-radius:50%;display:grid;place-items:center;color:#687086;font-size:26px}
 h1{text-align:center;font-size:32px;line-height:1.15;font-weight:800;letter-spacing:-1px}
 h1 span{color:#ffca18}
 .subtitle{text-align:center;color:#9498a8;margin-top:8px;font-size:14px}
@@ -52,6 +51,36 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .run{width:100%;height:53px;border:0;border-radius:15px;background:linear-gradient(135deg,#7d43ff,#b45cff);color:#fff;font-size:16px;font-weight:800}
 .loader{display:none;width:40px;height:40px;border:4px solid #ffffff22;border-top-color:#a55cff;border-radius:50%;margin:18px auto;animation:spin .7s linear infinite}
 
+/* Tombol Menu Hamburger */
+.menu-btn {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: .15s;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  -webkit-tap-highlight-color: transparent;
+}
+.menu-btn:active {
+  transform: scale(.92);
+}
+.menu-btn span {
+  display: block;
+  width: 22px;
+  height: 2.5px;
+  background: #000000;
+  border-radius: 2px;
+  margin: 3px 0;
+  }
+  
   /* Progress Bar */
 .progress-container {
   display: none;
@@ -261,7 +290,6 @@ body.has-broadcast{padding-top:60px}
 @media(max-width:370px){
   .app{padding:23px 16px}
   h1{font-size:28px}
-  .music{display:none}
   .service{min-height:84px;padding:12px 14px 12px 12px}
   .icon{width:57px;height:57px;flex-basis:57px}
   .topBadge{font-size:12px;padding:8px 18px}
@@ -274,7 +302,6 @@ body.has-broadcast{padding-top:60px}
   .app{padding:18px 20px}
   h1{font-size:26px}
   .topBadge{margin-bottom:14px;padding:6px 18px;font-size:12px}
-  .music{display:none}
   .live{margin:14px auto 18px;font-size:12px}
   .service{min-height:72px;padding:10px 14px 10px 10px}
   .icon{width:48px;height:48px;flex-basis:48px;font-size:22px;border-radius:14px}
@@ -423,7 +450,14 @@ body.has-broadcast{padding-top:60px}
 
 <main class="app">
   <div class="topBadge">⚡ PREMIUM BYPASS AUTO ⚡</div>
-  <div class="music">♫</div>
+  <!-- TOMBOL MENU HAMBURGER -->
+<button class="menu-btn" onclick="openDrawer()">
+  <div>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</button>
   <h1>BYPASS <span>WEB</span></h1>
   <p class="subtitle">Bypass Generator • Fast &amp; Secure</p>
   <div class="live">● LIVE USERS ONLINE: <span id="live">143</span></div>
